@@ -82,6 +82,12 @@ public class RemarkCardBean extends BaseCardBean<Remark>{
         }    
     }
     
+    public void onSaveChange(){
+        remarks.stream()
+                .filter(remark->Objects.equals(getCurrentUser(), remark.getAuthor()))
+                .forEach(remark->remarkFacade.edit(remark));
+    }
+    
     @Override
     public boolean isEastShow(){
        return isRemarkTabShow(); 
@@ -92,12 +98,7 @@ public class RemarkCardBean extends BaseCardBean<Remark>{
         remark.setProcess(process);
         remarkFacade.create(remark);
         remarks.add(remark);
-    }
-    
-    public void onSaveRemark(Remark remark){
-        remarkFacade.edit(remark);
-        MsgUtils.succesMessage(getLabelFromBundle("ObjectSaved"));
-    }
+    }    
     
     public List<User> getAuthors(){
         if (authors == null){
@@ -163,7 +164,7 @@ public class RemarkCardBean extends BaseCardBean<Remark>{
     }
     
     public void onNotifyRemark(Remark remark){
-        onSaveRemark(remark);
+        remarkFacade.edit(remark);
         Map<String, List<String>> params = getParamsMap();        
         params.put("remarkID", Collections.singletonList(remark.getId().toString()));
         sessionBean.openDialogFrm(DictFrmName.FRM_NOTIFY, params);

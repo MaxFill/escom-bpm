@@ -131,7 +131,7 @@
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                      rowsPerPageTemplate="10,25,50" rows="10" 
                      currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord}"                     
-                     sortBy="#{item.planExecDate}" sortOrder="descending"
+                     sortBy="#{item.regNumber}"
                      rowStyleClass="#{monitorBean.getItemStyle(item)}"
                      tableStyle="table-layout: auto; font-size: 90%;" styleClass="ui-grid-col-12 without-spaces">                
 
@@ -141,7 +141,11 @@
             </p:column>
 
             <p:column headerText="#{bundle.Number}" sortBy="#{item.regNumber}">
-                <h:outputLabel value="#{item.regNumber}"/>
+                <h:outputLabel value="#{item.fullRegNumber}"/>
+            </p:column>
+            
+            <p:column width="16">
+                <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>            
             </p:column>
             
             <p:column headerText="#{bundle.Role}">
@@ -160,11 +164,7 @@
                 <h:outputLabel value="#{item.planExecDate}">
                     <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
                 </h:outputLabel>
-            </p:column>
-            
-            <p:column width="16">
-                <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>            
-            </p:column>
+            </p:column>            
             
             <p:column headerText="#{bundle.Status}">                
                 <h:outputLabel value="#{sessionBean.getItemStatus(item)}"/>

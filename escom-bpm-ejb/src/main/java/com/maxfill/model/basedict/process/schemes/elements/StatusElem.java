@@ -22,8 +22,8 @@ public class StatusElem extends WFConnectedElem{
     private Integer docStatusId;
     
     @XmlElement(name = "state")
-    private Integer docStateId;
-    
+    private Integer docStateId;    
+       
     @XmlElement(name = "save") //запись в результат процесса
     private Boolean isSaveInProc = true;
        
@@ -54,7 +54,7 @@ public class StatusElem extends WFConnectedElem{
     }
     
     /* Gets & Sets */
-
+    
     public Boolean getIsSaveInProc() {
         return isSaveInProc;
     }

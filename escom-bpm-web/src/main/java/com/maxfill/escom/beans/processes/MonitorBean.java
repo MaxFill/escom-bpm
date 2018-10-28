@@ -2,7 +2,6 @@ package com.maxfill.escom.beans.processes;
 
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.dictionary.DictFrmName;
-import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
@@ -10,7 +9,6 @@ import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.Results;
-import com.maxfill.model.WithDatesPlans;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.core.states.StateFacade;
 import com.maxfill.model.basedict.BaseDict;
@@ -19,11 +17,14 @@ import com.maxfill.model.core.states.State;
 import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.user.User;
 import java.util.ArrayList;
+import java.util.Comparator;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsFirst;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
 import org.omnifaces.cdi.ViewScoped;
@@ -121,7 +122,7 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     }
     
     private int loadTree(){
-        List<Process> processes = processFacade.findItemsByFilters("", "", makeFilters(new HashMap()), getCurrentUser());
+        List<Process> processes = processFacade.findItemsByFilters("regNumber", null, makeFilters(new HashMap()), getCurrentUser());
         processes.forEach(proc->{            
             TreeNode processNode = new DefaultTreeNode(proc, root);
             makeTree(proc, processNode);            
@@ -138,13 +139,13 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     }
     
     private void makeTree(Process process, TreeNode processNode){
+        process.getChildItems().forEach(subProc->{
+                    TreeNode subProcNode = new DefaultTreeNode(subProc, processNode);
+                    makeTree(subProc, subProcNode);
+        });
         if (process.getScheme() != null){
             process.getScheme().getTasks().forEach(task->new DefaultTreeNode(task, processNode));
         }
-        process.getChildItems().forEach(subProc->{
-            TreeNode subProcNode = new DefaultTreeNode(subProc, processNode);
-            makeTree(subProc, subProcNode);
-        });
     }
     
     /**

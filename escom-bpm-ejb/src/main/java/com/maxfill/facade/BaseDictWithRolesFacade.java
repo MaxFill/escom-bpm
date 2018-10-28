@@ -143,7 +143,7 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
     }
     
     /**
-     * Формирует список пользователей, входящих в роль
+     * Формирует список пользователей, входящих в роль указанного процесса
      * @param item - процесс или документ
      * @param roleName
      * @param currentUser
@@ -155,7 +155,7 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
         if (CollectionUtils.isEmpty(roles) || !roles.containsKey(roleName)) return new ArrayList<>();
         Set<Integer> usersIds = roles.get(roleName);
         return userFacade.findByIds(usersIds, currentUser);
-    }     
+    }         
     
     /**
      * Отправка сообщения ролям

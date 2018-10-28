@@ -204,7 +204,13 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     public void onGetDocOpenURL(Doc doc){
         docURL = sessionBean.doGetItemURL(doc, "/docs/doc-card.xhtml");
     }   
-            
+    
+    /* *** ПРОЦЕССЫ *** */
+    
+    public void onAfterCeateProcess(){
+        
+    }
+    
     /* *** РЕГИСТРАЦИЯ *** */
     
     /* Сброс регистрационного номера */

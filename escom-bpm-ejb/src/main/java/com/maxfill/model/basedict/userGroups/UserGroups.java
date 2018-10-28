@@ -41,12 +41,15 @@ public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroup
     private Integer typeActualize = 0;
 
     @Column(name = "RoleFieldName")
-    private String roleFieldName;
+    private String roleFieldName;       
 
-    @XmlTransient
-    @ManyToMany(mappedBy = "usersGroupsList", fetch = FetchType.EAGER)
+    @JoinTable(name = "usersInGroup", 
+            joinColumns = {@JoinColumn(name = "GroupId", referencedColumnName = "Id")}, 
+            inverseJoinColumns = {@JoinColumn(name = "UserId", referencedColumnName = "Id")}
+    )
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<User> usersList = new ArrayList<>();
-
+    
     @OneToMany
     @JoinColumn(name = "parent")
     private List<UserGroups> childItems;

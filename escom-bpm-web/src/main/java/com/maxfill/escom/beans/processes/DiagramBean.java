@@ -1085,14 +1085,19 @@ public class DiagramBean extends BaseViewBean<BaseView>{
      */
     private void onLoadModelFromTempl(){
         scheme.setElements(new WorkflowElements());  
-        scheme.setPackElements(selectedTempl.getElements());        
+        scheme.setPackElements(selectedTempl.getElements());
         workflow.unpackScheme(scheme, getCurrentUser());
-        workflow.clearScheme(scheme, new HashMap<>());
+        workflow.clearElements(scheme);
+        Set<String> errors = new HashSet<>();
+        workflow.clearScheme(scheme.getProcess(), getCurrentUser(), new HashMap<>(), errors);
         restoreModel();
         PrimeFaces.current().ajax().update("mainFRM");        
         PrimeFaces.current().ajax().update("southFRM:diagramm");
         addElementContextMenu();        
         onItemChange();
+        if (!errors.isEmpty()){         
+            MsgUtils.showErrors(errors);
+        }
     }
     
     /**

@@ -67,6 +67,10 @@ public class ProcessNumeratorImpl extends NumeratorBase implements ProcessNumera
             procType.setGuide(counterName);            
             processTypesFacade.edit(procType);
         }
+        Process parent = process.getParent();
+        if (parent != null){
+            sb.append("_").append(parent.getId());
+        }
         sb.append("_").append(counterName);        
         if (processTypesFacade.getProcTypeForOpt(procType).getNumerator().getResetNewYear()){                
             sb.append("_").append(EscomUtils.getYearYY(process.getItemDate()));

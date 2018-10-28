@@ -1,6 +1,5 @@
 package com.maxfill.escom.beans.partners.groups;
 
-import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.model.basedict.partnerGroups.PartnersGroupsFacade;
 import com.maxfill.model.basedict.partnerGroups.PartnerGroups;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
@@ -37,9 +36,6 @@ public class PartnersGroupsCardBean extends BaseCardBeanGroups<PartnerGroups, Pa
         if (!groups.contains(partner)){
             groups.add(partner);
         } 
-        if(!addGroups.contains(partner)){
-            addGroups.add(partner);
-        }
         onItemChange();        
     }
 

@@ -10,7 +10,16 @@
     <ui:define name="specActionMenu" >
     </ui:define>
     
-    <ui:define name="CardToolButtons" >        
+    <ui:define name="CardToolButtons" > 
+        <p:commandButton icon="ico_process" title="#{bundle.GoToProcess}" 
+                        rendered="#{taskCardBean.process != null}"
+                        actionListener="#{taskCardBean.onOpenProcess()}"/>
+        <p:commandButton icon="ico_doc-16" title="#{bundle.GoToDocument}" 
+                        rendered="#{taskCardBean.process != null}"
+                        actionListener="#{taskCardBean.onOpenDocument()}"/>
+        <p:commandButton icon="ico_look" title="#{bundle.ViewDoc}" 
+                        rendered="#{taskCardBean.process != null}"
+                        actionListener="#{taskCardBean.onViewDocument()}"/>
     </ui:define>
     
     <ui:define  name="form_scripts">
@@ -156,14 +165,7 @@
                         </p:selectOneMenu>
                     </p:panelGrid>
                 </p:panelGrid>
-                <p:separator rendered="#{taskCardBean.editedItem.scheme != null}"/>                   
-                                     
-                <p:selectBooleanCheckbox value="#{taskCardBean.editedItem.considInProcReport}" 
-                                         itemLabel="#{taskCardBean.getCheckBoxAddCaption()}" 
-                                         rendered="#{taskCardBean.isShowCheckBoxAdd()}"
-                                         disabled="#{taskCardBean.isTaskReadOnly()}">
-                    <p:ajax process="@this" listener="#{taskCardBean.onConsidInProcReportChange()}" oncomplete="itemChange = 1;"/>
-                </p:selectBooleanCheckbox>                
+                <p:separator rendered="#{taskCardBean.editedItem.scheme != null}"/>                                                    
                 
                 <p:separator rendered="#{taskCardBean.isShowExtTaskAtr()}"/>
                 <p:commandButton value="#{bundle.Delete}" 
@@ -174,8 +176,8 @@
             </p:panelGrid>
         </p:tab>
 
-        <p:tab title="#{bundle.Settings}" rendered="#{!taskCardBean.isTaskReadOnly()}">
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
+        <p:tab title="#{bundle.Settings}" rendered="#{taskCardBean.isCanShowTaskSettings()}">
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
                 <p:outputLabel value="#{bundle.AvailableActions}" indicateRequired="true"/>
                 <p:pickList id="pickList" value="#{taskCardBean.results}" var="result" converter="resultConverter"
                             showCheckbox="true" responsive="true"
@@ -186,11 +188,17 @@
                     <f:facet name="sourceCaption">#{bundle.AvailableButton}</f:facet>
                     <f:facet name="targetCaption">#{bundle.Selected}</f:facet>
                 </p:pickList>
+                <p:selectBooleanCheckbox value="#{taskCardBean.editedItem.considInProcReport}" 
+                                         itemLabel="#{taskCardBean.getCheckBoxAddCaption()}" 
+                                         rendered="#{taskCardBean.isShowCheckBoxAdd()}"
+                                         disabled="#{taskCardBean.isTaskReadOnly()}">
+                    <p:ajax process="@this" listener="#{taskCardBean.onConsidInProcReportChange()}" oncomplete="itemChange = 1;"/>
+                </p:selectBooleanCheckbox> 
             </p:panelGrid>
         </p:tab>
 
         <p:tab title="#{bundle.Execution}" rendered="#{taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}">
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces"> 
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces"> 
                 <h:panelGroup id="btnTaskExe">
                     <ui:repeat value="#{taskCardBean.taskResults}" var="result" rendered="#{taskCardBean.isShowBtnResults()}" >
                         <p:commandButton value="#{resultBean.getLabelFromBundle(result.getName())}" 
@@ -202,18 +210,7 @@
                             <f:param name="isRequired" value="true"/>
                         </p:commandButton>
                     </ui:repeat>
-                </h:panelGroup>
-                
-                <h:panelGrid columns="1" rendered="#{taskCardBean.editedItem.id != null and taskCardBean.editedItem.scheme != null}" style="float: right;">
-                    <p:commandLink  value="#{bundle.GoToProcess}" style="float: right;"
-                                    rendered="#{taskCardBean.sourceBean == null}"
-                                    actionListener="#{taskCardBean.onOpenProcess()}"/>
-                    <p:commandLink  value="#{bundle.GoToDocument}" style="float: right;"
-                                    rendered="#{taskCardBean.sourceBean == null}"
-                                    actionListener="#{taskCardBean.onOpenDocument()}"/>
-                    <p:commandLink  value="#{bundle.ViewDoc}" style="float: right;"
-                                    actionListener="#{taskCardBean.onViewDocument()}"/>
-                </h:panelGrid>
+                </h:panelGroup>                
                 
                 <p:outputLabel value="#{bundle.ReportExe}:" indicateRequired="true"/>                
                 <p:textEditor value="#{taskCardBean.editedItem.comment}" 

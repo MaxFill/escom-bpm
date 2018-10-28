@@ -124,7 +124,8 @@ body{
 }
 
 .Сompleted{
-   color: #C7C6C4 !important;
+   color: grey !important;
+   font-style: italic !important;
 }
 
 .Cancelled{

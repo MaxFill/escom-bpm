@@ -14,7 +14,6 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
 
     private List<O> checkedGroups = new ArrayList<>(); 
     protected final List<O> deleteGroups = new ArrayList<>();
-    protected final List<O> addGroups = new ArrayList<>();
     
     public abstract List<O> getGroups(T item);          //возвращает список групп объекта 
     
@@ -72,9 +71,6 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
             if (!groups.contains(group)){
                 groups.add(group);
             } 
-            if(!addGroups.contains(group)){
-                addGroups.add(group);
-            }
             if(item.getOwner() == null){
                 getOwnerAndAddGroups(item, group);
             }
@@ -86,10 +82,7 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
     public O getOwnerAndAddGroups(T item, O group) {                      
         List<O> groups = getGroups(item);
         if (!group.getId().equals(0) && !groups.contains(group)){
-            groups.add(group);
-            if(!addGroups.contains(group)){
-                addGroups.add(group);
-            }            
+            groups.add(group);           
         }
         if (group.getParent() != null){
             group = getOwnerAndAddGroups(item, (O) group.getParent());

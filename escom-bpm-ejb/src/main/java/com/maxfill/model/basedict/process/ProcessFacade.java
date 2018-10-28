@@ -11,7 +11,6 @@ import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.doc.DocFacade;
 import com.maxfill.model.basedict.folder.Folder;
 import com.maxfill.model.basedict.process.schemes.Scheme;
-import com.maxfill.model.basedict.process.schemes.elements.AnchorElem;
 import com.maxfill.model.basedict.process.schemes.elements.SubProcessElem;
 import com.maxfill.model.core.messages.UserMessagesFacade;
 import com.maxfill.model.basedict.remark.RemarkFacade;
@@ -28,6 +27,7 @@ import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import javax.ejb.EJB;
@@ -35,7 +35,6 @@ import javax.ejb.Stateless;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -176,8 +175,10 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         }        
         if (params.containsKey("curator")) {
             setRoleCurator(process, (Staff)params.get("curator"));
-        } else {   
-            setRoleCurator(process, process.getAuthor().getStaff());
+        } else { 
+            if (process.getAuthor().getStaff() != null){
+                setRoleCurator(process, process.getAuthor().getStaff());
+            }
         }
     }
 
@@ -201,6 +202,24 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
                     .filter(task->task.getOwner() != null)
                     .forEach(task->process.addUserInRole(task.getRoleInProc().getRoleFieldName(), task.getOwner().getEmployee()));
         }
+    }
+    
+    /**
+     * Формирует список пользователей, входящих в роль указанного процесса включая все подпроцессы
+     * @param parent
+     * @param roleName
+     * @param currentUser
+     * @return 
+     */
+    public List<User> getUsersProcessRole(Process parent, String roleName, User currentUser){
+        Set<User> users = new HashSet<>();
+        makeUsersFromProcessRole(parent, users, roleName, currentUser);
+        return new ArrayList<>(users);
+    }
+    
+    private void makeUsersFromProcessRole(Process parent, Set<User> users, String roleName, User currentUser){
+        users.addAll(getUsersFromRole(parent, roleName, currentUser));
+        parent.getChildItems().forEach(process->makeUsersFromProcessRole(process, users, roleName, currentUser));
     }
     
     /* *** ВАЛИДАЦИЯ *** */

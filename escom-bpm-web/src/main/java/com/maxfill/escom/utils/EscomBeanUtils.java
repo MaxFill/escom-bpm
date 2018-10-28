@@ -141,10 +141,24 @@ public final class EscomBeanUtils {
         }
 
         StringBuilder dr = new StringBuilder();
-        dr.append("d").append("дн.").append("H").append("ч.").append("mm").append("м.");
+        dr.append("d").append("д.").append("H").append("ч.").append("mm").append("м.");
 
         String delta = DurationFormatUtils.formatDuration(duration.toMillis(), dr.toString(), true);
         sb.append(" ").append(delta);
         return sb.toString();
     }  
+    
+    /**
+     * Формирует информацию о длительности
+     * @param dateStart
+     * @param dateEnd
+     * @return 
+     */
+    public static String makeDuration(Date dateStart, Date dateEnd){
+        if (dateStart == null || dateEnd == null) return "";
+        Duration duration = Duration.between(dateStart.toInstant(), dateEnd.toInstant());
+        StringBuilder dr = new StringBuilder();
+        dr.append("d").append("д.").append("H").append("ч.").append("mm").append("м.");
+        return DurationFormatUtils.formatDuration(duration.toMillis(), dr.toString(), true);
+    }
 }

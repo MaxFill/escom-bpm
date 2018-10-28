@@ -302,6 +302,8 @@ public class WorkflowImpl implements Workflow {
             scheme.getElements().getProcedures().remove(element.getUid());
         } else if (element instanceof MessageElem){
             scheme.getElements().getMessages().remove(element.getUid());
+        } else if (element instanceof SubProcessElem){
+            scheme.getElements().getSubprocesses().remove(element.getUid());
         }
         removeConnectors(element, scheme);        
     }
@@ -507,30 +509,45 @@ public class WorkflowImpl implements Workflow {
 
     /**
      * Сброс настроек схемы
-     * @param scheme 
+     * @param process 
+     * @param currentUser 
      * @param params 
+     * @param errors 
      */
     @Override
-    public void clearScheme(Scheme scheme, Map<String, Object> params){
-        scheme.getElements().getConnectors().forEach(c->c.setDone(false));  
-        scheme.getElements().getLogics().forEach((k, logicEl)->logicEl.getTasksExec().clear());
-        scheme.getElements().getTasks().forEach((k, taskEl)->taskEl.getTasksExec().clear());
+    public void clearScheme(Process process, User currentUser, Map<String, Object> params, Set<String> errors){
+        Scheme scheme = process.getScheme();
+        if (process.getScheme() == null){
+            scheme = initScheme(process, currentUser, errors);            
+        } else {
+            unpackScheme(scheme, currentUser);
+        }
+        clearElements(scheme);
         boolean sendNotAgree = params.containsKey(ProcessParams.PARAM_SEND_NOTAGREE);
         State draftState = stateFacade.getDraftState();
         scheme.getTasks().stream()
                 .filter(task-> !sendNotAgree || Objects.equals(DictResults.RESULT_REFUSED, task.getResult()))
                 .forEach(task->{
                     task.setFactExecDate(null);
+                    task.setBeginDate(null);
                     task.setResult(null);
                     task.getState().setCurrentState(draftState);
             });
-        scheme.getProcess().getChildItems().stream()
-                .filter(subProc-> !sendNotAgree || !Objects.equals(DictStates.STATE_COMPLETED, subProc.getState().getCurrentState().getId()))
-                .forEach(subProcess->{
-                    subProcess.setResult(null);
-                    subProcess.setFactExecDate(null);
-                    subProcess.getState().setCurrentState(draftState);            
-        });
+        
+        process.setResult(null);
+        process.setFactExecDate(null);
+        process.getState().setCurrentState(draftState);
+        
+        process.getChildItems().stream()
+                .filter(subProc-> !(sendNotAgree == true && Objects.equals(DictStates.STATE_COMPLETED, subProc.getState().getCurrentState().getId())))
+                .forEach(subproc->clearScheme(subproc, currentUser, params, errors));
+    }    
+    
+    @Override
+    public void clearElements(Scheme scheme){
+        scheme.getElements().getConnectors().forEach(c->c.setDone(false));  
+        scheme.getElements().getLogics().forEach((k, logicEl)->logicEl.getTasksExec().clear());
+        scheme.getElements().getTasks().forEach((k, taskEl)->taskEl.getTasksExec().clear());
     }
     
     /**
@@ -574,9 +591,12 @@ public class WorkflowImpl implements Workflow {
 
             params.put(EXECUTED_TASKS, executedTasks);
             
-            forShow.addAll(run(process, startElement, new HashSet<>(), currentUser, params, errors));
+            forShow = run(process, startElement, new HashSet<>(), currentUser, params, errors);
+            
             if (errors.isEmpty()){
                 processFacade.addLogEvent(process, DictLogEvents.TASK_FINISHED, currentUser);
+            } else {
+              //ToDO нужен откат транзакции!!
             }
         }
         return forShow;
@@ -617,6 +637,9 @@ public class WorkflowImpl implements Workflow {
         }
         if (role != null){
             procReport.setRoleName(role.getRoleFieldName());
+        }
+        if (!process.getReports().contains(procReport)){
+            process.getReports().add(procReport);
         }
         return procReport;
     }
@@ -696,7 +719,7 @@ public class WorkflowImpl implements Workflow {
                 subProcess.setFactExecDate(null);
                 processFacade.setRoleOwner(subProcess, curUser);
                 processFacade.edit(subProcess);
-
+                clearScheme(subProcess, curUser, params, errors);
                 if (subProcElem.isShowCard()){
                     processesForShow.add(subProcess);
                 } else {                
@@ -717,18 +740,13 @@ public class WorkflowImpl implements Workflow {
      */
     @Override
     public Set<BaseDict> start(Process process, User currentUser, Map<String, Object> params, Set<String> errors) {        
-        Scheme scheme = process.getScheme();
-        if (process.getScheme() == null){
-            scheme = initScheme(process, currentUser, errors);            
-        } else {
-            unpackScheme(scheme, currentUser);
-        }
-
+        clearScheme(process, currentUser, params, errors);
+        Scheme scheme = process.getScheme();       
         validateScheme(scheme, true, errors);
         if (!errors.isEmpty()) return new HashSet<>();
-        
-        clearScheme(scheme, params);
-        processFacade.edit(process);    //сохраняем возможные изменения
+                
+        processFacade.actualizeProcessRoles(process);
+        processFacade.edit(process);    //сохраняем изменения
         
         Doc doc = process.getDocument();
         if (doc != null){
@@ -738,7 +756,6 @@ public class WorkflowImpl implements Workflow {
         
         process.getState().setCurrentState(stateFacade.getRunningState());
         process.setBeginDate(new Date());
-        process.setResult(null);
         
         WFConnectedElem startElement = scheme.getElements().getStartElem();
         startElement.setDone(true);
@@ -798,7 +815,7 @@ public class WorkflowImpl implements Workflow {
     private void cancelTasks(Process process, User currentUser){ 
         State stateCancel = stateFacade.getCanceledState();
         process.getScheme().getTasks().stream()
-                .filter(task->DictStates.STATE_DRAFT != task.getState().getCurrentState().getId()) //отмена всех задач, кроме черновиков
+                .filter(task->DictStates.STATE_RUNNING == task.getState().getCurrentState().getId()) //отмена всех запущенных задач
                 .forEach(task->{
                         task.getState().setCurrentState(stateCancel);
                         notificationService.makeNotification(task, "TaskCancelled"); //уведомление об аннулировании задачи
@@ -1022,6 +1039,8 @@ public class WorkflowImpl implements Workflow {
                             .forEach(exitElem->{
                                 exitElem.setEnter(true);
                                 exitElem.setDone(true);
+                                final StatusesDoc status = getStatus(exitElem.getStatusId(), errors);                                
+                                process.setResult(status != null ? status.getBundleName() : null);
                                 finish(process, exitElem, exeSubProc, currentUser, errors);
                             });
                     }
@@ -1136,7 +1155,7 @@ public class WorkflowImpl implements Workflow {
      * @param errors 
      */    
     private StatusesDoc changingDoc(StatusElem stateElem, Scheme scheme, Set<String> errors){
-        final StatusesDoc status = getNewDocStatus(stateElem, errors);
+        final StatusesDoc status = getStatus(stateElem.getDocStatusId(), errors);
         final State state = getNewDocState(stateElem, errors);
         if (!errors.isEmpty()) return null;
         List<Doc> docs = scheme.getProcess().getDocs();
@@ -1174,9 +1193,9 @@ public class WorkflowImpl implements Workflow {
         return state;
     }
     
-    private StatusesDoc getNewDocStatus(StatusElem stateElem, Set<String> errors ){        
-        if (stateElem.getDocStatusId() == null) return null;
-        StatusesDoc status = statusesFacade.find(stateElem.getDocStatusId());
+    private StatusesDoc getStatus(Integer docStatusId, Set<String> errors ){        
+        if (docStatusId == null) return null;
+        StatusesDoc status = statusesFacade.find(docStatusId);
         if (status == null){
             errors.add("StateProcessRouteNotFound");            
         }

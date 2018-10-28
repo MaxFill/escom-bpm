@@ -179,6 +179,24 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         return "";
     }
     
+    private void makeFullRegNumber(StringBuilder sb, BaseDict item){        
+        if (item.getParent() != null){
+            makeFullRegNumber(sb, item.getParent());
+            sb.append(".");           
+        }
+        if (item.getRegNumber() != null){
+            sb.append(item.getRegNumber());
+        }
+    }     
+    
+    /* *** GETS & SETS *** */
+    
+    public String getFullRegNumber(){
+        StringBuilder sb = new StringBuilder("");
+        makeFullRegNumber(sb, this);
+        return sb.toString();
+    };
+    
     public String getRegNumber(){
         return "";
     }

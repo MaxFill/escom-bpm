@@ -89,6 +89,10 @@
                                             oncomplete="PF('statusDialog').hide();"
                                             actionListener="#{sessionBean.onViewHelp()}"/>
                                 <p:separator />
+                                <p:menuitem value="#{bundle.SaveAndClose}" icon="ui-icon-disk" 
+                                            disabled="#{_bean.isReadOnly()}"                                            
+                                            onclick="document.getElementById('mainFRM:btnSaveClose').click();"/>
+                                <p:separator />
                                 <p:menuitem value="#{bundle.Close}" icon="ui-icon-closethick" 
                                             immediate="true"
                                             rendered="#{!_bean.isFullPageMode() and _canClose == null ? true : _canClose}"

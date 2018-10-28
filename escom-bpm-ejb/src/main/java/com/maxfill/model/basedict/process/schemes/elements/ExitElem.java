@@ -26,6 +26,9 @@ public class ExitElem extends WFConnectedElem{
     @XmlElement(name = "stateId")
     private Integer finishStateId = DictStates.STATE_COMPLETED;
     
+    @XmlElement(name = "status")
+    private Integer statusId;
+        
     public ExitElem() {
     }
 
@@ -72,7 +75,14 @@ public class ExitElem extends WFConnectedElem{
     public void setFinishStateId(Integer finishStateId) {
         this.finishStateId = finishStateId;
     }    
-    
+
+    public Integer getStatusId() {
+        return statusId;
+    }
+    public void setStatusId(Integer statusId) {
+        this.statusId = statusId;
+    }
+        
     /* *** *** */
     @Override
     public boolean equals(Object o) {

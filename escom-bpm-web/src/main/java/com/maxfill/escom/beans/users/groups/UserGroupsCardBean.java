@@ -32,9 +32,6 @@ public class UserGroupsCardBean extends BaseCardBeanGroups<UserGroups, User> {
         if (!groups.contains(user)){
             groups.add(user);
         } 
-        if(!addGroups.contains(user)){
-            addGroups.add(user);
-        }
         onItemChange();
     }
     

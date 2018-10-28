@@ -14,24 +14,23 @@
                         rowsPerPageTemplate="5,10,15" rows="5"
                         styleClass="ui-grid-col-12 without-spaces">
 
-                <p:panel menuTitle="#{bundle.Menu}" collapsed="#{remark.state.currentState.id == 13}" toggleable="true" toggleSpeed="100" styleClass="ui-grid-col-12 without-spaces">
+                <p:panel menuTitle="#{bundle.Menu}" collapsed="#{remark.state.currentState.id == 13}" 
+                         toggleTitle="#{''.concat(bundle.Collapse).concat('/').concat(bundle.Expand)}" 
+                         toggleable="true" toggleSpeed="100" 
+                         styleClass="ui-grid-col-12 without-spaces">
                     <f:facet name="header">
-                        <h:graphicImage value="#{remark.state.currentState.icon}" title="#{stateBean.getBundleName(remark.state.currentState)}"/>
-                        <h:graphicImage value="#{remark.iconName}" title="#{remark.checked ? bundle.RemarkChecked : bundle.RemarkNotTakenAccount}"/>
+                        <h:graphicImage value="#{remark.state.currentState.icon}" title="#{stateBean.getBundleName(remark.state.currentState)}"
+                                        rendered="#{!remarkCardBean.isCanCheckRemark()}"/>
+                        <h:graphicImage value="#{remark.iconName}" title="#{remark.checked ? bundle.RemarkChecked : bundle.RemarkNotTakenAccount}"
+                                        rendered="#{remarkCardBean.isCanCheckRemark()}"/>
                         <p:outputLabel value="#{''.concat(stateBean.getBundleName(remark.state.currentState))}" />
                     </f:facet>
 
                     <f:facet name="actions">
-                        <p:commandLink type="button" title="#{bundle.RemarkChecked}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
-                                        disabled="#{!remarkCardBean.isCanCheckRemark()}"
-                                        rendered="#{remark.state.currentState.id == 12 and !remark.checked}"
+                        <p:commandLink type="button" title="#{bundle.RemarkChecked}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"                                        
+                                        rendered="#{remarkCardBean.isCanCheckRemark()}"
                                         actionListener="#{remarkCardBean.onRemarkCheck(remark)}" update="dgMyRemarks">   
                             <h:outputText styleClass="ui-icon ui-icon-check" />
-                        </p:commandLink>
-                        <p:commandLink type="button" title="#{bundle.Save}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
-                                       disabled="#{!remarkCardBean.isCanModifyRemark(remark)}"                                       
-                                       actionListener="#{remarkCardBean.onSaveRemark(remark)}">
-                            <h:outputText styleClass="ui-icon ui-icon-disk" />
                         </p:commandLink>
                         <p:commandLink type="button" title="#{bundle.Delete}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
                                         disabled="#{!remarkCardBean.isCanModifyRemark(remark)}" 
@@ -45,18 +44,17 @@
                             <h:outputText styleClass="ui-icon ui-icon-mail-closed" />
                         </p:commandLink>
                         <p:commandLink type="button" title="#{bundle.RemarkConfirmed}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
-                                    rendered="#{remark.state.currentState.id == 12}"
+                                    rendered="#{!remarkCardBean.isCanCheckRemark() and remark.state.currentState.id == 12}"
                                     disabled="#{!remarkCardBean.isCanModifyRemark(remark)}"
                                     actionListener="#{remarkCardBean.onChangeStateRemark(remark, 13)}" update="dgMyRemarks">
-                            <h:outputText styleClass="ui-icon ui-icon-circle-check" />
+                            <h:outputText styleClass="ui-icon ui-icon-close" />
                         </p:commandLink>
                         <p:commandLink type="button" title="#{bundle.RemarkIssued}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default" 
                                     disabled="#{!remarkCardBean.isCanModifyRemark(remark)}"
-                                    rendered="#{remark.state.currentState.id == 13}"
+                                    rendered="#{!remarkCardBean.isCanCheckRemark() and remark.state.currentState.id == 13}"
                                     actionListener="#{remarkCardBean.onChangeStateRemark(remark, 12)}" update="dgMyRemarks">
                             <h:outputText styleClass="ui-icon ui-icon-notice" />
                         </p:commandLink>
-                        
                     </f:facet>
 
                     <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">

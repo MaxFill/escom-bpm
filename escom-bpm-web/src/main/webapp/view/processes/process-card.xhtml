@@ -75,7 +75,7 @@
 
         <ui:define name="page_body">                
             <p:tab title="#{bundle.Process}">
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >                    
+                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >                    
                     <p:outputLabel value="#{bundle.Organization}:" indicateRequired="true"/>                    
                     <p:selectOneMenu value="#{_bean.editedItem.company}" converter="companyConvertor"
                                      title="#{bundle.CompanyDocRegistred}"
@@ -135,13 +135,14 @@
                                  required="#{param['isRequired'] == 'true'}"
                                  requiredMessage="#{bundle.Field} [#{bundle.ProcessCaption}] #{bundle.MustBeFilled}"/>                    
 
-                    <p:outputLabel value="#{bundle.Term}:" indicateRequired="true"/> 
-                    <h:panelGrid columns="2" >
+                    <h:panelGrid columns="4" styleClass="without-spaces">
+                        <p:outputLabel value="#{bundle.Term}:" indicateRequired="true"/> 
                         <p:selectOneRadio id="typeDatePlan" value="#{_bean.editedItem.deadLineType}" disabled="#{_bean.isReadOnly()}" layout="grid" columns="1" >
                             <f:selectItem itemLabel="" itemValue="delta"/>
                             <f:selectItem itemLabel="" itemValue="data" />
                             <p:ajax update="planEndDate deltaDay deltaHour btnCalcPlan" event="valueChange" onstart="itemChange = 1;"/>
-                        </p:selectOneRadio>  
+                        </p:selectOneRadio> 
+                        
                         <h:panelGrid columns="1" cellpadding="3" styleClass="ui-grid-col-12">
                             <h:panelGroup>
                                 <div class="ui-inputgroup">
@@ -174,8 +175,15 @@
                                 <p:ajax event="dateSelect" onstart="itemChange = 1;" />                    
                             </p:calendar>
                         </h:panelGrid>
+                        
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="#{bundle.Number}:" />
+                            <p:inputText value="#{processCardBean.editedItem.regNumber}" title="#{bundle.AutomaticallyGenerated}"                                      
+                                         placeholder="#{bundle.AutomaticallyGenerated}"
+                                         readonly="true"/>
+                        </h:panelGrid>
                     </h:panelGrid>
-
+                    
                     <p:accordionPanel id="accordDocs" activeIndex="#{_bean.accordDocsTab}">
                         <p:ajax event="tabChange" listener="#{_bean.onAccordDocsTabChange}"/>
                         <p:tab id="tabDocs" title="#{bundle.Documents}" >
@@ -195,13 +203,6 @@
 
             <p:tab title="#{_bean.getHeaderTabReports()}" rendered="#{_bean.isShowReports()}">
                 <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" > 
-                    <h:panelGrid columns="2" styleClass="without-spaces" >                         
-                        <p:outputLabel value="#{bundle.Number}:" />
-                        <p:inputText value="#{processCardBean.editedItem.regNumber}" title="#{bundle.AutomaticallyGenerated}"                                      
-                                     placeholder="#{bundle.AutomaticallyGenerated}"
-                                     readonly="true"/>
-                    </h:panelGrid>
-
                     <p:accordionPanel id="accord" widgetVar="accordion" >
                         <p:tab title="#{_bean.getHeaderTabReports()}">
                             <p:dataTable id="concorderList" value="#{processCardBean.editedItem.getReports()}" var="report" emptyMessage="#{bundle.EmptyTable}"
@@ -242,7 +243,8 @@
                         </p:tab>                        
                     </p:accordionPanel>
                 </p:panelGrid>
-            </p:tab>               
+            </p:tab> 
+            
             <p:tab title="#{bundle.Links}">
                 <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
                     <p:panelGrid columns="1" layout="grid" rendered="" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >

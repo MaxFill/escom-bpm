@@ -334,9 +334,15 @@ public class TaskCardBean extends BaseCardBean<Task>{
                 PrimeFaces.current().ajax().update("initObjFRM");
                 PrimeFaces.current().executeScript("PF('InitObjectsWV').show();");                            
             }
+            return "";
         }
-        return "";
+        return closeTaskForm();
     }    
+    
+    public void onUpdateProcesses(){
+        List<BaseDict> procs = forShow.stream().map(proc->processFacade.find(proc.getId())).collect(Collectors.toList());
+        forShow = new ArrayList<>(procs);
+    }
     
     /**
      * Закрытие карточки задачи после запуска из-неё подпроцесса
@@ -397,7 +403,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
         docBean.doViewMainAttache(doc, params);
     }
     
-    private Process getProcess(){
+    public Process getProcess(){
         Scheme scheme = getEditedItem().getScheme();
         if (scheme == null) return null;
         return scheme.getProcess();
@@ -677,6 +683,10 @@ public class TaskCardBean extends BaseCardBean<Task>{
         this.executors = executors;
     }
 
+    public boolean isCanShowTaskSettings(){
+        return Objects.equals(DictStates.STATE_DRAFT, getEditedItem().getState().getCurrentState().getId());
+    }
+            
     /**
      * Расширенные ограничения к некоторым полям задачи
      * если задача в статусе RUNNING, то поле на форме нельзя редактировать

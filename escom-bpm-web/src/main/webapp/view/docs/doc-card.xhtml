@@ -11,7 +11,7 @@
     
     <ui:define name="page_body">       
         <p:tab title="#{bundle.Document}" id="tabDocCard" >
-            <p:panelGrid id="panelDocCard" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
+            <p:panelGrid id="panelDocCard" layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
                 
                 <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
                     <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
@@ -137,10 +137,14 @@
         </p:tab>
         
         <p:tab title="#{bundle.Processes}" rendered="#{applicationBean.isCanUsesProcess()}">
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">                
+            <p:panelGrid id="processes" columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">                
                 <ui:include src="/view/processes/process-list.xhtml"> 
                     <ui:param name="_processes" value="#{docCardBean.editedItem.processList}"/>
                 </ui:include>
+                
+                <p:commandButton icon="ico_process" value="#{bundle.CreateProcess}" disabled="#{_bean.isReadOnly()}" style="float:right;"> 
+                    <p:ajax event="dialogReturn" listener="#{docCardBean.onAfterCeateProcess()}" update="mainFRM:mainTabView:processes"/>
+                </p:commandButton>
             </p:panelGrid>
         </p:tab>                
         <ui:include src="/view/docs/attaches/attaches.xhtml"/>

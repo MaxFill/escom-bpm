@@ -105,6 +105,10 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
         }
     }
 
+    public void onUpdateProcesses(){
+        
+    }
+    
     /* Печать карточки контрагента */
     @Override
     protected void doPreViewItemCard(ArrayList<Object> dataReport, Map<String, Object> parameters, String reportName){

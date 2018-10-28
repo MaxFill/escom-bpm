@@ -357,6 +357,11 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     
     /* *** ПРОЧИЕ МЕТОДЫ *** */
      
+    public void onUpdateProcesses(){
+        List<BaseDict> procs = forShow.stream().map(proc->processFacade.find(proc.getId())).collect(Collectors.toList());
+        forShow = new ArrayList<>(procs);
+    }
+    
     /**
      * Формирование заголовка для страницы с листом исполнения/согласования
      * @return 

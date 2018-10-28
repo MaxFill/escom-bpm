@@ -49,7 +49,8 @@ public interface Workflow {
     void packScheme(Scheme scheme);
     void unpackScheme(Scheme scheme, User currentUser);
     void validateScheme(Scheme scheme, Boolean checkTasks, Set<String> errors);
-    void clearScheme(Scheme scheme, Map<String, Object> params);
+    void clearScheme(Process process, User currentUser, Map<String, Object> params, Set<String> errors);
+    void clearElements(Scheme scheme);
     
     Set<BaseDict> run(Process process, WFConnectedElem startElement, Set<SubProcessElem> exeSubProc, User currentUser, Map<String, Object> params, Set<String> errors);
     void stop(Process process, User user);

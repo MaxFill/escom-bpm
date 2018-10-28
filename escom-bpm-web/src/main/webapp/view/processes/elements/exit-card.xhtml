@@ -38,6 +38,13 @@
                         <f:selectItems value="#{exitCardBean.getProcessStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />                
                     </p:selectOneMenu>
                     
+                    <p:outputLabel value="#{bundle.SaveAsProcResult}:" indicateRequired="true"/>
+                    <p:selectOneMenu value="#{exitCardBean.selectedStatus}" converter="statusesDocConvertor"
+                                     styleClass="ui-grid-col-12">
+                        <f:selectItems value="#{statusesDocBean.findAll()}" var="status" itemLabel="#{exitCardBean.getLabelFromBundle(status.bundleName)}" itemValue="#{status}" />
+                        <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
+                    </p:selectOneMenu>
+                    
                     <p:outputLabel value="#{bundle.Color}:" />
                     <p:selectOneMenu value="#{exitCardBean.style}" title="#{bundle.ColorSchemeOn}"
                                      required="#{param['isRequired'] == 'true'}"

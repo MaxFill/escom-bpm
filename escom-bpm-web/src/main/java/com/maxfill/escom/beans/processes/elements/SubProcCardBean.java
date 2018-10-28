@@ -127,7 +127,8 @@ public class SubProcCardBean extends BaseViewBean<BaseView>{
         initTemplates(selProcType);
     }
         
-    public void onProcTemplSelected(){        
+    public void onProcTemplSelected(){ 
+        
     }    
     
     @Override
@@ -137,7 +138,6 @@ public class SubProcCardBean extends BaseViewBean<BaseView>{
 
     private void initTemplates(ProcessType processType){         
         templates = processType.getTemplates();
-        selProcTempl = templates.stream().filter(templ -> templ.getIsDefault()).findFirst().orElse(null);
     }
     
     public void onProcDelete(){

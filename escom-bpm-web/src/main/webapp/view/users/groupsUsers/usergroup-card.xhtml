@@ -33,11 +33,11 @@
             </p:panelGrid>
         </p:tab>
         <p:tab title="#{bundle.Users}" rendered="#{_bean.editedItem.typeActualize == 0}"> 
-                <ui:include src="/view/common/dict-item-groups.xhtml" >
-                    <ui:param name="_groups" value="#{userGroupsCardBean.editedItem.usersList}" />    
-                    <ui:param name="_selectorBean" value="#{userBean}" />
-                    <ui:param name="_showOwner" value="#{false}" />
-                </ui:include>
+            <ui:include src="/view/common/dict-item-groups.xhtml" >
+                <ui:param name="_groups" value="#{userGroupsCardBean.editedItem.usersList}" />    
+                <ui:param name="_selectorBean" value="#{userBean}" />
+                <ui:param name="_showOwner" value="#{false}" />
+            </ui:include>
         </p:tab>
     </ui:define>
 </ui:composition>

@@ -11,7 +11,9 @@
 .ico_back {background-image: url('../resources/icon/back.png') !important;}
 .ico_run {background-image: url('../resources/icon/run.png') !important;}
 .ico_refresh {background-image: url('../resources/icon/refresh.png') !important;}
-.ico_execute {background-image: url('../resources/icon/execute.png') !important;}
+.ico_execute {
+    background-image: url('../resources/icon/execute.png') !important;
+}
 .ico_exit{background-image: url('../resources/icon/door-open20.png') !important;}
 .ico_sign {background-image: url('../resources/icon/sign.png') !important;}
 .ico_outdoc{background-image: url('../resources/icon/outdoc.png') !important;}

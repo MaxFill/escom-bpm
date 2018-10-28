@@ -5,7 +5,9 @@ import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.DiagramBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
+import com.maxfill.model.basedict.docStatuses.StatusesDocFacade;
 import com.maxfill.model.basedict.process.schemes.elements.ExitElem;
+import com.maxfill.model.basedict.statusesDoc.StatusesDoc;
 import com.maxfill.model.core.states.State;
 import com.maxfill.model.core.states.StateFacade;
 import java.lang.reflect.InvocationTargetException;
@@ -28,6 +30,8 @@ public class ExitCardBean extends BaseViewBean<BaseView>{
     
     @EJB
     private StateFacade stateFacade;
+    @EJB
+    private StatusesDocFacade statuseFacade;
     
     @Inject
     private ProcessBean processBean;
@@ -36,12 +40,16 @@ public class ExitCardBean extends BaseViewBean<BaseView>{
     private ExitElem sourceItem;
     private String style = "completed";
     private State seletedState;    
+    private StatusesDoc selectedStatus;
     
     @Override
     public void doBeforeOpenCard(Map<String, String> params){
         if (sourceItem == null){            
             if (sourceBean != null){
-                sourceItem = (ExitElem)((DiagramBean)sourceBean).getBaseElement(); 
+                sourceItem = (ExitElem)((DiagramBean)sourceBean).getBaseElement();
+                if (sourceItem.getStatusId() != null){
+                    selectedStatus = statuseFacade.find(sourceItem.getStatusId());
+                }
             }
             if (sourceItem != null){
                 try {
@@ -61,6 +69,11 @@ public class ExitCardBean extends BaseViewBean<BaseView>{
         try {
             if (seletedState != null){
                 editedItem.setFinishStateId(seletedState.getId());
+            } 
+            if (selectedStatus != null){
+                editedItem.setStatusId(selectedStatus.getId());
+            } else {
+                editedItem.setStatusId(null);
             }
             editedItem.setStyleType(style);
             BeanUtils.copyProperties(sourceItem, editedItem);
@@ -93,6 +106,13 @@ public class ExitCardBean extends BaseViewBean<BaseView>{
         this.seletedState = seletedState;
     }
 
+    public StatusesDoc getSelectedStatus() {
+        return selectedStatus;
+    }
+    public void setSelectedStatus(StatusesDoc selectedStatus) {
+        this.selectedStatus = selectedStatus;
+    }
+    
     public String getStyle() {
         return style;
     }

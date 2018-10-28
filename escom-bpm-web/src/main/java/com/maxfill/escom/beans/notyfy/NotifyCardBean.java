@@ -15,9 +15,11 @@ import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.basedict.user.UserFacade;
 import com.maxfill.utils.ItemUtils;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import org.apache.commons.collections.CollectionUtils;
@@ -65,8 +67,8 @@ public class NotifyCardBean extends BaseViewBean{
                 process = ((ProcessCardBean) sourceBean).getEditedItem();
             }
         
-        if (process != null){
-            source.addAll(processFacade.getUsersFromRole(process, DictRoles.ROLE_CONCORDER, getCurrentUser()));
+        if (process != null){            
+            source = processFacade.getUsersProcessRole(process, DictRoles.ROLE_CONCORDER, getCurrentUser());            
         }
         users = new DualListModel<>(source, new ArrayList<>());
     }

@@ -35,6 +35,7 @@
                         <ui:include src="/view/docs/remarks/remarks-panel.xhtml"/>
                     </p:panelGrid>            
                     <ui:include src="/view/common/confirm-dlg.xhtml"/>
+                    <p:commandButton id="btnSaveChange" style="display: none;" actionListener="#{remarkCardBean.onSaveChange()}"/>
                 </h:form>
             </pe:layoutPane>
 
@@ -46,8 +47,9 @@
                         </f:facet>
                         <f:facet name="actions">
                             <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
-                                           actionListener="#{_bean.onCancelItemSave()}"  
-                                           onclick="sendFormSize('#{_bean.getFormName()}');
+                                           actionListener="#{_bean.onCancelItemSave()}"                                             
+                                           onclick="document.getElementById('eastFRM:btnSaveChange').click();
+                                               sendFormSize('#{_bean.getFormName()}');
                                                    if (itemChange == 1) {
                                                        onChangeItem();
                                                    }">
