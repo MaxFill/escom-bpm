@@ -72,7 +72,7 @@ public class RemarkCardBean extends BaseCardBean<Remark>{
             doc = docFacade.find(docId);
             if (doc == null) return;
 
-            if (appBean.isCanUsesProcess() && doc != null && process != null){            
+            if (appBean.isCanUsesProcess() && doc != null){            
                 remarkTabShow = true;
                 List<Remark> remarklist = doc.getDetailItems();
                 if (!remarklist.isEmpty()){

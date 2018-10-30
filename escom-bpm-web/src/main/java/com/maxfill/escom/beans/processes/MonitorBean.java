@@ -117,6 +117,9 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         }
     }
     
+    /**
+     * Установка текущего объекта из контекстного меню
+     */
     public void onMenuItemOpen(){
         currentItem = (BaseDict)selectedNode.getData();
     }
@@ -252,28 +255,7 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         if (!SysParams.EXIT_NOTHING_TODO.equals(result) ){
             onRefreshData();
         }
-    }
-    
-    /* *** ОФОРМЛЕНИЕ *** */
-    public String getItemStyle(BaseDict item){
-        if (item == null) return "";
-        StringBuilder sb = new StringBuilder();
-            
-        sb.append(item.getState().getCurrentState().getName()).append(" ");
-        if (item.getBeginDate() != null && item.getPlanExecDate() != null){
-            if (item.getBeginDate().after(item.getPlanExecDate())){
-                sb.append("error-info");
-            }                
-        }
-        if (item instanceof Process){
-            if (item.getParent() == null){
-                sb.append("process");
-            } else {
-                sb.append("subProcess");
-            }
-        }
-        return sb.toString();
-    }
+    }    
     
     /* *** GETS & SETS *** */
 

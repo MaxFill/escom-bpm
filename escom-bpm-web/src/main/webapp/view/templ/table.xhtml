@@ -30,7 +30,7 @@
         
         <p:ajax event="rowSelect" update="mainFRM:explToolBar" oncomplete="initDND();" />
         <p:ajax event="rowDblselect" listener="#{_bean.onRowDblClckOpen}"
-                oncomplete="document.getElementById('mainFRM:viewCardBtn').click();"/>
+                oncomplete="document.getElementById('mainFRM:editCardBtn').click();"/>
         <p:ajax event="rowSelectCheckbox" update="mainFRM:explToolBar" oncomplete="initDND()"/>
         <p:ajax event="rowUnselectCheckbox" update="mainFRM:explToolBar" oncomplete="initDND()"/>
         <p:ajax event="toggleSelect" update="mainFRM:explToolBar" oncomplete="initDND();"/>
@@ -38,7 +38,7 @@
         
         <p:column id="colCheck" width="16" selectionMode="multiple" style="text-align:center"/>
         
-        <p:column id="colIcon" width="16" sortBy="#{item.iconName}" headerText="" visible="#{_detailBean.isVisibleColumn('colIcon')}">
+        <p:column id="colIcon" width="20" sortBy="#{item.iconName}" headerText="" visible="#{_detailBean.isVisibleColumn('colIcon')}">
             <p:graphicImage id="itemIcon" value="/resources/icon/#{item.iconName}.png" styleClass="#{item.deleted ? '' : 'dropoint'}"/>
             <h:outputLabel value="[#{item.id}]"/>
         </p:column>
@@ -174,5 +174,6 @@
                 </div>
             </h:panelGroup> 
         </p:column>
-    </p:dataTable>    
+    </p:dataTable>
+  
 </ui:composition>

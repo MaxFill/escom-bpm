@@ -1,6 +1,7 @@
 package com.maxfill.services.workflow;
 
 import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.procTempl.ProcTempl;
 import com.maxfill.model.basedict.process.schemes.elements.AnchorElem;
 import com.maxfill.model.basedict.process.schemes.elements.ExitElem;
 import com.maxfill.model.basedict.process.schemes.elements.TaskElem;
@@ -45,7 +46,7 @@ public interface Workflow {
     void removeElement(WFConnectedElem element, Scheme scheme, Set <String> errors);
     void removeConnector(AnchorElem from, AnchorElem to, Scheme scheme, Set <String> errors);
     
-    Scheme initScheme(Process process, User currentUser, Set<String> errors);
+    Scheme initScheme(Process process, ProcTempl procTempl, User currentUser, Set<String> errors);
     void packScheme(Scheme scheme);
     void unpackScheme(Scheme scheme, User currentUser);
     void validateScheme(Scheme scheme, Boolean checkTasks, Set<String> errors);

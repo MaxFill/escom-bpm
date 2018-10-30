@@ -203,9 +203,16 @@
                                      actionListener="#{_bean.onEditDocument()}"
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide();">
-                        <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterChangeItem}" oncomplete="initDND()"/>
+                        <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterChangeItem}" oncomplete="initDND();"/>
                     </p:commandButton>                                                 
 
+                    <p:commandButton id="editCardBtn" style="display: none;"
+                                    actionListener="#{_bean.onEditDetailItem(item)}" 
+                                    onstart="PF('statusDialog').show()"
+                                    oncomplete="PF('statusDialog').hide();">
+                        <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseForm}" update="mainFRM" oncomplete="initDND();"/>
+                    </p:commandButton>  
+                    
                     <p:commandButton id="btnScan" icon="ui-icon-clipboard" style="display: none;"
                                      actionListener="#{sessionBean.openScaningForm()}"> 
                         <p:ajax event="dialogReturn" listener="#{_bean.addAttacheFromScan}" oncomplete="initDND()"/>

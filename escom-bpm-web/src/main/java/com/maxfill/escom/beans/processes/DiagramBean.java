@@ -144,9 +144,9 @@ public class DiagramBean extends BaseViewBean<BaseView>{
         FlowChartConnector connector = new FlowChartConnector();
         connector.setPaintStyle("{strokeStyle:'#98AFC7', lineWidth:2}");
         connector.setHoverPaintStyle("{strokeStyle:'#5C738B'}");
-        connector.setCornerRadius(10);
+        connector.setCornerRadius(10);        
         model.setDefaultConnector(connector);
-        scheme = workflow.initScheme(process, getCurrentUser(), new HashSet<>());        
+        scheme = workflow.initScheme(process, null, getCurrentUser(), new HashSet<>());        
         loadModel(scheme);
         if (!isReadOnly()){
             addElementContextMenu();

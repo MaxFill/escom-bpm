@@ -128,7 +128,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     private Integer filterId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать 
     private Integer folderId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать
     
-    private Integer itemId;
+    protected Integer itemId;
                
     private SortOrder defSortOrder = SortOrder.ASCENDING;
     private String defSortField = "name";    
@@ -1770,6 +1770,14 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         versionOS = params.get("version");
     } 
+    
+    /**
+     * Определяет видимость кнопки "Выбрать" в контекстном меню дерева
+     * @return 
+     */
+    public boolean isCanSelectInTree(){
+        return isSelectorViewMode() && Objects.equals(tableBean, treeBean);
+    }
     
     /* GETS & SETS */       
 

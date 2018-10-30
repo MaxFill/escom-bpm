@@ -199,51 +199,7 @@
                         </p:tab>
                     </p:accordionPanel>
                 </p:panelGrid>
-            </p:tab>        
-
-            <p:tab title="#{_bean.getHeaderTabReports()}" rendered="#{_bean.isShowReports()}">
-                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" > 
-                    <p:accordionPanel id="accord" widgetVar="accordion" >
-                        <p:tab title="#{_bean.getHeaderTabReports()}">
-                            <p:dataTable id="concorderList" value="#{processCardBean.editedItem.getReports()}" var="report" emptyMessage="#{bundle.EmptyTable}"
-                                         rowKey="#{report.tempId}" selectionMode="single" 
-                                         paginator="true" paginatorPosition="bottom" 
-                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                                                  
-                                         rowsPerPageTemplate="5, 10, 15, 20, 25, 30" rows="5"
-                                         currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
-                                         tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">                                         
-
-                                <p:column width="16">
-                                    <h:graphicImage value="#{processCardBean.getCuratorImage(report.executor)}"/>                     
-                                </p:column>
-
-                                <p:column headerText="#{bundle.Employee}" >                        
-                                    <h:outputText value="#{report.executor.getStaffFIO()}" />                                    
-                                </p:column>
-
-                                <p:column headerText="#{bundle.Date}" width="90" >
-                                    <h:outputLabel value="#{report.dateCreate}">
-                                        <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
-                                    </h:outputLabel>
-                                </p:column>
-
-                                <p:column width="16">
-                                    <h:graphicImage value="#{resultBean.getResultIcon(report.status)}"/>
-                                </p:column>
-
-                                <p:column headerText="#{bundle.Status}" >
-                                    <h:outputLabel value="#{processCardBean.getLabelFromBundle(report.status)}"/>
-                                </p:column>
-
-                                <p:column headerText="#{bundle.VersionDoc}" >
-                                    <h:outputText value="#{report.version.number}" />                                    
-                                </p:column>
-
-                            </p:dataTable>
-                        </p:tab>                        
-                    </p:accordionPanel>
-                </p:panelGrid>
-            </p:tab> 
+            </p:tab>
             
             <p:tab title="#{bundle.Links}">
                 <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >

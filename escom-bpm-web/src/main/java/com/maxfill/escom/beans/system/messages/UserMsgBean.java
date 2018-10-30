@@ -3,6 +3,7 @@ package com.maxfill.escom.beans.system.messages;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
+import com.maxfill.escom.beans.docs.DocCardBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.escom.beans.task.TaskBean;
@@ -41,6 +42,7 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
     private boolean showOnlyUnread = true;
     private UserMessages selectedMessages;
     private Process process;
+    private Doc doc;
     
     @Override
     protected void initBean() {
@@ -60,6 +62,9 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
         }
         if (sourceBean != null && sourceBean instanceof ProcessCardBean){
             process = ((ProcessCardBean) sourceBean).getEditedItem();
+        }
+        if (sourceBean != null && sourceBean instanceof DocCardBean){
+            doc = ((DocCardBean) sourceBean).getEditedItem();
         }
     }
 
@@ -121,9 +126,12 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
     protected Map<String, Object> makeFilters(Map filters) {        
         if (process != null){
             filters.put("process", process);
-        } else {
-            filters.put("addressee", sessionBean.getCurrentUser());
-        }
+        } else 
+            if (doc != null){
+                filters.put("document", doc);
+            } else {
+                filters.put("addressee", sessionBean.getCurrentUser());
+            }
         if (showOnlyUnread){
             filters.put("dateReading", null);
             filters.remove("dateSent");

@@ -258,8 +258,8 @@
                                         rendered="#{sessionBean.getUserFolder() != null}"
                                         value="#{bundle.MyFolder}" target="_blank" />
                                 
-                                <p:graphicImage id="imgDocTypes" value="/resources/icon/book-32.png"/>
-                                <p:link href="#{sessionBean.onGetExplorerURL('/docs/docTypes/doctype-explorer')}" value="#{bundle.DocsTypes}" target="_blank" />
+                                <p:graphicImage id="imgDocTypes" value="/resources/icon/book-32.png"  rendered="#{sessionBean.userAdmin}"/>
+                                <p:link href="#{sessionBean.onGetExplorerURL('/docs/docTypes/doctype-explorer')}" value="#{bundle.DocsTypes}" target="_blank"  rendered="#{sessionBean.userAdmin}" />
                             </p:panelGrid>
                             <p:fileUpload id="fileDoc" style="font-size: small;"                                       
                                           styleClass="ui-grid-col-12"
@@ -289,8 +289,8 @@
                                 <p:graphicImage id="imgStaffs" value="/resources/icon/structure-32.png"/> 
                                 <p:link href="#{sessionBean.onGetExplorerURL('/staffs/staff-explorer')}" value="#{bundle.OrgStructureExplorer}" target="_blank" />
 
-                                <p:graphicImage id="imgPosts" value="/resources/icon/book-32.png"/>
-                                <p:link href="#{sessionBean.onGetExplorerURL('/staffs/posts/post-explorer')}" value="#{bundle.Posts}" target="_blank" />                                
+                                <p:graphicImage id="imgPosts" value="/resources/icon/book-32.png" rendered="#{sessionBean.userAdmin}"/>
+                                <p:link href="#{sessionBean.onGetExplorerURL('/staffs/posts/post-explorer')}" value="#{bundle.Posts}" rendered="#{sessionBean.userAdmin}" target="_blank" />
                             </p:panelGrid>
                         </p:panelGrid>                        
                     </p:panel>
@@ -301,8 +301,8 @@
                                 <p:graphicImage id="imgPartners" value="/resources/icon/book-32.png"/>
                                 <p:link href="#{sessionBean.onGetExplorerURL('/partners/partner-explorer')}" value="#{bundle.Partners}" target="_blank" />
 
-                                <p:graphicImage id="imgPartnerTypes" value="/resources/icon/book-32.png"/>
-                                <p:link href="#{sessionBean.onGetExplorerURL('/partners/types/partnertypes-explorer')}" value="#{bundle.PartnerTypes}" target="_blank" />                                
+                                <p:graphicImage id="imgPartnerTypes" value="/resources/icon/book-32.png" rendered="#{sessionBean.userAdmin}"/>
+                                <p:link href="#{sessionBean.onGetExplorerURL('/partners/types/partnertypes-explorer')}" value="#{bundle.PartnerTypes}" target="_blank" rendered="#{sessionBean.userAdmin}"/>
                             </p:panelGrid>
                         </p:panelGrid>                                                
                     </p:panel>

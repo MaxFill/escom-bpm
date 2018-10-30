@@ -1,20 +1,7 @@
 package com.maxfill.services.workflow;
 
 import com.maxfill.dictionary.DictDocStatus;
-import com.maxfill.model.basedict.process.schemes.elements.AnchorElem;
-import com.maxfill.model.basedict.process.schemes.elements.ExitElem;
-import com.maxfill.model.basedict.process.schemes.elements.TaskElem;
-import com.maxfill.model.basedict.process.schemes.elements.ConditionElem;
-import com.maxfill.model.basedict.process.schemes.elements.ConnectorElem;
-import com.maxfill.model.basedict.process.schemes.elements.LogicElem;
-import com.maxfill.model.basedict.process.schemes.elements.TimerElem;
-import com.maxfill.model.basedict.process.schemes.elements.WFConnectedElem;
-import com.maxfill.model.basedict.process.schemes.elements.ProcedureElem;
-import com.maxfill.model.basedict.process.schemes.elements.StatusElem;
-import com.maxfill.model.basedict.process.schemes.elements.WorkflowElements;
-import com.maxfill.model.basedict.process.schemes.elements.MessageElem;
-import com.maxfill.model.basedict.process.schemes.elements.EnterElem;
-import com.maxfill.model.basedict.process.schemes.elements.StartElem;
+import com.maxfill.model.basedict.process.schemes.elements.*;
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictReportStatuses;
 import com.maxfill.dictionary.DictResults;
@@ -347,19 +334,23 @@ public class WorkflowImpl implements Workflow {
                 .orElse(null);
     }
     
+    /* *** СХЕМА *** */
+    
     @Override
-    public Scheme initScheme(Process process, User currentUser, Set<String> errors){
+    public Scheme initScheme(Process process, ProcTempl defaultTempl, User currentUser, Set<String> errors){
         Scheme scheme = process.getScheme();
         if (scheme == null){
             scheme = new Scheme(process);
-            process.setScheme(scheme);
-            ProcTempl procTempl = processTypeFacade.getDefaultTempl(process.getOwner(), currentUser);
-            if (procTempl != null){
-                scheme.setElements(new WorkflowElements());
-                scheme.setPackElements(procTempl.getElements());
-                scheme.setName(procTempl.getName());
+            scheme.setElements(new WorkflowElements());
+            if (defaultTempl == null){
+                defaultTempl = processTypeFacade.getDefaultTempl(process.getOwner(), currentUser);
             }
-        } 
+            if (defaultTempl != null){
+                scheme.setPackElements(defaultTempl.getElements());
+                scheme.setName(defaultTempl.getName());
+            }
+            process.setScheme(scheme);
+        }
         unpackScheme(scheme, currentUser);
         return scheme;
     }
@@ -517,11 +508,7 @@ public class WorkflowImpl implements Workflow {
     @Override
     public void clearScheme(Process process, User currentUser, Map<String, Object> params, Set<String> errors){
         Scheme scheme = process.getScheme();
-        if (process.getScheme() == null){
-            scheme = initScheme(process, currentUser, errors);            
-        } else {
-            unpackScheme(scheme, currentUser);
-        }
+        if (scheme == null) return;
         clearElements(scheme);
         boolean sendNotAgree = params.containsKey(ProcessParams.PARAM_SEND_NOTAGREE);
         State draftState = stateFacade.getDraftState();
@@ -549,6 +536,8 @@ public class WorkflowImpl implements Workflow {
         scheme.getElements().getLogics().forEach((k, logicEl)->logicEl.getTasksExec().clear());
         scheme.getElements().getTasks().forEach((k, taskEl)->taskEl.getTasksExec().clear());
     }
+    
+    /* *** ВЫПОЛНЕНИЕ ПРОЦЕССА *** */
     
     /**
      * Выполнение задачи
@@ -703,10 +692,7 @@ public class WorkflowImpl implements Workflow {
                     errors.add("WorkflowIncorrectData"); //ToDO надо передаль сообщения на возможность формирования детальной информации ObjectWithIDNotFound
                     return;
                 }
-                subProcess = processFacade.createSubProcess(owner, mainProcess, curUser, subProcElem.getCaption());                
-                subProcess.setLinkUID(subProcElem.getUid());
-                processFacade.create(subProcess);
-                subProcElem.setSubProcess(subProcess);
+                subProcess = processFacade.createSubProcess(owner, mainProcess, curUser, subProcElem);                
             } 
             
             boolean sendNotAgree = params.containsKey(ProcessParams.PARAM_SEND_NOTAGREE);
@@ -719,7 +705,6 @@ public class WorkflowImpl implements Workflow {
                 subProcess.setFactExecDate(null);
                 processFacade.setRoleOwner(subProcess, curUser);
                 processFacade.edit(subProcess);
-                clearScheme(subProcess, curUser, params, errors);
                 if (subProcElem.isShowCard()){
                     processesForShow.add(subProcess);
                 } else {                
@@ -739,9 +724,14 @@ public class WorkflowImpl implements Workflow {
      * @return  
      */
     @Override
-    public Set<BaseDict> start(Process process, User currentUser, Map<String, Object> params, Set<String> errors) {        
-        clearScheme(process, currentUser, params, errors);
-        Scheme scheme = process.getScheme();       
+    public Set<BaseDict> start(Process process, User currentUser, Map<String, Object> params, Set<String> errors) {  
+        Scheme scheme = process.getScheme();
+        if (scheme == null){            
+            scheme = initScheme(process, null, currentUser, errors);            
+        } else {
+            unpackScheme(scheme, currentUser);
+            clearScheme(process, currentUser, params, errors);
+        }      
         validateScheme(scheme, true, errors);
         if (!errors.isEmpty()) return new HashSet<>();
                 
@@ -774,7 +764,6 @@ public class WorkflowImpl implements Workflow {
      * Прерывание выполнения процесса
      * @param process
      * @param currentUser
-     * @param errors 
      */
     @Override
     public void stop(Process process, User currentUser) {
@@ -1046,6 +1035,8 @@ public class WorkflowImpl implements Workflow {
                     }
                 });
     }        
+    
+    /* *** ПОИСКИ ЭЛЕМЕНТОВ В МОДЕЛИ *** */
     
     /**
      * Находит элементы подпроцессов в модели процесса к которым идут коннекторы

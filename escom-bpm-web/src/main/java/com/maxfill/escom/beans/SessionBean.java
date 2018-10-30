@@ -205,6 +205,26 @@ public class SessionBean implements Serializable{
         if (item.isCanceled()) return MsgUtils.getBandleLabel("Cancelled");
         return EscomBeanUtils.makeDateDiffStatus(new Date(), item.getPlanExecDate());
     }
+         
+    public String getItemStyle(BaseDict item){
+        if (item == null) return "";
+        StringBuilder sb = new StringBuilder();
+            
+        sb.append(item.getState().getCurrentState().getName()).append(" ");
+        if (item.getBeginDate() != null && item.getPlanExecDate() != null){
+            if (item.getBeginDate().after(item.getPlanExecDate())){
+                sb.append("error-info");
+            }                
+        }
+        if (item instanceof Process){
+            if (item.getParent() == null){
+                sb.append("process");
+            } else {
+                sb.append("subProcess");
+            }
+        }
+        return sb.toString();
+    }
     
     /* ПРОЧИЕ МЕТОДЫ */
     

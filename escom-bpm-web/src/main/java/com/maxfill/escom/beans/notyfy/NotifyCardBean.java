@@ -4,9 +4,11 @@ import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.escom.beans.core.BaseViewBean;
+import com.maxfill.escom.beans.docs.DocCardBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.core.messages.UserMessagesFacade;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.basedict.remark.Remark;
@@ -15,11 +17,9 @@ import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.basedict.user.UserFacade;
 import com.maxfill.utils.ItemUtils;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import org.apache.commons.collections.CollectionUtils;
@@ -50,6 +50,7 @@ public class NotifyCardBean extends BaseViewBean{
     private String message;
     private Process process;
     private Remark remark;
+    private Doc doc;    
     
     @Override
     public void doBeforeOpenCard(Map params){        
@@ -63,12 +64,19 @@ public class NotifyCardBean extends BaseViewBean{
             }
             message = MsgUtils.getMessageLabel("PleasePayAttentionMyRemark");
         } else             
-            if (sourceBean != null && sourceBean instanceof ProcessCardBean){
-                process = ((ProcessCardBean) sourceBean).getEditedItem();
+            if (sourceBean != null){
+                if (sourceBean instanceof ProcessCardBean){
+                    process = ((ProcessCardBean) sourceBean).getEditedItem();
+                }
+                if (sourceBean instanceof DocCardBean){
+                    doc = ((DocCardBean)sourceBean).getEditedItem();
+                }
             }
         
         if (process != null){            
             source = processFacade.getUsersProcessRole(process, DictRoles.ROLE_CONCORDER, getCurrentUser());            
+        } else {
+            source = userFacade.findAll(getCurrentUser());
         }
         users = new DualListModel<>(source, new ArrayList<>());
     }
@@ -85,7 +93,10 @@ public class NotifyCardBean extends BaseViewBean{
         }
         if (remark != null){
             links.add(remark.getOwner());   //ссылка на документ
-        }
+        } else 
+            if (doc != null){
+                links.add(doc);
+            }
         StringBuilder cb = new StringBuilder();
         cb.append("<h3>").append(message).append("<h3/>");
         cb.append("<br/>");
@@ -96,14 +107,16 @@ public class NotifyCardBean extends BaseViewBean{
                     Locale locale = userFacade.getUserLocale(recipient);
                     StringBuilder subject = new StringBuilder();
                     if (remark != null){
-                        ItemUtils.getMessageLabel("NotificationNewRemark", locale);
+                        subject.append(ItemUtils.getMessageLabel("NotificationNewRemark", locale));
                     } else 
                         if (process != null){
-                            ItemUtils.getMessageLabel("NotifyFromProcess", locale);
-                        }
-                    if (process != null){
-                        subject.append(": ").append(process.getNameEndElipse());
-                    }                    
+                            subject.append(ItemUtils.getMessageLabel("NotifyFromProcess", locale));
+                            subject.append(": ").append(process.getNameEndElipse());
+                        } else
+                            if (doc != null){
+                                subject.append(ItemUtils.getMessageLabel("NotifyFromDoc", locale));
+                                subject.append(": ").append(doc.getNameEndElipse());
+                            }                                        
                     messagesFacade.createMessage(recipient, sender.getName(), sender.getEmail(), subject.toString(), cb, links);         
                 });
         MsgUtils.succesMsg("MessageSentUsers");

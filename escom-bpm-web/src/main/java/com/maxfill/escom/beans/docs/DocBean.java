@@ -160,7 +160,9 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     
     @Override
     public SearcheModel initSearcheModel() {
-        return new DocsSearche();
+        SearcheModel sm = new DocsSearche();
+        sm.setAuthorSearche(getCurrentUser());
+        return sm;
     }
 
     @Override

@@ -47,8 +47,11 @@
                         </f:facet>
                         <f:facet name="actions">
                             <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
-                                           actionListener="#{_bean.onCancelItemSave()}"                                             
-                                           onclick="document.getElementById('eastFRM:btnSaveChange').click();
+                                           actionListener="#{_bean.onCancelItemSave()}"
+                                           onclick="var btnSave = document.getElementById('eastFRM:btnSaveChange');
+                                               if (btnSave) {
+                                                   btnSave.click();
+                                               }
                                                sendFormSize('#{_bean.getFormName()}');
                                                    if (itemChange == 1) {
                                                        onChangeItem();

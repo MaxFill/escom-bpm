@@ -49,14 +49,26 @@ public class ExplorerTreeBean extends ExplorerBean{
     
     @Override
     public void onAfterFormLoad(){
-        if (getFolderId() !=null){            
+        if (getFolderId() != null){            
             BaseDict folder = treeBean.getLazyFacade().find(getFolderId());
             if (folder != null){
                 makeSelectedFolder(folder);
                 setFolderId(null);
             }
         }
+        if (itemId != null){
+            currentItem = tableBean.findItem(itemId);
+            if (currentItem != null){
+                if (currentItem.getOwner() != null){                    
+                    makeSelectedFolder(currentItem.getOwner());
+                }
+                onEditDetailItem(currentItem);
+                itemId = null;
+            }
+        }
     }
+    
+
     
     /**
      * Находит и выделяет папку в дереве

@@ -11,15 +11,20 @@ import com.maxfill.model.basedict.docType.DocType;
 import com.maxfill.model.basedict.partner.Partner;
 import com.maxfill.model.basedict.numeratorPattern.NumeratorPattern;
 import com.maxfill.model.basedict.statusesDoc.StatusesDoc;
+import com.maxfill.model.basedict.process.Process;
 import com.maxfill.dictionary.DictEditMode;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictNumerator;
 import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.interfaces.WithDetails;
+import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.escom.beans.processes.remarks.RemarkBean;
 import com.maxfill.model.attaches.AttacheFacade;
 import com.maxfill.model.basedict.docStatuses.DocStatusFacade;
 import com.maxfill.model.basedict.company.Company;
+import com.maxfill.model.basedict.procTempl.ProcTempl;
+import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.basedict.remark.Remark;
 import com.maxfill.model.basedict.remark.RemarkFacade;
 import com.maxfill.services.numerators.doc.DocNumeratorService;
@@ -33,6 +38,7 @@ import javax.inject.Named;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Date;
 import java.util.HashMap;
@@ -53,22 +59,14 @@ import javax.inject.Inject;
 @ViewScoped
 public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark>{
     private static final long serialVersionUID = -8151932533993171177L;
-
-    private final List<DocStatuses> forDelDocStatus = new ArrayList<>();
-    private final List<Attaches> forDelAttaches = new ArrayList<>();
-    
-    private String docURL;  
-    private Attaches selectedAttache;
-    private Doc linkedDoc;
-    private Process selectedProcess;
-    private List<Remark> checkedDetails;
-    private Remark selectedDetail;
-    
+        
     @Inject
     private DocBean docBean;
     @Inject
     private RemarkBean remarkBean;
-        
+    @Inject
+    private ProcessBean processBean;
+    
     @EJB
     private DocNumeratorService docNumeratorService;
     @EJB
@@ -79,7 +77,20 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     private AttacheFacade attacheFacade;
     @EJB
     private RemarkFacade remarkFacade;
+    @EJB
+    private ProcessFacade processFacade;
 
+    private final List<DocStatuses> forDelDocStatus = new ArrayList<>();
+    private final List<Attaches> forDelAttaches = new ArrayList<>();
+    
+    private String docURL;  
+    private Attaches selectedAttache;
+    private Doc linkedDoc;
+    private Process selectedProcess;
+    private List<Remark> checkedDetails;
+    private Remark selectedDetail;
+    private ProcTempl selectedProcTempl;
+    
     @Override
     public String doFinalCancelSave() {      
         List<Attaches> notSaveAttaches = getEditedItem().getAttachesList().stream()
@@ -205,9 +216,57 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
         docURL = sessionBean.doGetItemURL(doc, "/docs/doc-card.xhtml");
     }   
     
+    /* *** СООБЩЕНИЯ *** */
+    
+    /**
+     * Открытие формы просмотра сообщений, связанных с процессом
+     */
+    public void onShowMessages(){
+        Map<String, List<String>> paramMap = getParamsMap();
+        paramMap.put("typeMsg", Collections.singletonList("allMsg"));
+        sessionBean.openDialogFrm(DictFrmName.FRM_USER_MESSAGES, paramMap); 
+    }
+    
+    /**
+     * Создание сообщения
+     */
+    public void onCreateMessage(){
+        Map<String, List<String>> params = getParamsMap();        
+        sessionBean.openDialogFrm(DictFrmName.FRM_NOTIFY, params);
+    }
+    
     /* *** ПРОЦЕССЫ *** */
     
-    public void onAfterCeateProcess(){
+    public List<Process> getProcesses(){
+        return processFacade.findProcessesByDoc(getEditedItem(), getCurrentUser());
+    }
+    
+    public void onAfterSelectProcTempl(SelectEvent event){
+        if (event.getObject() == null) return;
+        List<ProcTempl> procTempls = (List<ProcTempl>) event.getObject();
+        if (!procTempls.isEmpty()){
+            selectedProcTempl = procTempls.get(0);
+        }
+    }
+    
+    public void onCreateProc(){
+        if (selectedProcTempl == null) return;
+        onItemChange();
+        if (doSaveItem()){
+            Doc doc = getEditedItem();
+            Map<String, Object> createParams = new HashMap<>();
+            createParams.put("documents", Collections.singletonList(doc));
+            createParams.put("template", selectedProcTempl);
+            createParams.put("company", doc.getCompany());        
+            processBean.createItemAndOpenCard(null, selectedProcTempl.getOwner(), createParams, getParamsMap());
+        }
+    }
+    
+    public void onAfterCloseProcess(){
+        
+    }
+    
+    public void onUpdateProcesses(){
         
     }
     
@@ -389,13 +448,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     /* Возвращает true если у документа есть заблокированные вложения */
     public boolean getDocIsLock(){
         return docBean.docIsLock(getEditedItem());
-    }    
-    
-    /* Печать карточки документа */
-    @Override
-    protected void doPreViewItemCard(ArrayList<Object> dataReport, Map<String, Object> parameters, String reportName){
-        super.doPreViewItemCard(dataReport, parameters, DictPrintTempl.REPORT_DOC_CARD);
-    }
+    }          
     
     /* СТАТУСЫ ДОКУМЕНТА */
               
@@ -546,12 +599,18 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     
     /* *** ПЕЧАТЬ *** */
     
+    /* Печать карточки документа */
+    @Override
+    protected void doPreViewItemCard(ArrayList<Object> dataReport, Map<String, Object> parameters, String reportName){
+        super.doPreViewItemCard(dataReport, parameters, DictPrintTempl.REPORT_DOC_CARD);
+    }
+    
     /**
      * Распечатка списка замечаний
      */
     public void onPreViewRemarks(){        
         remarkBean.onPreViewRemarks(getEditedItem());        
-    }
+    }    
     
     /* GETS & SETS */
 

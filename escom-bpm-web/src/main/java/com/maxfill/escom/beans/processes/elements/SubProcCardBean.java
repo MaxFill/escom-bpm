@@ -147,10 +147,7 @@ public class SubProcCardBean extends BaseViewBean<BaseView>{
     public void onProcOpen(){
         if (selProcess == null){
             Process parent = ((DiagramBean)sourceBean).getProcess();
-            selProcess = procFacade.createSubProcess(selProcType, parent, getCurrentUser(), "");                        
-            selProcess.setPlanExecDate(parent.getPlanExecDate());
-            selProcess.setLinkUID(editedItem.getUid());            
-            editedItem.setSubProcess(selProcess);      
+            selProcess = procFacade.createSubProcess(selProcType, parent, getCurrentUser(), editedItem);     
             typeEditProc = "create";
         } else {
             typeEditProc = "edit";

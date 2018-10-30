@@ -278,7 +278,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         validatePlanDate(process, errors);
         validateRemarks(process.getDocument(), errors);
         processFacade.validateCanRun(process, getCurrentUser(), errors);
-        workflow.initScheme(process, getCurrentUser(), errors);
+        workflow.initScheme(process, null, getCurrentUser(), errors);
         if (!errors.isEmpty()){
             MsgUtils.showErrorsMsg(errors);
             return;
@@ -356,10 +356,20 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     }    
     
     /* *** ПРОЧИЕ МЕТОДЫ *** */
-     
+    
+    /**
+     * Обновление списка подпроцессов на форме предварительного запуска после открытия карточки процесса
+     */
     public void onUpdateProcesses(){
-        List<BaseDict> procs = forShow.stream().map(proc->processFacade.find(proc.getId())).collect(Collectors.toList());
-        forShow = new ArrayList<>(procs);
+        forShow = forShow.stream()
+                .map(proc->processFacade.find(proc.getId()))
+                .filter(proc->Objects.equals(proc.getState().getCurrentState().getId(), DictStates.STATE_DRAFT))
+                .collect(Collectors.toList());
+        if(forShow.isEmpty()){
+            PrimeFaces.current().executeScript("PF('InitObjectsWV').hide();");
+        } else {
+            PrimeFaces.current().ajax().update("initObjFRM");
+        }
     }
     
     /**
@@ -459,7 +469,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     /* *** СООБЩЕНИЯ *** */
     
     /**
-     * Создание сообщения с сылкой на процесс
+     * Создание сообщения с cсылкой на процесс
      */
     public void onCreateMessage(){
         Map<String, List<String>> params = getParamsMap();        

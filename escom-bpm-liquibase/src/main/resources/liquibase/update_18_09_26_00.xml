@@ -81,9 +81,6 @@
             <column name="InheritRunOptions" type="BOOLEAN" >
                 <constraints nullable="true"/>
             </column>   
-            <column name="TermHours" type="INT" >
-                <constraints nullable="true"/>
-            </column>
             <column name="InheritTaskOptions" type="BOOLEAN" >
                 <constraints nullable="true"/>
             </column>
@@ -95,12 +92,6 @@
             INSERT runOptions(Id, Name, BundleName, Icon) VALUES (0, N'run', N'Run', N'ui-icon-play');
             INSERT runOptions(Id, Name, BundleName, Icon) VALUES (1, N'send_all', N'NewEditionSendToAll', N'ui-icon-play');
             INSERT runOptions(Id, Name, BundleName, Icon) VALUES (2, N'send_notagree', N'SendJustDoNotAgree', N'ui-icon-play');
-        </sql>
-    </changeSet>
-    
-    <changeSet id="processesTypes_set_def_TermHours" author="filatov" context="initdata" runOnChange="true">
-        <sql>
-            UPDATE processesTypes SET TermHours=72;
         </sql>
     </changeSet>
     

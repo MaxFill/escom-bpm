@@ -9,6 +9,7 @@
                  paginator="true" paginatorPosition="bottom" 
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                                                  
                  rowsPerPageTemplate="5, 10, 20, 35" 
+                 rowStyleClass="#{sessionBean.getItemStyle(item)}"
                  currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                  tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
                  sortBy="#{proc.regNumber}" rowKey="#{proc.id}">
@@ -18,7 +19,7 @@
         </p:column>        
         
         <p:column headerText="#{bundle.Number}" sortBy="#{proc.number}" >
-            <h:outputText value="#{proc.regNumber}"/>
+            <h:outputText value="#{proc.fullRegNumber}"/>
         </p:column>
         
         <p:column headerText="#{bundle.ProcessType}" sortBy="#{proc.owner.name}">
@@ -30,18 +31,22 @@
         </p:column> 
         
         <p:column width="16" sortBy="#{proc.state.currentState.name}">
-            <h:graphicImage id="iconDone" value="#{proc.state.currentState.icon}" title="#{stateBean.getBundleName(state.currentState)}"/>             
+            <h:graphicImage id="iconDone" value="#{proc.state.currentState.icon}" title="#{stateBean.getBundleName(proc.state.currentState)}"/>             
         </p:column>
         
         <p:column headerText="#{bundle.DateBegin}" sortBy="#{proc.beginDate}">
             <h:outputText value="#{proc.beginDate}" >
                 <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputText>
-        </p:column>                                      
-
+        </p:column>                 
+        
+        <p:column headerText="#{bundle.Status}">
+            <h:outputLabel value="#{sessionBean.getItemStatus(proc)}"/>
+        </p:column>
+        
         <p:column headerText="#{bundle.Commands}" width="20" > 
             <p:commandButton icon="ico_look" title="#{bundle.Open}" actionListener="#{processBean.prepEditItem(proc)}" > 
-                <p:ajax event="dialogReturn" listener="#{_bean.onUpdateProcesses()}" update="tblProcess"/>
+                <p:ajax event="dialogReturn" listener="#{_bean.onUpdateProcesses()}" />
             </p:commandButton>
         </p:column>
     </p:dataTable>        

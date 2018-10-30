@@ -13,7 +13,7 @@
         <p:tab title="#{bundle.Document}" id="tabDocCard" >
             <p:panelGrid id="panelDocCard" layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
                 
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
+                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
                     <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
                         <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
                         <p:inputTextarea id="nameItem" value="#{_bean.editedItem.name}"
@@ -63,7 +63,7 @@
                    
                 </p:panelGrid>
                 
-                <p:panelGrid columns="2" columnClasses="ui-grid-col-5 col-padding, ui-grid-col-7 col-padding" styleClass="without-spaces ui-grid-col-12">
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-5 col-padding, ui-grid-col-7 col-padding" styleClass="without-spaces ui-grid-col-12">
                     <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
                         <p:outputLabel value="#{bundle.Number}:" />  
                         <h:panelGroup id="regNumberPanel" styleClass="ui-grid-col-12 without-spaces">
@@ -113,7 +113,7 @@
                     </h:panelGrid>                    
                 </p:panelGrid>    
 
-                <p:panelGrid columns="1" rendered="#{applicationBean.isCanUsesPartners()}" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
+                <p:panelGrid columns="1" layout="grid" rendered="#{applicationBean.isCanUsesPartners()}" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
                     <h:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
                         <p:outputLabel value="#{bundle.Partner}:" />
                         <ui:include src="/view/common/item-select-list-btn.xhtml" >
@@ -139,14 +139,18 @@
         <p:tab title="#{bundle.Processes}" rendered="#{applicationBean.isCanUsesProcess()}">
             <p:panelGrid id="processes" columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">                
                 <ui:include src="/view/processes/process-list.xhtml"> 
-                    <ui:param name="_processes" value="#{docCardBean.editedItem.processList}"/>
+                    <ui:param name="_processes" value="#{docCardBean.processes}"/>
                 </ui:include>
                 
-                <p:commandButton icon="ico_process" value="#{bundle.CreateProcess}" disabled="#{_bean.isReadOnly()}" style="float:right;"> 
-                    <p:ajax event="dialogReturn" listener="#{docCardBean.onAfterCeateProcess()}" update="mainFRM:mainTabView:processes"/>
-                </p:commandButton>
+                <p:commandButton icon="ico_process" value="#{bundle.CreateProcess}" style="float:right;"
+                                 actionListener="#{procTemplBean.onOneSelectItem()}"
+                                 rendered="#{!_bean.isReadOnly()}"
+                                 disabled="#{_bean.isReadOnly()}">                     
+                    <p:ajax event="dialogReturn" listener="#{docCardBean.onAfterSelectProcTempl}"
+                            oncomplete="document.getElementById('mainFRM:btnCreateProc').click();" />
+                </p:commandButton>                
             </p:panelGrid>
-        </p:tab>                
+        </p:tab>
         <ui:include src="/view/docs/attaches/attaches.xhtml"/>
         <ui:include src="/view/docs/doc-places.xhtml"/>
         <ui:include src="/view/docs/docStatus/docstatus-list.xhtml"/>
@@ -157,7 +161,7 @@
     </ui:define>
     
     <ui:define name="menuExtReports"> 
-        <p:separator />    
+        <p:separator /> 
         <p:menuitem value="#{bundle.Remarks}" icon="ui-icon-comment"
                     disabled="#{_bean.editedItem.id == null}"
                     actionListener="#{_bean.onPreViewRemarks()}">
@@ -165,7 +169,7 @@
     </ui:define>
     
     <ui:define name="specSubMenu"> 
-        <p:menuButton value="#{bundle.Document}" icon="ui-icon-document" styleClass="submenu">
+        <p:menuButton value="#{bundle.Document}" icon="ico_document" styleClass="submenu">
             <p:menuitem icon="ui-icon-clipboard" value="#{bundle.AddVersionFromScan}" rendered="false"    
                         oncomplete="document.getElementById('mainFRM:mainTabView:btnScan').click();"/>                             
             <p:separator rendered="false"  />
@@ -196,13 +200,25 @@
             <p:menuitem icon="ui-icon-mail-open" value="#{bundle.SendToEmailAsAttache}"
                         rendered="#{_bean.editedItem.id != null}"
                         actionListener="#{docCardBean.prepareSendMailDoc('asAttache')}"/>
-        </p:menuButton>        
+        </p:menuButton>   
+        <p:menuButton value="#{bundle.Messages}" icon="ico_message-16" >
+            <p:menuitem icon="ui-icon-mail-closed" value="#{bundle.CreateMessage}"
+                        disabled="#{_bean.editedItem.id == null}"
+                        actionListener="#{_bean.onCreateMessage()}"/>
+            <p:menuitem icon="ui-icon-folder-open" value="#{bundle.Messages}"
+                        disabled="#{_bean.editedItem.id == null}"
+                        actionListener="#{docCardBean.onShowMessages()}"/>                
+        </p:menuButton>
     </ui:define>
 
     <ui:define name="specMenuButtons">
     </ui:define>
     
     <ui:define name="form_scripts">
+        <p:commandButton id="btnCreateProc" actionListener="#{docCardBean.onCreateProc()}" style="display: none;"> 
+            <p:ajax event="dialogReturn" listener="#{docCardBean.onAfterCloseProcess}" update="mainFRM:mainTabView:processes"/>
+        </p:commandButton>
+        
         <p:commandButton id="setLockBtn" actionListener="#{docCardBean.onLockSelectedAttache()}" style="display: none;">
             <p:ajax event="dialogReturn" listener="#{docCardBean.onUpdateSelectedAttache()}" update="mainFRM:mainTabView:versionsTBL"/>
         </p:commandButton>

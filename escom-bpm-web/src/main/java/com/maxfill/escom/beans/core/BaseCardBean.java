@@ -144,6 +144,9 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
      * @return 
      */
     public String prepSaveItemAndClose() { 
+        if (getTypeEdit().equals(DictEditMode.INSERT_MODE)){
+            onItemChange();
+        }
         if (!doSaveItem()){
             return "";
         }    

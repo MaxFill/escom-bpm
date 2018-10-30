@@ -41,7 +41,7 @@
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
         <p:column headerText="#{bundle.Number}" width="75" sortBy="#{item.number}" >
-            <h:outputText value="#{item.regNumber}"/>
+            <h:outputText value="#{item.fullRegNumber}"/>
         </p:column> 
         <p:column headerText="#{bundle.Term}" width="75" sortBy="#{item.planExecDate}">
             <h:outputLabel value="#{item.planExecDate}">

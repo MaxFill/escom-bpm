@@ -132,7 +132,7 @@
                      rowsPerPageTemplate="10,25,50" rows="10" 
                      currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord}"                     
                      sortBy="#{item.regNumber}"
-                     rowStyleClass="#{monitorBean.getItemStyle(item)}"
+                     rowStyleClass="#{sessionBean.getItemStyle(item)}"
                      tableStyle="table-layout: auto; font-size: 90%;" styleClass="ui-grid-col-12 without-spaces">                
 
             <p:column width="20" sortBy="#{item.iconName}" >
@@ -156,8 +156,8 @@
                 <h:outputLabel value="#{item.nameEndElipse}"/>
                 <p:commandButton icon="ico_look" title="#{bundle.Open}"
                                  style="float: right;"
-                                actionListener="#{monitorBean.setCurrentItem(item)}"
-                                oncomplete="document.getElementById('mainFRM:btnOpenItem').click();"/>
+                                 actionListener="#{monitorBean.setCurrentItem(item)}"
+                                 oncomplete="document.getElementById('mainFRM:btnOpenItem').click();"/>                
             </p:column>
 
             <p:column headerText="#{bundle.Term}" width="80" sortBy="#{item.planExecDate}">
@@ -179,9 +179,9 @@
         <p:contextMenu for="monitorTable">
             <p:menuitem value="#{bundle.Open}" icon="ui-icon-document" 
                         actionListener="#{monitorBean.onMenuItemOpen()}"
-                        oncomplete="document.getElementById('mainFRM:btnOpenItem').click();"/>            
+                        oncomplete="document.getElementById('mainFRM:btnOpenItem').click();"/>
         </p:contextMenu>
-        
+                
         <p:commandButton id="btnOpenItem" style="display: none;"
                          onstart="PF('statusDialog').show()"
                          oncomplete="PF('statusDialog').hide();"

@@ -10,6 +10,8 @@ import com.maxfill.model.basedict.company.Company;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.doc.DocFacade;
 import com.maxfill.model.basedict.folder.Folder;
+import com.maxfill.model.basedict.procTempl.ProcTempl;
+import com.maxfill.model.basedict.procTempl.ProcessTemplFacade;
 import com.maxfill.model.basedict.process.schemes.Scheme;
 import com.maxfill.model.basedict.process.schemes.elements.SubProcessElem;
 import com.maxfill.model.core.messages.UserMessagesFacade;
@@ -25,6 +27,7 @@ import com.maxfill.services.worktime.WorkTimeService;
 import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,7 +38,9 @@ import javax.ejb.Stateless;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -50,6 +55,8 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
 
     @EJB
     private ProcessTypesFacade processTypesFacade;
+    @EJB
+    private ProcessTemplFacade procTemplFacade;
     @EJB
     private DocFacade docFacade;
     @EJB
@@ -107,20 +114,30 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
      * @param owner
      * @param parent
      * @param author
+     * @param subProcEl
      * @param caption
      * @return 
      */
-    public Process createSubProcess(ProcessType owner, Process parent, User author, String caption){
+    public Process createSubProcess(ProcessType owner, Process parent, User author, SubProcessElem subProcEl){        
         StringBuilder sb = new StringBuilder();
         sb.append(ItemUtils.getBandleLabel("SubProcess", userFacade.getUserLocale(author)));
-        sb.append(": ").append(caption);
+        sb.append(": ").append(subProcEl.getCaption());
         
-        Process subProcess = createItem(author, parent, owner, new HashMap<>());
-        subProcess.setDocs(parent.getDocs());
-        subProcess.setDocument(parent.getDocument());
-        subProcess.setCompany(parent.getCompany());        
+        Map<String, Object> createParams = new HashMap<>();
+        createParams.put("documents", Collections.singletonList(parent.getDocument()));        
+        createParams.put("company", parent.getCompany());
+        createParams.put("curator", parent.getCurator());
+        if (subProcEl.getProctemplId() != null){
+            createParams.put("template", procTemplFacade.find(subProcEl.getProctemplId()));
+        }
+        Process subProcess = createItem(author, parent, owner, createParams);
+        
+        subProcess.setDocs(parent.getDocs());                    
         subProcess.setName(sb.toString());
-        setRoleCurator(subProcess, parent.getCurator());
+        subProcess.setLinkUID(subProcEl.getUid());
+        subProcEl.setSubProcess(subProcess);
+        
+        create(subProcess);
         return subProcess;
     }    
     
@@ -137,13 +154,12 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     /**
      * Установка специальных атрибутов объекта при его создании
      * @param process
-     * @param params 
+     * @param createParams 
      */
     @Override
-    public void setSpecAtrForNewItem(Process process, Map<String, Object> params){
+    public void setSpecAtrForNewItem(Process process, Map<String, Object> createParams){
         process.setDeltaDeadLine(0);
-        process.setDeadLineType("data");
-        process.setCompany(staffFacade.findCompanyForStaff(process.getAuthor().getStaff()));        
+        process.setDeadLineType("data");              
         
         ProcessType processType = processTypesFacade.getProcTypeForOpt(process.getOwner());
         if (processType != null){
@@ -155,8 +171,14 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
             }
         }
         
-        if (params.containsKey("documents")){
-            List<Doc> docs = (List<Doc>)params.get("documents");
+        if (createParams.containsKey("company")){
+            process.setCompany((Company) createParams.get("company"));
+        } else {
+            process.setCompany(staffFacade.findCompanyForStaff(process.getAuthor().getStaff())); 
+        }
+        
+        if (createParams.containsKey("documents")){
+            List<Doc> docs = (List<Doc>)createParams.get("documents");
             if (!docs.isEmpty()){
                 process.setDocs(docs);
                 process.setDocument(docs.get(0));
@@ -164,8 +186,8 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
             makeProcName(process);
         }
         
-        if (params.containsKey("author")) {
-            User user = (User)params.get("author");
+        if (createParams.containsKey("author")) {
+            User user = (User)createParams.get("author");
             if (user.getStaff() != null){
                 Staff curator = user.getStaff();
                 if (curator != null){
@@ -173,15 +195,42 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
                 }
             }
         }        
-        if (params.containsKey("curator")) {
-            setRoleCurator(process, (Staff)params.get("curator"));
+        if (createParams.containsKey("curator")) {
+            setRoleCurator(process, (Staff)createParams.get("curator"));
         } else { 
             if (process.getAuthor().getStaff() != null){
                 setRoleCurator(process, process.getAuthor().getStaff());
             }
         }
+        
+        if (createParams.containsKey("template")){
+            ProcTempl procTempl = (ProcTempl)createParams.get("template");
+            workflow.initScheme(process, procTempl, process.getAuthor(), new HashSet<>());
+        }
     }
 
+    /**
+     * Отбор процессов по документу
+     * @param doc
+     * @param currentUser
+     * @return 
+     */
+    public List<Process> findProcessesByDoc(Doc doc, User currentUser){        
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(itemClass);
+        Root c = cq.from(itemClass);
+        Predicate crit1 = builder.equal(c.get(Process_.document), doc);
+        Predicate crit2 = builder.equal(c.get("deleted"), false);
+        Predicate crit3 = builder.isNull(c.get("parent"));
+        Predicate crit4 = builder.equal(c.get("actual"), true);
+        cq.select(c).where(builder.and(crit1, crit2, crit3, crit4));        
+        TypedQuery<Process> query = em.createQuery(cq);         
+        return query.getResultStream()
+                    .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
+                    .collect(Collectors.toList());
+    }  
+    
     /* *** РОЛИ *** */    
     
     public void setRoleCurator(Process process, Staff curator){

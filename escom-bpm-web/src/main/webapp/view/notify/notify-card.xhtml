@@ -42,11 +42,12 @@
                         <f:facet name="targetCaption">#{bundle.Recipients}</f:facet>
                     </p:pickList>
 
-                    <p:contextMenu for="pickList">
+                    <p:contextMenu for="pickList" >
                         <p:menuitem value="#{bundle.AddRecipient}" 
                                     onclick="document.getElementById('mainFRM:mainTabView:btnSelectRecipient').click();">
                         </p:menuitem>
                     </p:contextMenu>
+                    
                     <p:commandButton id="btnSelectRecipient" style="display: none;" actionListener="#{userBean.onManySelectItem()}">
                         <p:ajax event="dialogReturn" listener="#{notifyCardBean.onAddRecipients}" update="mainFRM:mainTabView:pickList"/>
                     </p:commandButton>

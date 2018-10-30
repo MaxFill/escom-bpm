@@ -60,6 +60,8 @@ public class ProcessBean extends BaseDetailsBean<Process, ProcessType>{
 
     @Override
     public SearcheModel initSearcheModel() {
-        return new ProcessSearche();
+        SearcheModel sm = new ProcessSearche();
+        sm.setAuthorSearche(getCurrentUser());
+        return sm;
     }
 }
