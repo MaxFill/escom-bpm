@@ -126,7 +126,7 @@
 
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
-        <p:column id="colCompany" headerText="#{bundle.Company}" 
+        <p:column id="colCompany" headerText="#{bundle.Company}" rendered="false"
                   visible="#{_detailBean.isVisibleColumn('colCompany')}"
                   sortBy="#{item.companyName}" width="90" priority="3">
             <h:outputText value="#{item.companyName}"/>

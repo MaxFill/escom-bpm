@@ -27,7 +27,7 @@
             <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
                 <h:panelGrid columns="5" styleClass="without-spaces">
                     <h:panelGrid columns="2" styleClass="without-spaces">
-                        <p:outputLabel value="#{bundle.Initiator}:" />
+                        <p:outputLabel value="#{bundle.Author}:" />
                         <ui:include src="/view/common/item-select-list-btn.xhtml" >
                             <ui:param name="_itemValue" value="#{monitorBean.initiator}"/>
                             <ui:param name="_itemLabel" value="nameEndElipse"/>
@@ -64,6 +64,13 @@
                             <div class="ui-inputgroup">
                                 <p:inputText value="#{monitorBean.number}" widgetVar="srcNumber"/>
                                 <p:commandButton styleClass="btnClear" title="#{bundle.Clear}" icon="ui-icon-close" onclick="PF('srcNumber').jq.val('');"/>                        
+                            </div>
+                        </h:panelGroup>
+                        <p:outputLabel value="#{bundle.Name}:" />
+                        <h:panelGroup>
+                            <div class="ui-inputgroup">
+                                <p:inputText value="#{monitorBean.name}" widgetVar="srcName"/>
+                                <p:commandButton styleClass="btnClear" title="#{bundle.Clear}" icon="ui-icon-close" onclick="PF('srcName').jq.val('');"/> 
                             </div>
                         </h:panelGroup>
                     </h:panelGrid>
@@ -105,6 +112,21 @@
                         </p:selectManyMenu>
                     </h:panelGrid>
 
+                    <h:panelGrid columns="1" styleClass="without-spaces">
+                        <p:tree id="treeProcTypes" value="#{monitorBean.procTypesTree}" var="procType" selectionMode="single" 
+                                selection="#{monitorBean.selProcTypeNode}" 
+                                style="height: 140px; width: auto; overflow-y: auto;">
+                            <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+                                <h:outputText value="#{procType.nameEndElipse}"/>
+                            </p:treeNode>
+                        </p:tree>
+                        <p:contextMenu for="treeProcTypes" >
+                            <p:menuitem icon="ui-icon-close" value="#{bundle.Reset}" 
+                                        update="treeProcTypes"
+                                        actionListener="#{monitorBean.clearSelectedProcType()}"/>
+                        </p:contextMenu>
+                    </h:panelGrid>
+                    
                     <h:panelGrid columns="1" rendered="#{!empty(monitorBean.allResults)}" styleClass="without-spaces">
                         <p:outputLabel value="#{bundle.Result}:" />
                         <p:selectManyMenu value="#{monitorBean.results}" var="item" showCheckbox="true">
@@ -115,8 +137,6 @@
                         </p:selectManyMenu>
                     </h:panelGrid>
 
-                    <h:panelGrid columns="1" styleClass="without-spaces">                        
-                    </h:panelGrid>
                 </h:panelGrid>            
                 <p:commandButton icon="ui-icon-search" value="#{bundle.Find}"
                              actionListener="#{monitorBean.onRefreshData()}">
@@ -137,23 +157,23 @@
 
             <p:column width="20" sortBy="#{item.iconName}" >
                 <p:spacer width="3"/>
-                <p:graphicImage value="/resources/icon/#{item.iconName}-20.png" /> 
+                <p:graphicImage value="/resources/icon/#{item.iconName}-20.png"  /> 
             </p:column>
 
             <p:column headerText="#{bundle.Number}" sortBy="#{item.regNumber}">
                 <h:outputLabel value="#{item.fullRegNumber}"/>
             </p:column>
             
-            <p:column width="16">
+            <p:column >
                 <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>            
             </p:column>
             
             <p:column headerText="#{bundle.Role}">
-                <h:outputLabel value="#{monitorBean.onGetItemTitle(item)}"/>
+                #{monitorBean.onGetItemTitle(item)}
             </p:column>
 
             <p:column headerText="#{bundle.Name}">
-                <h:outputLabel value="#{item.nameEndElipse}"/>
+                #{item.nameEndElipse}
                 <p:commandButton icon="ico_look" title="#{bundle.Open}"
                                  style="float: right;"
                                  actionListener="#{monitorBean.setCurrentItem(item)}"
@@ -167,11 +187,11 @@
             </p:column>            
             
             <p:column headerText="#{bundle.Status}">                
-                <h:outputLabel value="#{sessionBean.getItemStatus(item)}"/>
+                #{sessionBean.getItemStatus(item)}
             </p:column>
 
             <p:column headerText="#{bundle.Result}" width="100">
-                <h:outputLabel value="#{monitorBean.onGetItemResult(item)}"/>
+                #{monitorBean.onGetItemResult(item)}
             </p:column>
 
         </p:treeTable>

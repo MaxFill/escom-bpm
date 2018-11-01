@@ -54,7 +54,7 @@ public class NotifyCardBean extends BaseViewBean{
     
     @Override
     public void doBeforeOpenCard(Map params){        
-        List<User> source = new ArrayList<>();
+        List<User> source;
         if (params.containsKey("remarkID")){
             Integer remarkID = Integer.valueOf((String)params.get("remarkID"));
             remark = remarkFacade.find(remarkID);
@@ -74,7 +74,7 @@ public class NotifyCardBean extends BaseViewBean{
             }
         
         if (process != null){            
-            source = processFacade.getUsersProcessRole(process, DictRoles.ROLE_CONCORDER, getCurrentUser());            
+            source = processFacade.getUsersProcessRole((Process)process.getRoot(), DictRoles.ROLE_CONCORDER, getCurrentUser());            
         } else {
             source = userFacade.findAll(getCurrentUser());
         }

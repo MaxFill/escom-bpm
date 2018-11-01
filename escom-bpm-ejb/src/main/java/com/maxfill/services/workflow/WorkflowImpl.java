@@ -5,6 +5,7 @@ import com.maxfill.model.basedict.process.schemes.elements.*;
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictReportStatuses;
 import com.maxfill.dictionary.DictResults;
+import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.ProcessParams;
 import com.maxfill.model.basedict.BaseDict;
@@ -51,8 +52,7 @@ import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.text.DateFormat;
 import java.util.Comparator;
 import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsFirst;
@@ -60,12 +60,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -77,6 +82,10 @@ import org.apache.commons.lang.StringUtils;
 public class WorkflowImpl implements Workflow {
     protected static final Logger LOGGER = Logger.getLogger(WorkflowImpl.class.getName());
     private final String EXECUTED_TASKS = "executedTasks";
+    private final String LAST_TASK = "lastTask";
+    
+    @Resource
+    private SessionContext ctx;
     
     @EJB
     private DocFacade docFacade;
@@ -341,11 +350,8 @@ public class WorkflowImpl implements Workflow {
         Scheme scheme = process.getScheme();
         if (scheme == null){
             scheme = new Scheme(process);
-            scheme.setElements(new WorkflowElements());
-            if (defaultTempl == null){
-                defaultTempl = processTypeFacade.getDefaultTempl(process.getOwner(), currentUser);
-            }
             if (defaultTempl != null){
+                //defaultTempl = processTypeFacade.getDefaultTempl(process.getOwner(), currentUser);            
                 scheme.setPackElements(defaultTempl.getElements());
                 scheme.setName(defaultTempl.getName());
             }
@@ -448,6 +454,9 @@ public class WorkflowImpl implements Workflow {
         if (scheme.getElements().getTasks().isEmpty() && MapUtils.isEmpty(scheme.getElements().getSubprocesses())){
             errors.add("DiagramNotHaveTasks");
         }
+        if (scheme.getProcess().getCurator() == null || scheme.getProcess().getCurator().getEmployee() == null){
+            errors.add("CuratorNotSet");
+        }
         Date planEndDate = scheme.getProcess().getPlanExecDate();
         if (checkTasks){            
             for(Task task : scheme.getTasks()){ 
@@ -549,45 +558,50 @@ public class WorkflowImpl implements Workflow {
      * @param errors 
      * @return  
      */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     @Override
     public Set<BaseDict> executeTask(Process process, Task task, Result result, User currentUser, Map<String, Object> params, Set<String> errors){        
+        Set<BaseDict> forShow = new HashSet<>(); 
         if (DictStates.STATE_RUNNING != process.getState().getCurrentState().getId()){
             errors.add("TaskCannotCompletedBecauseProcessStopped");
-            return new HashSet<>();
-        }
+            return forShow;
+        }        
+        
+        if (!errors.isEmpty()) return forShow;        
+        
         Scheme scheme = process.getScheme();
         unpackScheme(scheme, currentUser);
-        Set<BaseDict> forShow = new HashSet<>();
-        if (errors.isEmpty()){
-            TaskElem startElement = scheme.getElements().getTasks().get(task.getTaskLinkUID());
-            startElement.getTask().setResult(result.getName());
-            taskFacade.taskDone(task, result, currentUser);
-            scheme.getTasks().remove(task);
-            scheme.getTasks().add(task); //TODO это лишнее ?  
-            
-            //Запись отчёта по задаче
-            TaskReport taskReport = new TaskReport(task.getComment(), DictReportStatuses.REPORT_ACTUAL, currentUser, task);
-            task.getReports().add(taskReport);
-            
-            //Внесение инф. в отчёт по процессу
-            if (task.getConsidInProcReport()){
-                ProcReport procReport = updateReportStatus(process, task.getOwner(), task.getRoleInProc(), task.getResult(), currentUser);
-                procReport.setTask(task);
-            }
-            
-            List<Integer> executedTasks = startElement.getTasksExec();            
-            executedTasks.add(task.getId());
+        TaskElem startElement = scheme.getElements().getTasks().get(task.getTaskLinkUID());
+        startElement.getTask().setResult(result.getName());
+        taskFacade.taskDone(task, result, currentUser);
 
-            params.put(EXECUTED_TASKS, executedTasks);
-            
-            forShow = run(process, startElement, new HashSet<>(), currentUser, params, errors);
-            
-            if (errors.isEmpty()){
-                processFacade.addLogEvent(process, DictLogEvents.TASK_FINISHED, currentUser);
-            } else {
-              //ToDO нужен откат транзакции!!
-            }
+        scheme.getTasks().remove(task);
+        scheme.getTasks().add(task); //TODO это лишнее ?  
+
+        //Запись отчёта по задаче
+        TaskReport taskReport = new TaskReport(task.getComment(), DictReportStatuses.REPORT_ACTUAL, currentUser, task);
+        task.getReports().add(taskReport);
+
+        //Внесение инф. в отчёт по процессу
+        if (task.getConsidInProcReport()){
+            ProcReport procReport = updateReportStatus(process, task.getOwner(), task.getRoleInProc(), task.getResult(), currentUser);
+            procReport.setTask(task);
         }
+
+        List<Integer> executedTasks = startElement.getTasksExec();            
+        executedTasks.add(task.getId());
+
+        params.put(EXECUTED_TASKS, executedTasks);
+        params.put(LAST_TASK, task);
+                
+        forShow = run(process, startElement, new HashSet<>(), currentUser, params, errors);
+
+        if (!errors.isEmpty()){                            
+            ctx.setRollbackOnly();                      
+        } else {
+            processFacade.addLogEvent(process, DictLogEvents.TASK_FINISHED, currentUser);
+        }
+        
         return forShow;
     }
     
@@ -706,7 +720,7 @@ public class WorkflowImpl implements Workflow {
                 processFacade.setRoleOwner(subProcess, curUser);
                 processFacade.edit(subProcess);
                 if (subProcElem.isShowCard()){
-                    processesForShow.add(subProcess);
+                    processesForShow.add(subProcess);                    
                 } else {                
                     start(subProcess, curUser, params,  errors);
                 }
@@ -723,6 +737,7 @@ public class WorkflowImpl implements Workflow {
      * @param errors 
      * @return  
      */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     @Override
     public Set<BaseDict> start(Process process, User currentUser, Map<String, Object> params, Set<String> errors) {  
         Scheme scheme = process.getScheme();
@@ -738,9 +753,11 @@ public class WorkflowImpl implements Workflow {
         processFacade.actualizeProcessRoles(process);
         processFacade.edit(process);    //сохраняем изменения
         
+        /* Перевод документа в статус Действующий */
         Doc doc = process.getDocument();
         if (doc != null){
-            doc = docFacade.find(doc.getId());            
+            doc = docFacade.find(doc.getId());
+            doc.addUserInRole(DictRoles.ROLE_EDITOR, process.getCurator().getEmployee());
             docFacade.changeState(doc, DictStates.STATE_VALID);
         }
         
@@ -750,12 +767,6 @@ public class WorkflowImpl implements Workflow {
         WFConnectedElem startElement = scheme.getElements().getStartElem();
         startElement.setDone(true);
         
-        //если действие выполняется куратором, то внести инф в лист согласования 
-        /*
-        if (Objects.equals(process.getCurator().getEmployee(), currentUser)){
-            updateReportStatus(process, process.getCurator(), DictResults.RESULT_AGREED, currentUser);
-        }
-        */
         processFacade.addLogEvent(process, DictLogEvents.PROCESS_START, currentUser);
         return run(process, startElement, new HashSet<>(), currentUser, params, errors);
     }
@@ -848,18 +859,20 @@ public class WorkflowImpl implements Workflow {
             process.getState().setCurrentState(state);            
             stopTasks(process, currentUser); //отмена всех запущенных и не завершённых задач
             stopTimers(process);
-        }
+        }        
         process.setFactExecDate(new Date());
         processFacade.addLogEvent(process, DictLogEvents.PROCESS_FINISHED, currentUser);
-        //если есть главный процесс, то выполняем переход в него
+        //если есть главный процесс, то текущий является подпроцессом и выполняем переход в главный процесс
         if (process.getParent() != null){ 
             Process mainProcess = processFacade.find(process.getParent().getId());
             unpackScheme(mainProcess.getScheme(), currentUser);
-            SubProcessElem subProcessElem = mainProcess.getScheme().getElements().getSubprocesses().values().stream()
-                .filter(subProcEl->Objects.equals(process.getLinkUID(), subProcEl.getUid())).findFirst().orElse(null);
+            
             Map<String, Object> params = new HashMap<>();
             params.put("subprocess", process);
-            run(mainProcess, subProcessElem, exeSubProc, currentUser, params, errors);
+            
+            SubProcessElem subProcessEl = findSubProcEl(mainProcess.getScheme(), process);
+            subProcessEl.setShowCard(false); //сброс признака открытия формы, т.к. подпроцесс выполнен
+            run(mainProcess, subProcessEl, exeSubProc, currentUser, params, errors);
         }
     }
 
@@ -875,15 +888,20 @@ public class WorkflowImpl implements Workflow {
      * @param currentUser 
      * @return - возвращает список объектов, которые должны быть показаны пользователю
      */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     @Override
     public Set<BaseDict> run(Process process, WFConnectedElem startElement, Set<SubProcessElem> exeSubProc, User currentUser, Map<String, Object> params, Set<String> errors) {   
         Set<BaseDict> forShow = new HashSet<>();
         Set<Task> exeTasks = new HashSet<>();        
         doRun(startElement.getAnchors(), process, exeTasks, exeSubProc, currentUser, params, errors);
-        if (errors.isEmpty()){
+        if (!errors.isEmpty()){
+            ctx.setRollbackOnly();
+        } else {
             startTasks(process, exeTasks, currentUser, params, errors);
             forShow.addAll(initSubProcesses(process, exeSubProc, params, currentUser, errors));
-            if (errors.isEmpty()){
+            if (!errors.isEmpty()){
+                ctx.setRollbackOnly();
+            } else {
                 packScheme(process.getScheme());
                 processFacade.edit(process);
             }
@@ -1037,6 +1055,15 @@ public class WorkflowImpl implements Workflow {
     }        
     
     /* *** ПОИСКИ ЭЛЕМЕНТОВ В МОДЕЛИ *** */
+    
+    /**
+     * Находит элемент подпроцесса для заданного процесса в указанной модели 
+     * @return 
+     */
+    private SubProcessElem findSubProcEl(Scheme scheme, Process process){
+        return scheme.getElements().getSubprocesses().values().stream()
+                .filter(subProcEl->Objects.equals(process.getLinkUID(), subProcEl.getUid())).findFirst().orElse(null);
+    }
     
     /**
      * Находит элементы подпроцессов в модели процесса к которым идут коннекторы
@@ -1329,17 +1356,16 @@ public class WorkflowImpl implements Workflow {
      * @param scheme
      * @return 
      */
-    private boolean lastApproved(Scheme scheme, Map<String, Object> params){        
-        if (!params.containsKey(EXECUTED_TASKS)) return false;
-        List<Integer> taskIds = (List<Integer>) params.get(EXECUTED_TASKS);
-        List<Task> tasks = scheme.getTasks().stream()
-                .filter(task->taskIds.contains(task.getId()))
-                .sorted(Comparator.comparing(Task::getFactExecDate, nullsFirst(naturalOrder())).reversed())
-                .collect(Collectors.toList());
-        Task lastTask = tasks.get(0);
+    private boolean lastApproved(Scheme scheme, Map<String, Object> params){
+        Task lastTask = (Task) params.get(LAST_TASK);
+        List<Integer> taskIds = (List<Integer>) params.get(EXECUTED_TASKS);                
         taskIds.clear();
         taskIds.add(lastTask.getId());
         params.put(EXECUTED_TASKS, taskIds); //оставляем только последнюю задачу, так как её результат важнее
+        LOGGER.log(Level.INFO, null, "lastApproved: "+lastTask.getId());
+        LOGGER.log(Level.INFO, null, "lastApproved: "+lastTask.getResult());
+        LOGGER.log(Level.INFO, null, "lastApproved: "+DateUtils.dateToString(lastTask.getFactExecDate(), DateFormat.SHORT, DateFormat.MEDIUM, userFacade.getUserLocale(userFacade.getAdmin())));
+        LOGGER.log(Level.INFO, null, "lastApproved: "+taskIds.size());        
         return !Objects.equals(DictResults.RESULT_REFUSED, lastTask.getResult());        
     }
     

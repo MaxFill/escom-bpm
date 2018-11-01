@@ -144,6 +144,10 @@ public abstract class BaseLazyFacade<T extends Dict> extends BaseFacade<T>{
                                 predicate = builder.like(root.<String>get(filterProperty),"%"+filterValue+"%");                                
                                 break;
                             }
+                            case "name":{
+                                predicate = builder.like(root.<String>get(filterProperty),"%"+filterValue+"%");                                
+                                break;
+                            }
                             default:{
                                 predicate = builder.equal(root.get(filterProperty), filterValue);
                             }

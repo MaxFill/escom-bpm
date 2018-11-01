@@ -27,7 +27,6 @@ public class TaskLog extends BaseLogItems<Task>{
     public void setId(Integer id) {
         this.id = id;
     }
-
     
     /* *** *** */
     

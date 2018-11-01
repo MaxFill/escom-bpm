@@ -51,7 +51,7 @@ public class RemarkCardBean extends BaseCardBean<Remark>{
     private Doc doc;    
     private final List<Remark> remarks = new ArrayList<>();
     private List<User> authors;
-    protected String currentTab = "0";
+    protected String currentTab;
     private Task task;
     private boolean remarkTabShow = false;
     
@@ -78,7 +78,13 @@ public class RemarkCardBean extends BaseCardBean<Remark>{
                 if (!remarklist.isEmpty()){
                     remarks.addAll(remarklist);
                 }
-            }
+                authors = new ArrayList<>(remarks.stream().map(remark->remark.getAuthor()).collect(Collectors.toSet()));
+                User user = getCurrentUser();
+                if (!authors.contains(user)){
+                    authors.add(user);
+                }
+                currentTab = String.valueOf(authors.indexOf(user));
+            }                                 
         }    
     }
     
@@ -100,15 +106,9 @@ public class RemarkCardBean extends BaseCardBean<Remark>{
         remarks.add(remark);
     }    
     
-    public List<User> getAuthors(){
-        if (authors == null){
-            authors = new ArrayList<>(remarks.stream().map(remark->remark.getAuthor()).collect(Collectors.toSet()));
-            if (!authors.contains(getCurrentUser())){
-                authors.add(getCurrentUser());
-            }
-        }
+    public List<User> getAuthors(){       
         return authors;
-    }
+    }        
     
     public List<Remark> getAuthorRemarks(User author){
         return remarks.stream()
@@ -145,23 +145,7 @@ public class RemarkCardBean extends BaseCardBean<Remark>{
     public void onRemarkUnCheck(Remark remark){
         remark.setChecked(false);
         remarkFacade.edit(remark);
-    }
-    
-    @Override
-    public void onTabChange(TabChangeEvent event) {
-        Tab tab = event.getTab();
-        String tabId = tab.getId();
-        switch (tabId) {
-            case "tabMyRemarks": {
-                currentTab = "0";                
-                break;
-            }
-            case "tabFilter": {
-                currentTab = "1";
-                break;
-            }
-        }
-    }
+    }    
     
     public void onNotifyRemark(Remark remark){
         remarkFacade.edit(remark);

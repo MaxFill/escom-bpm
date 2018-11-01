@@ -189,6 +189,21 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         }
     }     
     
+    /**
+     * Возвращает элемент верхнего уровня в ветке
+     * @return 
+     */
+    public BaseDict getRoot(){
+        return getRoot(this);
+    }
+    
+    private BaseDict getRoot(BaseDict item){
+        if (item.getParent() != null) {
+            return getRoot(item.getParent());
+        }
+        return item;
+    }
+    
     /* *** GETS & SETS *** */
     
     public String getFullRegNumber(){

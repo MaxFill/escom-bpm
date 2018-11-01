@@ -4,8 +4,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">                
 
-    <p:accordionPanel id="accord" widgetVar="accordion" activeIndex="#{remarkCardBean.currentTab}" var="author" value="#{remarkCardBean.authors}" >
-        <p:ajax event="tabChange" listener="#{remarkCardBean.onTabChange}"/>        
+    <p:accordionPanel id="accord" widgetVar="accordion" activeIndex="#{remarkCardBean.currentTab}" var="author" value="#{remarkCardBean.authors}" >       
         <p:tab title="#{author.getShortFIO()}">
             <p:dataGrid id="dgMyRemarks" var="remark" value="#{remarkCardBean.getAuthorRemarks(author)}" columns="1" layout="grid"
                         paginator="true" emptyMessage="#{bundle.EmptyTable}"

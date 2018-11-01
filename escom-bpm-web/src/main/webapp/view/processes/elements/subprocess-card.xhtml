@@ -57,7 +57,9 @@
                                          actionListener="#{_bean.makeCaption()}"/>
                     </div>
                     </h:panelGroup>
-                                        
+                          
+                    <p:separator/>
+                    
                     <p:selectBooleanCheckbox itemLabel="#{bundle.ShowSubProcCardInit}" value="#{_bean.editedItem.showCard}" >  
                         <p:ajax process="@this" update="pnInfo" />
                     </p:selectBooleanCheckbox>

@@ -123,7 +123,10 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
         
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "task", orphanRemoval = true)
     private List<TaskReport> reports = new ArrayList<>();
-        
+     
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item", orphanRemoval = true)
+    private final List<TaskLog> logs = new ArrayList<>();
+    
     /* Категории */
     //ToDo добавить категории
 
@@ -406,7 +409,11 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     public Integer getTempId() {
         return tempId;
     }
-         
+
+    public List<TaskLog> getLogs() {
+        return logs;
+    }
+        
     /* *** *** */
 
     @Override

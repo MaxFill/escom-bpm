@@ -103,8 +103,9 @@ public class TaskListBean extends LazyLoadBean<Task>{
     }
     
     public String getProcessName(Task task){
-        if (task.getScheme() == null) return "";        
-        return task.getScheme().getProcess().getNameEndElipse();
+        if (task.getScheme() == null) return "";
+        Process process = task.getScheme().getProcess();
+        return process.getFullRegNumber()+" " + process.getNameEndElipse();
     }
     
     /* *** ФИЛЬТРЫ *** */

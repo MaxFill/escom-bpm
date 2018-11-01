@@ -60,18 +60,20 @@ public class ProcessNumeratorImpl extends NumeratorBase implements ProcessNumera
     protected String doGetCounterName(BaseDict item) {
         Process process = (Process) item;
         ProcessType procType = process.getOwner();        
-        StringBuilder sb = new StringBuilder(processFacade.getFRM_NAME());        
-        String counterName = procType.getGuide();
-        if (StringUtils.isEmpty(counterName)){
-            counterName = EscomUtils.generateGUID();
-            procType.setGuide(counterName);            
-            processTypesFacade.edit(procType);
-        }
+        StringBuilder sb = new StringBuilder(processFacade.getFRM_NAME());
         Process parent = process.getParent();
         if (parent != null){
-            sb.append("_").append(parent.getId());
+            sb.append("_parent_").append(parent.getId());
+        } else {
+            String counterName = procType.getGuide();
+            if (StringUtils.isEmpty(counterName)){
+                counterName = EscomUtils.generateGUID();
+                procType.setGuide(counterName);            
+                processTypesFacade.edit(procType);
+            }
+            sb.append("_").append(counterName);
         }
-        sb.append("_").append(counterName);        
+        
         if (processTypesFacade.getProcTypeForOpt(procType).getNumerator().getResetNewYear()){                
             sb.append("_").append(EscomUtils.getYearYY(process.getItemDate()));
         }        

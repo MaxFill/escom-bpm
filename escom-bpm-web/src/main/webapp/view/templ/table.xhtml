@@ -82,7 +82,7 @@
             </h:outputLabel>
         </p:column>
 
-        <p:column id="colAuthor" headerText="#{bundle.Owner}" rendered="#{_showAuthor}" width="80"                   
+        <p:column id="colAuthor" headerText="#{bundle.Owner}" width="80"                   
                   visible="#{_detailBean.isVisibleColumn('colAuthor')}"
                   sortBy="#{item.authorName}">
             #{item.author.shortFIO}

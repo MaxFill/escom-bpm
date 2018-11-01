@@ -12,19 +12,17 @@ import com.maxfill.model.Results;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.core.states.StateFacade;
 import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.processType.ProcessType;
+import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.core.states.State;
 import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.user.User;
 import java.util.ArrayList;
-import java.util.Comparator;
-import static java.util.Comparator.naturalOrder;
-import static java.util.Comparator.nullsFirst;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
 import org.omnifaces.cdi.ViewScoped;
@@ -55,7 +53,9 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     private User initiator;
     private Staff curator;
     private String number;
-    
+    private String name;
+    private final TreeNode procTypesTree = new DefaultTreeNode("", null);
+    private TreeNode selProcTypeNode = null;
     private List<State> states = new ArrayList<>();
     private List<String> results = new ArrayList<>();
     private List<String> allResults;
@@ -64,6 +64,8 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     private ProcessFacade processFacade;
     @EJB
     private StateFacade stateFacade;
+    @EJB
+    private ProcessTypesFacade procTypesFacade;
     
     @Inject
     private ProcessBean processBean;
@@ -103,7 +105,13 @@ public class MonitorBean extends BaseViewBean<BaseView>{
             taskId = Integer.valueOf(params.get("itemId"));
         }
         states.add(stateFacade.getRunningState());
-    }    
+        procTypesFacade.findRootItems(getCurrentUser())
+                .forEach(procType->{
+                    TreeNode childNode = new DefaultTreeNode(procType, procTypesTree);
+                    childNode.setExpanded(true);
+                    loadProcTypesTree(procType, childNode); 
+                });        
+    }
     
     /**
      * Обработка события открытия карточки процесса или задачи
@@ -160,6 +168,9 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         filters.put("actual", true);
         filters.put("deleted", false);
         filters.put("parent", null);
+        if (selProcTypeNode != null){
+            filters.put("owner", selProcTypeNode.getData());
+        }
         if(dateStart != null || dateEnd != null) {
             Map <String, Date> dateFilters = new HashMap <>();
             dateFilters.put("startDate", dateStart);        //дата начала периода отбора
@@ -180,6 +191,9 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         }
         if (StringUtils.isNotBlank(number)){
             filters.put("regNumber", number);
+        }
+        if (StringUtils.isNotBlank(name)){
+            filters.put("name", name);
         }
         return filters;
     }         
@@ -257,8 +271,29 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         }
     }    
     
+    private void loadProcTypesTree(ProcessType proccessType, TreeNode treeNode){
+       procTypesFacade.findActualChilds(proccessType, getCurrentUser())
+               .forEach(procType-> {
+                    TreeNode childNode = new DefaultTreeNode(procType, treeNode);
+                    loadProcTypesTree(procType, childNode);
+               });
+    }    
+    
+    public void clearSelectedProcType(){
+        selProcTypeNode = null;
+        procTypesTree.getChildren().forEach(treeNode->clearSelectedProcType(treeNode));
+        procTypesTree.setSelected(false);
+    }
+    public void clearSelectedProcType(TreeNode treeItem){
+        treeItem.setSelected(false);
+        treeItem.getChildren().forEach(treeNode->clearSelectedProcType(treeNode));
+    }
+    
     /* *** GETS & SETS *** */
 
+    public MonitorBean getEditedItem(){
+        return this;
+    }
     public List<State> getStates() {
         return states;
     }
@@ -311,6 +346,17 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         return DictFrmName.FRM_MONITOR;
     }
 
+    public TreeNode getProcTypesTree() {
+        return procTypesTree;
+    }
+
+    public TreeNode getSelProcTypeNode() {
+        return selProcTypeNode;
+    }
+    public void setSelProcTypeNode(TreeNode selProcTypeNode) {
+        this.selProcTypeNode = selProcTypeNode;
+    }
+    
     public List<String> getResults() {
         return results;
     }
@@ -337,6 +383,13 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     }
     public void setNumber(String number) {
         this.number = number;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
      
 }

@@ -17,7 +17,7 @@
         <p:commandButton icon="ico_doc-16" title="#{bundle.GoToDocument}" 
                         rendered="#{taskCardBean.process != null}"
                         actionListener="#{taskCardBean.onOpenDocument()}"/>
-        <p:commandButton icon="ico_look" title="#{bundle.ViewDoc}" 
+        <p:commandButton icon="ico_look" value="#{bundle.ViewDoc}" title="#{bundle.ViewDoc}" 
                         rendered="#{taskCardBean.process != null}"
                         actionListener="#{taskCardBean.onViewDocument()}"/>
     </ui:define>

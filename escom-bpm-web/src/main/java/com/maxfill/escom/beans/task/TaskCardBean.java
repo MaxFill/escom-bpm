@@ -290,27 +290,26 @@ public class TaskCardBean extends BaseCardBean<Task>{
      * @param resultName
      * @return 
      */
-    public String onExecute(String resultName){ 
-        return onExecute();
-    }
-    public String onExecute(){ 
-        if (StringUtils.isEmpty(resultName)) return "";
-        
+    public String onExecute(String resultName){         
+        return onExecute();        
+    }        
+    
+    public String onExecute() {    
         Task task = getEditedItem();
 
         List<Result> rs = resultFacade.findByName(resultName);
         Result result = rs.get(0);
-        
+                
         if (StringUtils.isBlank(task.getComment())){
             task.setComment(MsgUtils.getBandleLabel(resultName));
         }
-        
+
         Set<String> errors = new HashSet<>();
                                  
         checkTaskBeforeExecute(task, result, errors);
         if (!errors.isEmpty()){
-            MsgUtils.showErrors(errors);
-            return "";
+            MsgUtils.showErrors(errors);            
+            return "";            
         }
         doSaveItem();
         
@@ -340,8 +339,15 @@ public class TaskCardBean extends BaseCardBean<Task>{
     }    
     
     public void onUpdateProcesses(){
-        List<BaseDict> procs = forShow.stream().map(proc->processFacade.find(proc.getId())).collect(Collectors.toList());
-        forShow = new ArrayList<>(procs);
+        forShow = forShow.stream()
+                .map(proc->processFacade.find(proc.getId()))
+                .filter(proc->Objects.equals(proc.getState().getCurrentState().getId(), DictStates.STATE_DRAFT))
+                .collect(Collectors.toList());
+        if(forShow.isEmpty()){
+            PrimeFaces.current().executeScript("PF('InitObjectsWV').hide();");
+        } else {
+            PrimeFaces.current().ajax().update("initObjFRM");
+        }
     }
     
     /**
