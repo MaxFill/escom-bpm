@@ -1660,7 +1660,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         onSetCurrentItem(item);
         BaseTableBean bean = getItemBean(item);
         bean.setSourceItem(item);        
-        sessionBean.openDialogFrm(DictFrmName.FRM_OBJECT_ADMIN, bean.getParamsMap());
+        sessionBean.openDialogFrm(DictFrmName.FRM_ADMIN_OBJECTS, bean.getParamsMap());
     }           
     
     /* Установка текущей страницы списка данных в обозревателе/селекторе  */

@@ -4,6 +4,7 @@ import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.folder.Folder;
 import com.maxfill.model.basedict.user.User;
+import com.maxfill.utils.Tuple;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -23,4 +24,5 @@ public interface AttacheService {
     Attaches uploadAtache(Map<String, Object> params, InputStream inputStream) throws IOException;
     void doCopy(Attaches sourceAttache, Attaches targetAttache);
     String makeFolderZIP(Folder folder, User user, String os);
+    Tuple cleanUpFileStorage();
 }

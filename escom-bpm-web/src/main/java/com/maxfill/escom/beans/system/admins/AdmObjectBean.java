@@ -1,4 +1,4 @@
-package com.maxfill.escom.beans.system.admObj;
+package com.maxfill.escom.beans.system.admins;
 
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseTableBean;
@@ -78,7 +78,7 @@ public class AdmObjectBean extends BaseViewBean<BaseView>{
 
     @Override
     public String getFormName() {
-        return DictFrmName.FRM_OBJECT_ADMIN;
+        return DictFrmName.FRM_ADMIN_OBJECTS;
     }
     
     public String getObjectClassName(){

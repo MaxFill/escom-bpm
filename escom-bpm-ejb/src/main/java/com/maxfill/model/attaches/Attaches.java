@@ -14,6 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -29,7 +30,7 @@ import org.apache.commons.lang.StringUtils;
 
 /* Вложения */
 @Entity
-@Table(name = "attaches")
+@Table(name = "attaches", indexes = {@Index(name="Attaches_GUID_INDEX", columnList = "Guide", unique = true)})
 public class Attaches implements Serializable, Dict {
     private static final long serialVersionUID = -4633936978772232516L;
 

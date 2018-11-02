@@ -59,6 +59,8 @@
                         </h:panelGroup>
 
                         <p:commandButton value="#{bundle.Replace}"
+                                         onstart="PF('statusDialog').show();"
+                                         oncomplete="PF('statusDialog').hide();"
                                          disabled="#{admObjectBean.replaceItem == null}"
                                          actionListener="#{admObjectBean.onReplaceItem()}"/>                        
                     </p:panelGrid>

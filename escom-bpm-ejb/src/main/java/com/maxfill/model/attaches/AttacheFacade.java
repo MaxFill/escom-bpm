@@ -38,7 +38,7 @@ public class AttacheFacade extends BaseFacade<Attaches>{
     }
     
     public Integer countLockAttachesByDoc(Doc doc){
-        em.getEntityManagerFactory().getCache().evict(Doc.class);
+        em.getEntityManagerFactory().getCache().evict(Attaches.class);
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq= builder.createQuery();
         Root<Attaches> root = cq.from(Attaches.class);       
@@ -50,13 +50,23 @@ public class AttacheFacade extends BaseFacade<Attaches>{
         return ((Long) query.getSingleResult()).intValue();
     }
     
+    public List<Attaches> findAttachesByGUID(String guid){
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery cq= builder.createQuery();
+        Root<Attaches> root = cq.from(Attaches.class);       
+        Predicate crit1 = builder.equal(root.get(Attaches_.guid), guid);        
+        cq.select(root).where(builder.and(crit1));
+        Query query = em.createQuery(cq);
+        return query.getResultList();
+    }
+    
     public List<Attaches> findAttachesByDoc(Doc doc){
         em.getEntityManagerFactory().getCache().evict(Attaches.class);
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Attaches> cq = builder.createQuery(Attaches.class);
-        Root<Attaches> c = cq.from(Attaches.class);        
-        Predicate crit1 = builder.equal(c.get("doc"), doc);
-        cq.select(c).where(builder.and(crit1));
+        Root<Attaches> root = cq.from(Attaches.class);        
+        Predicate crit1 = builder.equal(root.get(Attaches_.doc), doc);
+        cq.select(root).where(builder.and(crit1));
         Query q = em.createQuery(cq);       
         return q.getResultList();
     }

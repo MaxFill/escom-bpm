@@ -147,6 +147,10 @@
         </navigation-case> 
          
         <navigation-case>
+            <from-outcome>clean-up</from-outcome>
+            <to-view-id>/view/admin/clears/clean-up.xhtml</to-view-id>
+        </navigation-case> 
+        <navigation-case>
             <from-outcome>notify-card</from-outcome>
             <to-view-id>/view/notify/notify-card.xhtml</to-view-id>
         </navigation-case>

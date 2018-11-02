@@ -129,6 +129,11 @@
                                                actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_COUNTERS)}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
 
+                                <p:graphicImage value="/resources/icon/clean-up-32.png"/>
+                                <p:commandLink value="#{bundle.CleanUpFileStorage}"
+                                               actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_ADMIN_CLEANS)}"
+                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                                
                                 <p:graphicImage value="/resources/icon/book-32.png"/>
                                 <p:link href="#{sessionBean.onGetExplorerURL('/docs/docStatus/statusesdoc-explorer')}" value="#{bundle.Statuses}" target="_blank" />
 

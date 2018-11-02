@@ -29,7 +29,8 @@ public final class DictFrmName {
     
     public static final String FRM_STAFF_EXPLORER = "staff-explorer";
 
-    public static final String FRM_OBJECT_ADMIN = "object-admin";
+    public static final String FRM_ADMIN_OBJECTS = "object-admin";
+    public static final String FRM_ADMIN_CLEANS = "clean-up";
     public static final String FRM_OBJECT_EXPL = "objects-expl";
 
     public static final String FRM_MAIL_SENDER_SERVICE = "mail-sender-service";
