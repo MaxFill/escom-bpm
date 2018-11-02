@@ -26,7 +26,9 @@ public class DocsSearche extends SearcheModel{
     
     @Override
     public void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<BaseDict> searcheGroups, Map<String, Object> addParams){
-        paramEQ.put("company", companySearche);
+        if (companySearche != null){
+            paramEQ.put("company", companySearche);
+        }
         if (StringUtils.isNotBlank(numberSearche)){
             paramLIKE.put("regNumber", numberSearche);
         }

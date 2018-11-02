@@ -1,6 +1,8 @@
 package com.maxfill.escom.system.servlets;
 
 import com.maxfill.Configuration;
+import com.maxfill.model.attaches.AttacheFacade;
+import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.basedict.doc.DocFacade;
 import com.maxfill.model.basedict.folder.FoldersFacade;
 import com.maxfill.model.basedict.user.UserFacade;
@@ -44,6 +46,8 @@ public class FileUploadServlet extends HttpServlet {
     private Configuration conf;
     @EJB
     private AttacheService attacheService;
+    @EJB
+    private AttacheFacade attacheFacade;
     @EJB
     private DocFacade docFacade;
     @EJB
@@ -140,7 +144,8 @@ public class FileUploadServlet extends HttpServlet {
         params.put("size", item.getSize());
         params.put("author", author);
         params.put("doc", doc);
-        attacheService.uploadAtache(params, item.getInputStream());
+        Attaches attache = attacheService.uploadAtache(params, item.getInputStream());
+        attacheFacade.create(attache);
         return HttpServletResponse.SC_OK;
     }
     

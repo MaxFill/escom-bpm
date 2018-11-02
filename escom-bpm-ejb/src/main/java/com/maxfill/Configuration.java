@@ -104,7 +104,7 @@ public class Configuration {
             initServerLocale((String) properties.get("SERVER_LOCALE"));
             signKey = MacProvider.generateKey();
             fullSearcheConnect = (String) properties.get("FULL_SEARCHE_CONNECT_URL");
-            String dqoute = (String) properties.get("DISK_QUOTE");
+            String dqoute = (String) properties.get("DISK_SIZE");
             diskQuote = Integer.parseInt(dqoute); 
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);

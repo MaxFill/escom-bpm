@@ -32,7 +32,8 @@
         <p:selectOneMenu value="#{_bean.model.companySearche}" filter="true" converter="companyConvertor"                         
                         widgetVar="companySearche"
                         styleClass="ui-grid-col-12">
-                <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />  
+                <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
+                <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
         </p:selectOneMenu> 
         
         <p:selectBooleanCheckbox itemLabel="#{bundle.FullTextSearche}" widgetVar="cbFullSearche"
