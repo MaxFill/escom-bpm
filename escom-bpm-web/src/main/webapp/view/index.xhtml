@@ -89,8 +89,17 @@
             </p:messages>
 
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12"> 
-                <p:dashboard id="board" model="#{sessionBean.dashboardModel}" >
+                <p:dashboard id="board" model="#{sessionBean.dashboardModel}"  >
 
+                    <p:panel id="charts" header="#{bundle.Info}" rendered="#{sessionBean.userAdmin}" toggleable="true" styleClass="dash-panel">
+                        <p:chart type="metergauge" model="#{sessionBean.meterFileSize}" style="width:250px;height:200px" />
+                        <h:panelGrid columns="3" >
+                            <p:outputLabel value="#{bundle.CurrentSize}:"/> 
+                            <p:outputLabel value="#{sessionBean.totalfilesSize}"/>
+                            <p:outputLabel value="Gb."/>
+                        </h:panelGrid>
+                    </p:panel>
+                    
                     <p:panel id="admObjects" header="#{bundle.Administation}" rendered="#{sessionBean.userAdmin}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces " >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
@@ -317,7 +326,7 @@
                 width: 280px !important;
             }
             .dash-panel{
-                margin: 5px !important;
+                margin: 5px !important;                
             }
         </style>
     </ui:define>

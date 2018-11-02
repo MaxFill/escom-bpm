@@ -140,8 +140,8 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         criteriaQuery.multiselect(typeName, builder.count(docId));
         criteriaQuery.groupBy(docs.get(Doc_.docType));
         Predicate crit1 = builder.equal(docs.get("deleted"), false);
-        Predicate crit2 = builder.greaterThanOrEqualTo(docs.get("dateDoc"), startPeriod);
-        Predicate crit3 = builder.lessThanOrEqualTo(docs.get("dateDoc"), endPeriod);
+        Predicate crit2 = builder.greaterThanOrEqualTo(docs.get("dateCreate"), startPeriod);
+        Predicate crit3 = builder.lessThanOrEqualTo(docs.get("dateCreate"), endPeriod);
         Predicate crit4 = docs.get(Doc_.docType).get("owner").in(groups);
         criteriaQuery.where(builder.and(crit1, crit2, crit3, crit4));
         criteriaQuery.orderBy(builder.asc(docs.get("docType").get("name")));
@@ -265,6 +265,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
                 doc.getAttachesList().add(attache);                
             }
         }
+        super.setSpecAtrForNewItem(doc, params);
     }
 
     private void doSetDefaultPartner(Doc doc, Folder folder){

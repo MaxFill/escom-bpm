@@ -103,4 +103,13 @@ public class AttacheFacade extends BaseFacade<Attaches>{
         Query query = em.createQuery(cq);  
         return (Long) query.getSingleResult();
     }
+    
+    public Long sumFilesSize(){        
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(Long.class);
+        Root root = cq.from(Attaches.class);        
+        cq.select(builder.sum(root.get(Attaches_.size)));
+        Query query = em.createQuery(cq);  
+        return (Long) query.getSingleResult();
+    }
 }

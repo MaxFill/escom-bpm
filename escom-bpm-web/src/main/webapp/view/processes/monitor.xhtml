@@ -23,125 +23,124 @@
     <ui:define name="centerFormContent">
         <p:defaultCommand target="mainFRM:btnSearche" />
                 
-        <p:panel toggleable="true" header="#{bundle.Filter}" toggleSpeed="500" >
-            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
-                <h:panelGrid columns="5" styleClass="without-spaces">
+        <p:panel toggleable="true" header="#{bundle.Filter}" toggleSpeed="500" >            
+            <h:panelGrid columns="5" styleClass="without-spaces">
+                <h:panelGrid columns="2" styleClass="without-spaces">
+                    <p:outputLabel value="#{bundle.Author}:" />
+                    <ui:include src="/view/common/item-select-list-btn.xhtml" >
+                        <ui:param name="_itemValue" value="#{monitorBean.initiator}"/>
+                        <ui:param name="_itemLabel" value="nameEndElipse"/>
+                        <ui:param name="_required" value="#{false}"/>
+                        <ui:param name="_disabled" value="#{false}"/>
+                        <ui:param name="_converter" value="usersConvertor" />
+                        <ui:param name="_itemPanel" value="ownerPanel"/>
+                        <ui:param name="_titleItem" value="#{bundle.Initiator}"/>
+                        <ui:param name="_selectorBean" value="#{userBean}"/>
+                        <ui:param name="_items" value="#{userBean.findAll()}"/>
+                        <ui:param name="_actionClear" value="setInitiator"/>
+                        <ui:param name="_actionSelect" value="onChangeInitiator"/>
+                        <ui:param name="_update" value=""/>
+                    </ui:include>
+
+                    <p:outputLabel value="#{bundle.Curator}:" />
+                    <ui:include src="/view/common/item-select-list-btn.xhtml" >
+                        <ui:param name="_itemValue" value="#{monitorBean.curator}"/>
+                        <ui:param name="_itemLabel" value="nameEndElipse"/>
+                        <ui:param name="_required" value="#{false}"/>
+                        <ui:param name="_disabled" value="#{false}"/>
+                        <ui:param name="_converter" value="staffConvertor" />
+                        <ui:param name="_itemPanel" value="curatorPanel"/>
+                        <ui:param name="_titleItem" value="#{bundle.Curator}"/>
+                        <ui:param name="_selectorBean" value="#{staffBean}"/>
+                        <ui:param name="_items" value="#{staffBean.findAll()}"/>
+                        <ui:param name="_actionClear" value="setCurator"/>
+                        <ui:param name="_actionSelect" value="onChangeCurator"/>
+                        <ui:param name="_update" value=""/>
+                    </ui:include>
+
+                    <p:outputLabel value="#{bundle.Number}:" />
+                    <h:panelGroup>
+                        <div class="ui-inputgroup">
+                            <p:inputText value="#{monitorBean.number}" widgetVar="srcNumber"/>
+                            <p:commandButton styleClass="btnClear" title="#{bundle.Clear}" icon="ui-icon-close" onclick="PF('srcNumber').jq.val('');"/>                        
+                        </div>
+                    </h:panelGroup>
+                    <p:outputLabel value="#{bundle.Name}:" />
+                    <h:panelGroup>
+                        <div class="ui-inputgroup">
+                            <p:inputText value="#{monitorBean.name}" widgetVar="srcName"/>
+                            <p:commandButton styleClass="btnClear" title="#{bundle.Clear}" icon="ui-icon-close" onclick="PF('srcName').jq.val('');"/> 
+                        </div>
+                    </h:panelGroup>
+                </h:panelGrid>
+
+                <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12"  styleClass="without-spaces">
+                    <p:outputLabel value="#{bundle.TermExecution}:"/>
                     <h:panelGrid columns="2" styleClass="without-spaces">
-                        <p:outputLabel value="#{bundle.Author}:" />
-                        <ui:include src="/view/common/item-select-list-btn.xhtml" >
-                            <ui:param name="_itemValue" value="#{monitorBean.initiator}"/>
-                            <ui:param name="_itemLabel" value="nameEndElipse"/>
-                            <ui:param name="_required" value="#{false}"/>
-                            <ui:param name="_disabled" value="#{false}"/>
-                            <ui:param name="_converter" value="usersConvertor" />
-                            <ui:param name="_itemPanel" value="ownerPanel"/>
-                            <ui:param name="_titleItem" value="#{bundle.Initiator}"/>
-                            <ui:param name="_selectorBean" value="#{userBean}"/>
-                            <ui:param name="_items" value="#{userBean.findAll()}"/>
-                            <ui:param name="_actionClear" value="setInitiator"/>
-                            <ui:param name="_actionSelect" value="onChangeInitiator"/>
-                            <ui:param name="_update" value=""/>
-                        </ui:include>
+                        <h:outputLabel value="#{bundle.With}"/>                    
+                        <p:calendar value="#{monitorBean.dateStart}" id="dateStart"
+                                    widgetVar="dateCreateStartSearche"
+                                    showHour="true" showMinute="true" pages="3"
+                                    navigator="true" yearRange="c-10:c+20"
+                                    locale="#{sessionBean.locale}"
+                                    pattern="dd.MM.yyyy HH:mm:ss"
+                                    required="false"
+                                    requiredMessage="#{bundle.Field} [#{bundle.DateStart}  #{bundle.MustBeFilled}">
+                        </p:calendar>
 
-                        <p:outputLabel value="#{bundle.Curator}:" />
-                        <ui:include src="/view/common/item-select-list-btn.xhtml" >
-                            <ui:param name="_itemValue" value="#{monitorBean.curator}"/>
-                            <ui:param name="_itemLabel" value="nameEndElipse"/>
-                            <ui:param name="_required" value="#{false}"/>
-                            <ui:param name="_disabled" value="#{false}"/>
-                            <ui:param name="_converter" value="staffConvertor" />
-                            <ui:param name="_itemPanel" value="curatorPanel"/>
-                            <ui:param name="_titleItem" value="#{bundle.Curator}"/>
-                            <ui:param name="_selectorBean" value="#{staffBean}"/>
-                            <ui:param name="_items" value="#{staffBean.findAll()}"/>
-                            <ui:param name="_actionClear" value="setCurator"/>
-                            <ui:param name="_actionSelect" value="onChangeCurator"/>
-                            <ui:param name="_update" value=""/>
-                        </ui:include>
-                        
-                        <p:outputLabel value="#{bundle.Number}:" />
-                        <h:panelGroup>
-                            <div class="ui-inputgroup">
-                                <p:inputText value="#{monitorBean.number}" widgetVar="srcNumber"/>
-                                <p:commandButton styleClass="btnClear" title="#{bundle.Clear}" icon="ui-icon-close" onclick="PF('srcNumber').jq.val('');"/>                        
-                            </div>
-                        </h:panelGroup>
-                        <p:outputLabel value="#{bundle.Name}:" />
-                        <h:panelGroup>
-                            <div class="ui-inputgroup">
-                                <p:inputText value="#{monitorBean.name}" widgetVar="srcName"/>
-                                <p:commandButton styleClass="btnClear" title="#{bundle.Clear}" icon="ui-icon-close" onclick="PF('srcName').jq.val('');"/> 
-                            </div>
-                        </h:panelGroup>
-                    </h:panelGrid>
+                        <h:outputLabel value="#{bundle.At}"/>
+                        <p:calendar value="#{monitorBean.dateEnd}" id="dateEnd"
+                                    widgetVar="dateCreateEndSearche"
+                                    navigator="true" yearRange="c-10:c+20"
+                                    showHour="true" showMinute="true" pages="3"
+                                    locale="#{sessionBean.locale}"
+                                    pattern="dd.MM.yyyy HH:mm:ss"
+                                    required="false"
+                                    requiredMessage="#{bundle.Field} #{bundle.DateEnd} #{bundle.MustBeFilled}">
+                        </p:calendar>
+                    </h:panelGrid>                                        
+                </p:panelGrid>
 
-                    <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12"  styleClass="without-spaces">
-                        <p:outputLabel value="#{bundle.TermExecution}:"/>
-                        <h:panelGrid columns="2" styleClass="without-spaces">
-                            <h:outputLabel value="#{bundle.With}"/>                    
-                            <p:calendar value="#{monitorBean.dateStart}" id="dateStart"
-                                        widgetVar="dateCreateStartSearche"
-                                        showHour="true" showMinute="true" pages="3"
-                                        navigator="true" yearRange="c-10:c+20"
-                                        locale="#{sessionBean.locale}"
-                                        pattern="dd.MM.yyyy HH:mm:ss"
-                                        required="false"
-                                        requiredMessage="#{bundle.Field} [#{bundle.DateStart}  #{bundle.MustBeFilled}">
-                            </p:calendar>
+                <h:panelGrid columns="1" styleClass="without-spaces">
+                    <p:outputLabel value="#{bundle.States}:" />
+                    <p:selectManyMenu value="#{monitorBean.states}" converter="stateConvertor" var="st" showCheckbox="true">
+                        <f:selectItems value="#{processBean.metadatesObj.statesList}" var="state" itemLabel="#{state.name}" itemValue="#{state}" />
+                        <p:column>
+                            <h:outputText value="#{monitorBean.getLabelFromBundle(st.name)}" />
+                        </p:column>
+                    </p:selectManyMenu>
+                </h:panelGrid>
 
-                            <h:outputLabel value="#{bundle.At}"/>
-                            <p:calendar value="#{monitorBean.dateEnd}" id="dateEnd"
-                                        widgetVar="dateCreateEndSearche"
-                                        navigator="true" yearRange="c-10:c+20"
-                                        showHour="true" showMinute="true" pages="3"
-                                        locale="#{sessionBean.locale}"
-                                        pattern="dd.MM.yyyy HH:mm:ss"
-                                        required="false"
-                                        requiredMessage="#{bundle.Field} #{bundle.DateEnd} #{bundle.MustBeFilled}">
-                            </p:calendar>
-                        </h:panelGrid>                                        
-                    </p:panelGrid>
+                <h:panelGrid columns="1" styleClass="without-spaces">
+                    <p:tree id="treeProcTypes" value="#{monitorBean.procTypesTree}" var="procType" selectionMode="single" 
+                            selection="#{monitorBean.selProcTypeNode}" 
+                            style="height: 140px; width: auto; overflow-y: auto;">
+                        <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+                            <h:outputText value="#{procType.nameEndElipse}"/>
+                        </p:treeNode>
+                    </p:tree>
+                    <p:contextMenu for="treeProcTypes" >
+                        <p:menuitem icon="ui-icon-close" value="#{bundle.Reset}" 
+                                    update="treeProcTypes"
+                                    actionListener="#{monitorBean.clearSelectedProcType()}"/>
+                    </p:contextMenu>
+                </h:panelGrid>
 
-                    <h:panelGrid columns="1" styleClass="without-spaces">
-                        <p:outputLabel value="#{bundle.States}:" />
-                        <p:selectManyMenu value="#{monitorBean.states}" converter="stateConvertor" var="st" showCheckbox="true">
-                            <f:selectItems value="#{processBean.metadatesObj.statesList}" var="state" itemLabel="#{state.name}" itemValue="#{state}" />
-                            <p:column>
-                                <h:outputText value="#{monitorBean.getLabelFromBundle(st.name)}" />
-                            </p:column>
-                        </p:selectManyMenu>
-                    </h:panelGrid>
+                <h:panelGrid columns="1" rendered="#{!empty(monitorBean.allResults)}" styleClass="without-spaces">
+                    <p:outputLabel value="#{bundle.Result}:" />
+                    <p:selectManyMenu value="#{monitorBean.results}" var="item" showCheckbox="true">
+                        <f:selectItems value="#{monitorBean.allResults}" var="result" itemLabel="#{result}" itemValue="#{result}" />
+                        <p:column>
+                            <h:outputText value="#{monitorBean.getLabelFromBundle(item)}" />
+                        </p:column>
+                    </p:selectManyMenu>
+                </h:panelGrid>
 
-                    <h:panelGrid columns="1" styleClass="without-spaces">
-                        <p:tree id="treeProcTypes" value="#{monitorBean.procTypesTree}" var="procType" selectionMode="single" 
-                                selection="#{monitorBean.selProcTypeNode}" 
-                                style="height: 140px; width: auto; overflow-y: auto;">
-                            <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
-                                <h:outputText value="#{procType.nameEndElipse}"/>
-                            </p:treeNode>
-                        </p:tree>
-                        <p:contextMenu for="treeProcTypes" >
-                            <p:menuitem icon="ui-icon-close" value="#{bundle.Reset}" 
-                                        update="treeProcTypes"
-                                        actionListener="#{monitorBean.clearSelectedProcType()}"/>
-                        </p:contextMenu>
-                    </h:panelGrid>
-                    
-                    <h:panelGrid columns="1" rendered="#{!empty(monitorBean.allResults)}" styleClass="without-spaces">
-                        <p:outputLabel value="#{bundle.Result}:" />
-                        <p:selectManyMenu value="#{monitorBean.results}" var="item" showCheckbox="true">
-                            <f:selectItems value="#{monitorBean.allResults}" var="result" itemLabel="#{result}" itemValue="#{result}" />
-                            <p:column>
-                                <h:outputText value="#{monitorBean.getLabelFromBundle(item)}" />
-                            </p:column>
-                        </p:selectManyMenu>
-                    </h:panelGrid>
-
-                </h:panelGrid>            
-                <p:commandButton icon="ui-icon-search" value="#{bundle.Find}"
-                             actionListener="#{monitorBean.onRefreshData()}">
-                </p:commandButton>
-            </p:panelGrid>
+            </h:panelGrid>
+            
+            <p:commandButton icon="ui-icon-search" value="#{bundle.Find}"
+                         actionListener="#{monitorBean.onRefreshData()}">
+            </p:commandButton>            
         </p:panel>
 
         <p:treeTable id="monitorTable" value="#{monitorBean.root}" var="item" 

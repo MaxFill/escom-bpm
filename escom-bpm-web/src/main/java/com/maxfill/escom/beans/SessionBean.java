@@ -24,6 +24,7 @@ import com.maxfill.model.basedict.post.Post;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.core.messages.UserMessagesFacade;
 import com.maxfill.model.WithDatesPlans;
+import com.maxfill.model.attaches.AttacheFacade;
 import com.maxfill.model.core.forms.FormsSettings;
 import com.maxfill.model.core.forms.FormsSettingsFacade;
 import com.maxfill.model.basedict.doc.Doc;
@@ -61,6 +62,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -74,6 +76,7 @@ import java.util.stream.Collectors;
 import javax.inject.Named;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
+import org.primefaces.model.chart.MeterGaugeChartModel;
 
 /* Cессионный бин приложения */
 @SessionScoped
@@ -95,6 +98,8 @@ public class SessionBean implements Serializable{
     private UserSettings userSettings = new UserSettings();
     private final List<NotifMsg> notifMessages = new ArrayList <>();
     private final List<Attaches> attaches = new ArrayList<>();
+    private BigDecimal totalfilesSize;
+    private MeterGaugeChartModel meterFileSize;
     
     //буфер бинов 
     private final ConcurrentHashMap<String, BaseView > openedBeans = new ConcurrentHashMap<>();
@@ -127,6 +132,8 @@ public class SessionBean implements Serializable{
     private FormsSettingsFacade formsSettingsFacade;
     @EJB
     private TaskFacade taskFacade;
+    @EJB
+    private AttacheFacade attacheFacade;
     
     @Inject
     private AttacheBean attacheBean;   
@@ -149,6 +156,8 @@ public class SessionBean implements Serializable{
         DashboardColumn column5 = new DefaultDashboardColumn();
         DashboardColumn column6 = new DefaultDashboardColumn();
          
+        column5.addWidget("charts");
+        
         column4.addWidget("admObjects"); 
         column4.addWidget("services");
         column4.addWidget("loggers");
@@ -158,7 +167,7 @@ public class SessionBean implements Serializable{
         
         column2.addWidget("docsExplorer");        
         column2.addWidget("processes");
-         
+        
         column1.addWidget("userParams");
         column1.addWidget("tasks");
         column1.addWidget("messages");
@@ -170,7 +179,7 @@ public class SessionBean implements Serializable{
         dashboardModel.addColumn(column5);
         dashboardModel.addColumn(column6);
 
-        temeInit();                
+        temeInit(); 
     }   
     
     /* Добавление права объекта источника в буфер  */
@@ -747,10 +756,34 @@ public class SessionBean implements Serializable{
     /* Отображение справки */
     public void onViewHelp(){
        openDialogFrm(DictFrmName.FRM_HELP, getParamsMap()); 
-    }           
-       
+    }                   
+    
     /* GETS & SETS */
 
+    public BigDecimal getTotalfilesSize() {
+        return totalfilesSize;
+    }
+    
+    public MeterGaugeChartModel getMeterFileSize() {
+        if (meterFileSize == null){
+            totalfilesSize = new BigDecimal(attacheFacade.sumFilesSize());
+            totalfilesSize = totalfilesSize.divide(new BigDecimal(1048576), 3, BigDecimal.ROUND_HALF_UP);
+            Integer filesQuote = configuration.getDiskQuote();        
+            List<Number> intervals = new ArrayList<>();
+            intervals.add(filesQuote * 30 / 100);
+            intervals.add(filesQuote * 60 / 100);
+            intervals.add(filesQuote * 80 / 100);
+            intervals.add(filesQuote * 90 / 100);
+            intervals.add(filesQuote);
+            meterFileSize = new MeterGaugeChartModel(totalfilesSize, intervals);;
+            meterFileSize.setTitle(MsgUtils.getBandleLabel("ArchiveSize"));
+            meterFileSize.setGaugeLabel("Gb");
+            meterFileSize.setGaugeLabelPosition("bottom");
+            meterFileSize.setSeriesColors("66cc66,93b75f,E7E658,cc6666,C33730");
+        }
+        return meterFileSize;
+    }
+    
     public void setOpenFormName(String openFormName) {
         this.openFormName = openFormName;
     }

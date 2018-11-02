@@ -19,13 +19,12 @@
     </ui:define>
 
     <ui:define name="centerFormContent"> 
-        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
-            <p:panelGrid columns="3" styleClass="ui-grid-col-12"
-                         columnClasses="ui-grid-col-3, ui-grid-col-6, ui-grid-col-3" >
+        <p:panel toggleable="true" header="#{bundle.Filter}" toggleSpeed="500" widgetVar="panel">
+            <h:panelGrid columns="3" styleClass="without-spaces">
                 <h:panelGroup>
                     <p:outputLabel value="#{bundle.PeriodSelected}"/>
-                    <p:panelGrid columns="2" columnClasses="col10r, ui-grid-col-10" styleClass="ui-grid-col-12">
-                        #{bundle.With}
+                    <h:panelGrid columns="2" styleClass="without-spaces">
+                        <h:outputLabel value="#{bundle.With}"/> 
                         <p:calendar value="#{docReportBean.dateStart}" id="dateStart" styleClass="ui-grid-col-12"
                                     navigator="true" yearRange="c-120:c+20"
                                     locale="#{sessionBean.locale}"
@@ -33,9 +32,8 @@
                                     requiredMessage="#{bundle.Field} [#{bundle.DateBegin}: #{bundle.With}] #{bundle.MustBeFilled}">
                             <p:ajax event="dateSelect" listener="#{docReportBean.dateStartChange()}"/>
                         </p:calendar>
-                    </p:panelGrid>
-                    <p:panelGrid columns="2" columnClasses="col10r, ui-grid-col-10" styleClass="ui-grid-col-12">
-                        #{bundle.At}
+                    
+                        <h:outputLabel value="#{bundle.At}" />
                         <p:calendar value="#{docReportBean.dateEnd}" id="dateEnd" styleClass="ui-grid-col-12"
                                     navigator="true" yearRange="c-120:c+20"
                                     locale="#{sessionBean.locale}"
@@ -43,31 +41,28 @@
                                     requiredMessage="#{bundle.Field} [#{bundle.DateEnd}: #{bundle.At}] #{bundle.MustBeFilled}">
                             <p:ajax event="dateSelect" listener="#{docReportBean.dateEndChange()}"/>
                         </p:calendar>
-                    </p:panelGrid>
+                    </h:panelGrid>
                 </h:panelGroup>
 
                 <p:tree value="#{docReportBean.tree}" var="group" 
                         selectionMode="checkbox"
-                        styleClass="ui-grid-col-12 without-spaces"
+                        style="height: 140px; width: auto; overflow-y: auto;"                        
                         selection="#{docReportBean.selectedNodes}">
-                    <p:treeNode type="tree" icon="ui-icon-note">
+                    <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
                         <h:outputText value="#{group.name}"/>
                     </p:treeNode>
                 </p:tree>
-
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
-                    <p:commandButton value="#{bundle.Print}" styleClass="ui-grid-col-12 without-spaces"
-                                     rendered="#{docReportBean.pieModel != null}"
-                                     actionListener="#{docReportBean.onPreViewReport()}">
-                    </p:commandButton>
-                </p:panelGrid>
-
-            </p:panelGrid>    
-
+            </h:panelGrid>    
+        </p:panel>
+        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
             <p:chart type="pie" model="#{docReportBean.pieModel}" 
                      rendered="#{docReportBean.pieModel != null}"                                 
                      responsive="true" styleClass="ui-grid-col-12"/>
-
+            
+            <p:commandButton value="#{bundle.Print}" style="float: right;"
+                             rendered="#{docReportBean.pieModel != null}"
+                             actionListener="#{docReportBean.onPreViewReport()}">
+            </p:commandButton>
         </p:panelGrid>
     </ui:define>
 </ui:composition>

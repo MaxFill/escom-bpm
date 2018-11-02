@@ -1,7 +1,6 @@
 package com.maxfill.escom.system.servlets;
 
 import com.maxfill.Configuration;
-import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.basedict.doc.DocFacade;
 import com.maxfill.model.basedict.folder.FoldersFacade;
 import com.maxfill.model.basedict.user.UserFacade;

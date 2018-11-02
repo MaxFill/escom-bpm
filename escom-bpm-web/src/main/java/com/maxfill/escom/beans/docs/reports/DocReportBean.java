@@ -2,27 +2,27 @@ package com.maxfill.escom.beans.docs.reports;
 
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.BaseReportBean;
-import com.maxfill.escom.beans.docs.docsTypes.docTypeGroups.DocTypeGroupsBean;
 import com.maxfill.escom.beans.system.reports.ReportPieData;
 import com.maxfill.escom.beans.users.settings.UserReportsSettings;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.basedict.doc.DocFacade;
 import com.maxfill.model.basedict.docTypeGroups.DocTypeGroups;
+import com.maxfill.model.basedict.docTypeGroups.DocTypeGroupsFacade;
 import com.maxfill.utils.DateUtils;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.Tuple;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.chart.PieChartModel;
 
@@ -33,11 +33,10 @@ public class DocReportBean extends BaseReportBean{
     
     @EJB
     private DocFacade docFacade;
+    @EJB
+    private DocTypeGroupsFacade docTypeGroupsFacade;
     
-    private TreeNode tree;
-    
-    @Inject
-    private DocTypeGroupsBean docTypeGroupsBean;
+    private final TreeNode tree = new DefaultTreeNode("", null);
 
     @Override
     protected void initBean() {
@@ -48,33 +47,53 @@ public class DocReportBean extends BaseReportBean{
             XMLGregorianCalendar dateEnd = (XMLGregorianCalendar) userReportsSettings.getSetting().get("dateEnd");
             if (dateBegin != null){
                 setDateStart(dateBegin.toGregorianCalendar().getTime());
+            } else {
+                setDateStart(new Date());
             }
             if (dateEnd != null){
                 setDateEnd(dateEnd.toGregorianCalendar().getTime());
+            } else {
+                setDateEnd(new Date());
             }
         } else {
             settings.put(getFormName(), new UserReportsSettings());
         }
     }
-
+    
+    @Override
+    public void doBeforeOpenCard(Map<String, String> params){
+        if (sourceBean == null) return;
+        docTypeGroupsFacade.findRootItems(getCurrentUser())
+                .forEach(docType->makeTree(docType, tree));
+    }
+    
     @Override
     public String onCloseCard() {
         try {
             ConcurrentHashMap<String, UserReportsSettings> settings = sessionBean.getUserSettings().getReportSetting();
             UserReportsSettings reportSettings = new UserReportsSettings();
-            GregorianCalendar dateBegin = DateUtils.dateToGregorianCalendar(getDateStart());
-            GregorianCalendar dateEnd = DateUtils.dateToGregorianCalendar(getDateEnd());
-            XMLGregorianCalendar dateBeginXML = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateBegin);
-            XMLGregorianCalendar dateEndXML = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateEnd);
+            XMLGregorianCalendar dateBeginXML = null;
+            if (getDateStart() != null){
+                GregorianCalendar dateBegin = DateUtils.dateToGregorianCalendar(getDateStart());
+                dateBeginXML = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateBegin);
+            }
+            XMLGregorianCalendar dateEndXML= null;
+            if (getDateEnd() != null){
+                GregorianCalendar dateEnd = DateUtils.dateToGregorianCalendar(getDateEnd());            
+                dateEndXML = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateEnd);
+            }
             reportSettings.getSetting().put("dateStart", dateBeginXML);
             reportSettings.getSetting().put("dateEnd", dateEndXML);
             settings.put(getFormName(), reportSettings);             
         } catch (DatatypeConfigurationException ex) {
-            Logger.getLogger(DocReportBean.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
         return super.onCloseCard();
     }    
     
+    /**
+     * Формирование диаграммы
+     */
     public void makeReport(){
         if (selectedNodes == null || selectedNodes.length == 0){
             MsgUtils.errorMsg("NeedSelectOneGroup");
@@ -94,13 +113,13 @@ public class DocReportBean extends BaseReportBean{
             return;
         }
         
-        tree.getChildren().get(0).setExpanded(false);
-        
         pieModel = new PieChartModel();
         docTypes.stream().forEach(tuple -> pieModel.set((String)tuple.get(0), (Long)tuple.get(1)));
         pieModel.setTitle(MsgUtils.getBandleLabel("DocReportCountTypes"));
         pieModel.setLegendPosition("w");
         pieModel.setShowDataLabels(true); 
+        pieModel.setShadow(false);
+        pieModel.setShowDatatip(true);
     }
 
     @Override
@@ -108,8 +127,10 @@ public class DocReportBean extends BaseReportBean{
         return DictFrmName.REP_DOC_COUNT_TYPES;
     }
     
-    private TreeNode makeTree(){
-        return docTypeGroupsBean.makeTree();
+    private void makeTree(DocTypeGroups docTypeGroup, TreeNode itemNode){
+        TreeNode treeNode = new DefaultTreeNode(docTypeGroup, itemNode);
+        docTypeGroupsFacade.findActualChilds(docTypeGroup, getCurrentUser())
+                .forEach(dt->makeTree(dt, treeNode));        
     }
     
     @Override
@@ -122,15 +143,7 @@ public class DocReportBean extends BaseReportBean{
     /* GETS & SETS */
 
     public TreeNode getTree() {
-        if (tree == null){
-            tree = makeTree();
-            tree.setExpanded(true);
-            tree.getChildren().get(0).setExpanded(true);
-        }
         return tree;
-    }
-    public void setTree(TreeNode tree) {
-        this.tree = tree;
     }
 
     @Override
@@ -141,7 +154,8 @@ public class DocReportBean extends BaseReportBean{
     @Override
     protected ArrayList<Object> prepareReportData(ArrayList<Object> reportData) {
         Map<String, Number> data = pieModel.getData();
-        data.entrySet().stream().forEach(record -> reportData.add(new ReportPieData(record.getKey(), record.getValue())));        
+        data.entrySet().stream()
+                .forEach(record->reportData.add(new ReportPieData(record.getKey(), record.getValue())));        
         return reportData;
     }
     

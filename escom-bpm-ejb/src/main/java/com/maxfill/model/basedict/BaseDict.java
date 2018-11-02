@@ -67,7 +67,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
             
     @Size(max = 255)
     @Column(name = "Name")
-    private String name;        
+    private String name = "";        
         
     @XmlTransient
     @Basic(optional = false)

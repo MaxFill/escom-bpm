@@ -210,7 +210,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     
     /* ПЕЧАТЬ: Открытие формы предввода отчёта по видам документов */
     public void openDocCountTypesReport() {
-        sessionBean.openDialogFrm(DictFrmName.REP_DOC_COUNT_TYPES, new HashMap<>());
+        sessionBean.openDialogFrm(DictFrmName.REP_DOC_COUNT_TYPES, getParamsMap());
     }    
         
     public boolean docIsLock(Doc doc) {

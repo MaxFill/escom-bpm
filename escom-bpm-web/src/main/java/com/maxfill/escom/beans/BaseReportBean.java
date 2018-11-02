@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans;
 
+import com.maxfill.escom.beans.core.BaseView;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,7 +11,7 @@ import com.maxfill.escom.utils.MsgUtils;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.chart.PieChartModel;
 
-public abstract class BaseReportBean extends BaseViewBean{
+public abstract class BaseReportBean extends BaseViewBean<BaseView>{
     private static final long serialVersionUID = -6471738532714818611L;    
             
     private Date dateStart;
@@ -45,6 +46,11 @@ public abstract class BaseReportBean extends BaseViewBean{
     }
     
     protected abstract String getReportBandleKey();
+    
+    @Override
+    public boolean isFullPageMode(){
+        return false;
+    }
     
     /* GETS & SETS */
 

@@ -57,7 +57,7 @@ public class Configuration {
 
     private Integer serverId;
     private Integer maxFileSize;
-
+    private Integer diskQuote = 1000;
     private Integer maxResultCount;
     
     private Key signKey;
@@ -104,13 +104,17 @@ public class Configuration {
             initServerLocale((String) properties.get("SERVER_LOCALE"));
             signKey = MacProvider.generateKey();
             fullSearcheConnect = (String) properties.get("FULL_SEARCHE_CONNECT_URL");
+            //diskQuote = Integer.valueOf((String) properties.get("DISK_QUOTE"));            
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
 
     /* GETS & SETS */
-    
+
+    public Integer getDiskQuote() {
+        return diskQuote;
+    }        
     public Integer getMaxResultCount() {
         return maxResultCount;
     }    
@@ -168,11 +172,6 @@ public class Configuration {
     public String getDefaultSmtpPort() {
         return defaultSmtpPort;
     }
-    /*
-    public String getRepositoryName(){
-        return REPO_FULL_NAME;
-    }
-*/
     public Key getSignKey() {
         return signKey;
     }
