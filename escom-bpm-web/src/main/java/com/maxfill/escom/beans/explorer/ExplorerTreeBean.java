@@ -66,9 +66,7 @@ public class ExplorerTreeBean extends ExplorerBean{
                 itemId = null;
             }
         }
-    }
-    
-
+    }    
     
     /**
      * Находит и выделяет папку в дереве
