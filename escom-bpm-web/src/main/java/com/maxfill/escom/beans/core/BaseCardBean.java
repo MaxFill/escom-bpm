@@ -232,7 +232,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
             Object[] messageParameters = new Object[]{item.getName(), findItem.getId()};
             String error = MessageFormat.format(MsgUtils.getMessageLabel("ObjectIsExsist"), messageParameters);
             errors.add(error);
-        }                           
+        }
     }
             
     /* Отмена изменений в объекте  */
@@ -552,6 +552,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
      * Определяет дефолтный доступ ко всем полям карточки объекта
      * @return 
      */
+    @Override
     public boolean isReadOnly(){
         boolean result = Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit());
         return result;

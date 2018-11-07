@@ -16,10 +16,9 @@ import com.maxfill.model.basedict.user.UserFacade;
 import com.maxfill.services.Services;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.ItemUtils;
-import java.util.Map;
+import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -73,7 +72,7 @@ public class NotificationServiceImp implements NotificationService{
         );
         detailInfo.append("Send task notifications: ").append(countTask).append(SysParams.LINE_SEPARATOR);
         
-        Set<String> errors = new HashSet<>();
+        Set<Tuple> errors = new HashSet<>();
         AtomicInteger countTimers = new AtomicInteger(0);
         procTimerFacade.findActualTimers().forEach(timer -> {
                 countTimers.incrementAndGet();

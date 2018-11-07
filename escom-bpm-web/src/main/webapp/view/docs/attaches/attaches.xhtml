@@ -107,8 +107,7 @@
                                         process="versionsTBL"
                                         disabled="#{_bean.isReadOnly() or _bean.editedItem.mainAttache.equals(attache)}"
                                         update="versionsTBL"
-                                        actionListener="#{_bean.makeCurrentVersion(attache)}">
-                                <p:confirm header="#{bundle.ChangeVersion}" message="#{bundle.ChangeCurrentVersion}" icon="fa-question-circle" />
+                                        actionListener="#{_bean.makeCurrentVersion(attache)}">                                
                             </p:menuitem> 
                             <p:separator />
                             <p:menuitem icon="ui-icon-trash" value="#{bundle.Delete}"

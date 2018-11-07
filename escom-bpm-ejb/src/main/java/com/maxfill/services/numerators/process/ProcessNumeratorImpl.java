@@ -9,6 +9,7 @@ import com.maxfill.model.basedict.processType.ProcessType;
 import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import com.maxfill.services.numerators.NumeratorBase;
 import com.maxfill.utils.EscomUtils;
+import com.maxfill.utils.Tuple;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -86,7 +87,7 @@ public class ProcessNumeratorImpl extends NumeratorBase implements ProcessNumera
      * @param errors 
      */
     @Override
-    public void registrate(Process process, Set<String> errors){
+    public void registrate(Process process, Set<Tuple> errors){
         if (!errors.isEmpty()) return;
         
         Date dateReg = process.getItemDate();
@@ -96,7 +97,7 @@ public class ProcessNumeratorImpl extends NumeratorBase implements ProcessNumera
         }                
         NumeratorPattern numPattern = processTypesFacade.getProcTypeForOpt(process.getOwner()).getNumerator();
         if (numPattern == null){
-            errors.add("NUMERATOR_NO_SET");
+            errors.add(new Tuple("NUMERATOR_NO_SET", new Object[]{}));
             return;
         }
         Map<String, Object> params = new HashMap<>();

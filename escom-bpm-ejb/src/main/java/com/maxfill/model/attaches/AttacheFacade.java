@@ -50,14 +50,11 @@ public class AttacheFacade extends BaseFacade<Attaches>{
         return ((Long) query.getSingleResult()).intValue();
     }
     
-    public List<Attaches> findAttachesByGUID(String guid){
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery cq= builder.createQuery();
-        Root<Attaches> root = cq.from(Attaches.class);       
-        Predicate crit1 = builder.equal(root.get(Attaches_.guid), guid);        
-        cq.select(root).where(builder.and(crit1));
-        Query query = em.createQuery(cq);
-        return query.getResultList();
+    public List findAttachesByGUID(String guid){
+        List results = em.createNamedQuery("Attaches.findByGUID")
+            .setParameter("paramGUID", guid)
+            .getResultList();        
+        return results;
     }
     
     public List<Attaches> findAttachesByDoc(Doc doc){

@@ -46,6 +46,7 @@ import com.maxfill.services.numerators.doc.DocNumeratorService;
 import com.maxfill.services.numerators.process.ProcessNumeratorService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
+import com.maxfill.utils.Tuple;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.xml.bind.JAXB;
@@ -60,7 +61,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -69,8 +69,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -346,7 +344,7 @@ public class WorkflowImpl implements Workflow {
     /* *** СХЕМА *** */
     
     @Override
-    public Scheme initScheme(Process process, ProcTempl defaultTempl, User currentUser, Set<String> errors){
+    public Scheme initScheme(Process process, ProcTempl defaultTempl, User currentUser, Set<Tuple> errors){
         Scheme scheme = process.getScheme();
         if (scheme == null){
             scheme = new Scheme(process);
@@ -439,49 +437,49 @@ public class WorkflowImpl implements Workflow {
     }
 
     @Override
-    public void validateScheme(Scheme scheme, Boolean checkTasks, Set<String> errors) {       
+    public void validateScheme(Scheme scheme, Boolean checkTasks, Set<Tuple> errors) {       
         StartElem startElem = scheme.getElements().getStartElem();        
         if (startElem == null && scheme.getElements().getEnters().isEmpty()){
-            errors.add("DiagramNotHaveStart");
+            errors.add(new Tuple("DiagramNotHaveStart", new Object[]{}));
         }
         if (scheme.getElements().getExits().isEmpty()){
-            errors.add("DiagramNotHaveExit");
+            errors.add(new Tuple("DiagramNotHaveExit", new Object[]{}));
         }
         if (scheme.getElements().getConnectors().isEmpty()){
-            errors.add("DiagramNotHaveConnectors");
+            errors.add(new Tuple("DiagramNotHaveConnectors", new Object[]{}));
         }
         
         if (scheme.getElements().getTasks().isEmpty() && MapUtils.isEmpty(scheme.getElements().getSubprocesses())){
-            errors.add("DiagramNotHaveTasks");
+            errors.add(new Tuple("DiagramNotHaveTasks", null));
         }
         if (scheme.getProcess().getCurator() == null || scheme.getProcess().getCurator().getEmployee() == null){
-            errors.add("CuratorNotSet");
+            errors.add(new Tuple("CuratorNotSet", null));
         }
         Date planEndDate = scheme.getProcess().getPlanExecDate();
         if (checkTasks){            
             for(Task task : scheme.getTasks()){ 
                 if (task.getOwner()==null && task.getRoleInProc()==null){
-                    errors.add("TaskNoHaveExecutor");
+                    errors.add(new Tuple("TaskNoHaveExecutor", new Object[]{task.getId(), task.getName()}));
                 }
                 if (StringUtils.isBlank(task.getName())){
-                    errors.add("TaskNoHaveName");
+                    errors.add(new Tuple("TaskNoHaveName", new Object[]{task.getId(), task.getName()}));
                 }
                 switch (task.getDeadLineType()){
                     case "data":{
                         if (task.getPlanExecDate() == null){
-                            errors.add("TasksNoHaveDeadline");
+                            errors.add(new Tuple("TasksNoHaveDeadline", new Object[]{task.getId(), task.getName()}));
                         } else 
                             if (task.getPlanExecDate().before(new Date())){
-                                errors.add("DeadlineTaskInPastTime");
+                                errors.add(new Tuple("DeadlineTaskInPastTime", new Object[]{task.getId(), task.getName()}));
                             } else 
                                 if (task.getPlanExecDate().after(planEndDate)) { 
-                                    errors.add("TaskExecTimeLongerThanProcessDeadLine");
+                                    errors.add(new Tuple("TaskExecTimeLongerThanProcessDeadLine", new Object[]{task.getId(), task.getName()}));
                                 }
                         break;
                     }
                     case "delta":{
                         if (task.getDeltaDeadLine() == null || task.getDeltaDeadLine() == 0){
-                            errors.add("TasksNoHaveDeadline");
+                            errors.add(new Tuple("TasksNoHaveDeadline", new Object[]{task.getId(), task.getName()}));
                         }
                     }        
                 }           
@@ -491,19 +489,19 @@ public class WorkflowImpl implements Workflow {
         scheme.getElements().getSubprocesses().entrySet().stream()
                 .filter(rec->rec.getValue().getProctypeId() == null)
                 .findFirst()
-                .map(rec->errors.add("IncorrectSubProcessType"));
+                .map(rec->errors.add(new Tuple("IncorrectSubProcessType", new Object[]{rec.getValue().getCaption()})));
         scheme.getElements().getConditions().entrySet().stream()
                 .filter(rec->rec.getValue().getConditonId() == null)
                 .findFirst()
-                .map(rec->errors.add("IncorrectConditionRouteProcess"));
+                .map(rec->errors.add(new Tuple("IncorrectConditionRouteProcess", new Object[]{rec.getValue().getCaption()})));
         scheme.getElements().getProcedures().entrySet().stream()
                 .filter(rec->rec.getValue().getProcedureId() == null)
                 .findFirst()
-                .map(rec->errors.add("IncorrectProcedureRouteProcess"));
+                .map(rec->errors.add(new Tuple("IncorrectProcedureRouteProcess", new Object[]{rec.getValue().getCaption()})));
         scheme.getElements().getStates().entrySet().stream()
                 .filter(rec->rec.getValue().getDocStatusId() == null)
                 .findFirst()
-                .map(rec->errors.add("ProcedureSettingStateContainsIncorrectValue"));
+                .map(rec->errors.add(new Tuple("ProcedureSettingStateContainsIncorrectValue", new Object[]{rec.getValue().getCaption()})));
         //ToDo! другие проверки!
     }
 
@@ -515,7 +513,7 @@ public class WorkflowImpl implements Workflow {
      * @param errors 
      */
     @Override
-    public void clearScheme(Process process, User currentUser, Map<String, Object> params, Set<String> errors){
+    public void clearScheme(Process process, User currentUser, Map<String, Object> params, Set<Tuple> errors){
         Scheme scheme = process.getScheme();
         if (scheme == null) return;
         clearElements(scheme);
@@ -558,12 +556,11 @@ public class WorkflowImpl implements Workflow {
      * @param errors 
      * @return  
      */
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     @Override
-    public Set<BaseDict> executeTask(Process process, Task task, Result result, User currentUser, Map<String, Object> params, Set<String> errors){        
+    public Set<BaseDict> executeTask(Process process, Task task, Result result, User currentUser, Map<String, Object> params, Set<Tuple> errors){        
         Set<BaseDict> forShow = new HashSet<>(); 
         if (DictStates.STATE_RUNNING != process.getState().getCurrentState().getId()){
-            errors.add("TaskCannotCompletedBecauseProcessStopped");
+            errors.add(new Tuple("TaskCannotCompletedBecauseProcessStopped", new Object[]{}));
             return forShow;
         }        
         
@@ -606,11 +603,11 @@ public class WorkflowImpl implements Workflow {
     }
     
     @Override
-    public void executeTimer(ProcTimer procTimer, Set<String> errors){
+    public void executeTimer(ProcTimer procTimer, Set<Tuple> errors){
         User admin = userFacade.getAdmin();
         Process process = processFacade.find(procTimer.getProcess().getId());
         if (process == null){            
-            errors.add("WorkflowIncorrectData");
+            errors.add(new Tuple("ProcessNotFound", new Object[]{procTimer.getProcess().getId()}));
             return;
         }
         Scheme scheme = process.getScheme();
@@ -652,7 +649,7 @@ public class WorkflowImpl implements Workflow {
      * @param tasks
      * @param scheme 
      */
-    private void startTasks(Process process, Set<Task> tasks, User currentUser, Map<String, Object> params, Set<String> errors){
+    private void startTasks(Process process, Set<Task> tasks, User currentUser, Map<String, Object> params, Set<Tuple> errors){
         if (tasks.isEmpty()) return;
         boolean sendNotAgree = params.containsKey(ProcessParams.PARAM_SEND_NOTAGREE);
         tasks.stream()
@@ -685,7 +682,7 @@ public class WorkflowImpl implements Workflow {
                         taskFacade.addLogEvent(task, DictLogEvents.TASK_ASSIGNED, task.getAuthor());
                         task.getState().setCurrentState(stateFacade.getRunningState());
                     } else {
-                        errors.add("OneTasksFailedSetRole");
+                        errors.add(new Tuple("OneTasksFailedSetRole", new Object[]{task.getId(), task.getName()}));
                     }
                 }
             });
@@ -695,7 +692,7 @@ public class WorkflowImpl implements Workflow {
      * Запуск подпроцессов на выполнение
      * @param exeSubProc 
      */
-    private Set<Process> initSubProcesses(Process mainProcess, Set<SubProcessElem> exeSubProc, Map<String, Object> params, User curUser, Set<String> errors){        
+    private Set<Process> initSubProcesses(Process mainProcess, Set<SubProcessElem> exeSubProc, Map<String, Object> params, User curUser, Set<Tuple> errors){        
         if (exeSubProc.isEmpty()) return new HashSet<>();
         Set<Process> processesForShow = new HashSet<>();
         exeSubProc.forEach(subProcElem->{
@@ -703,7 +700,7 @@ public class WorkflowImpl implements Workflow {
             if (subProcess == null){
                 ProcessType owner = processTypeFacade.find(subProcElem.getProctypeId());
                 if (owner == null){
-                    errors.add("WorkflowIncorrectData"); //ToDO надо передаль сообщения на возможность формирования детальной информации ObjectWithIDNotFound
+                    errors.add(new Tuple("ObjectWithIDNotFound", new Object[]{"ProcessType", subProcElem.getProctypeId()})); 
                     return;
                 }
                 subProcess = processFacade.createSubProcess(owner, mainProcess, curUser, subProcElem);                
@@ -737,9 +734,8 @@ public class WorkflowImpl implements Workflow {
      * @param errors 
      * @return  
      */
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     @Override
-    public Set<BaseDict> start(Process process, User currentUser, Map<String, Object> params, Set<String> errors) {  
+    public Set<BaseDict> start(Process process, User currentUser, Map<String, Object> params, Set<Tuple> errors) {  
         Scheme scheme = process.getScheme();
         if (scheme == null){            
             scheme = initScheme(process, null, currentUser, errors);            
@@ -853,7 +849,7 @@ public class WorkflowImpl implements Workflow {
      * Обработка выхода из процесса
      * @param exitElem 
      */
-    private void finish(Process process, ExitElem exitElem, Set<SubProcessElem> exeSubProc, User currentUser, Set<String> errors) {
+    private void finish(Process process, ExitElem exitElem, Set<SubProcessElem> exeSubProc, User currentUser, Set<Tuple> errors) {
         if (exitElem.getFinalize()){
             State state = stateFacade.find(exitElem.getFinishStateId());
             process.getState().setCurrentState(state);            
@@ -888,9 +884,8 @@ public class WorkflowImpl implements Workflow {
      * @param currentUser 
      * @return - возвращает список объектов, которые должны быть показаны пользователю
      */
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     @Override
-    public Set<BaseDict> run(Process process, WFConnectedElem startElement, Set<SubProcessElem> exeSubProc, User currentUser, Map<String, Object> params, Set<String> errors) {   
+    public Set<BaseDict> run(Process process, WFConnectedElem startElement, Set<SubProcessElem> exeSubProc, User currentUser, Map<String, Object> params, Set<Tuple> errors) {   
         Set<BaseDict> forShow = new HashSet<>();
         Set<Task> exeTasks = new HashSet<>();        
         doRun(startElement.getAnchors(), process, exeTasks, exeSubProc, currentUser, params, errors);
@@ -918,7 +913,7 @@ public class WorkflowImpl implements Workflow {
      * @param tasks
      * @param errors 
      */
-    private void doRun(Set<AnchorElem> anchors, Process process, Set<Task> exeTasks, Set<SubProcessElem> exeSubProc, User currentUser, Map<String, Object> params, Set<String> errors){
+    private void doRun(Set<AnchorElem> anchors, Process process, Set<Task> exeTasks, Set<SubProcessElem> exeSubProc, User currentUser, Map<String, Object> params, Set<Tuple> errors){
         Scheme scheme = process.getScheme();
         anchors.stream()
                 .filter(anchor->anchor.isSource())
@@ -1172,7 +1167,7 @@ public class WorkflowImpl implements Workflow {
      * @param scheme
      * @param errors 
      */    
-    private StatusesDoc changingDoc(StatusElem stateElem, Scheme scheme, Set<String> errors){
+    private StatusesDoc changingDoc(StatusElem stateElem, Scheme scheme, Set<Tuple> errors){
         final StatusesDoc status = getStatus(stateElem.getDocStatusId(), errors);
         final State state = getNewDocState(stateElem, errors);
         if (!errors.isEmpty()) return null;
@@ -1202,20 +1197,20 @@ public class WorkflowImpl implements Workflow {
         return status;
     }              
     
-    private State getNewDocState(StatusElem stateElem, Set<String> errors){
+    private State getNewDocState(StatusElem stateElem, Set<Tuple> errors){
         if (stateElem.getDocStateId() == null) return null;
         State state = stateFacade.find(stateElem.getDocStateId());
         if (state == null){
-            errors.add("StateProcessRouteNotFound");
+            errors.add(new Tuple("StateProcessRouteNotFound", new Object[]{stateElem.getDocStateId()}));
         }
         return state;
     }
     
-    private StatusesDoc getStatus(Integer docStatusId, Set<String> errors ){        
+    private StatusesDoc getStatus(Integer docStatusId, Set<Tuple> errors ){        
         if (docStatusId == null) return null;
         StatusesDoc status = statusesFacade.find(docStatusId);
         if (status == null){
-            errors.add("StateProcessRouteNotFound");            
+            errors.add(new Tuple("StateProcessRouteNotFound", new Object[]{docStatusId}));            
         }
         return status;
     }
@@ -1236,7 +1231,7 @@ public class WorkflowImpl implements Workflow {
      * @param scheme
      * @param errors 
      */
-    private void executeProcedure(ProcedureElem procedureElem, Scheme scheme, Set<String> errors){
+    private void executeProcedure(ProcedureElem procedureElem, Scheme scheme, Set<Tuple> errors){
         Procedure procedure = procedureFacade.find(procedureElem.getProcedureId());
         if (procedure == null) return;
         switch (procedure .getMethod()) {
@@ -1292,11 +1287,11 @@ public class WorkflowImpl implements Workflow {
      * @param condition
      * @return 
      */
-    private boolean checkCondition(ConditionElem conditionEl, Scheme scheme, Map<String, Object> params, Set<String> errors){
+    private boolean checkCondition(ConditionElem conditionEl, Scheme scheme, Map<String, Object> params, Set<Tuple> errors){
         Boolean result = false;
         Condition condition = (Condition)conditionFacade.find(conditionEl.getConditonId());
         if (condition == null){
-            errors.add("IncorrectConditionRouteProcess");
+            errors.add(new Tuple("IncorrectConditionRouteProcess", new Object[]{conditionEl.getConditonId(), scheme.getProcess().getName()}));
             return result;
         }
         switch (condition.getMethod()){

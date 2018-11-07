@@ -9,18 +9,33 @@
 
     <ui:define name="page_body">
         <p:tab title="#{bundle.Explorer}"> 
-            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12">
-                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12">
-                    <p:outputLabel value="#{bundle.Type}:" />
-                    <p:selectOneMenu value="#{_bean.editedItem.type}" id="type" converter="partnerTypesConvertor"
-                                     disabled="#{_bean.isReadOnly()}"                                     
-                                     filter="true" 
-                                     onchange="return itemChange = 1;"                                 
-                                     requiredMessage="#{bundle.Field} [#{bundle.Type}] #{bundle.MustBeFilled}">
-                        <f:selectItems value="#{partnerTypesBean.findAll()}" var="types" itemLabel="#{types.name}" itemValue="#{types}" />
-                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}"/>                         
-                    </p:selectOneMenu>
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12">                
+                <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces">
+                    <h:panelGrid columns="1" styleClass="ui-grid-col-12 without-spaces">
+                        <p:outputLabel value="#{bundle.Type}:" />
+                        <p:selectOneMenu value="#{_bean.editedItem.type}" id="type" converter="partnerTypesConvertor"
+                                         disabled="#{_bean.isReadOnly()}"                                     
+                                         filter="true" 
+                                         onchange="return itemChange = 1;"                                 
+                                         requiredMessage="#{bundle.Field} [#{bundle.Type}] #{bundle.MustBeFilled}">
+                            <f:selectItems value="#{partnerTypesBean.findAll()}" var="types" itemLabel="#{types.name}" itemValue="#{types}" />
+                            <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}"/>                         
+                        </p:selectOneMenu>
+                    </h:panelGrid>
                     
+                    <h:panelGrid columns="1" styleClass="without-spaces">
+                            <p:outputLabel value="#{bundle.Code}:" indicateRequired="true"/>            
+                            <p:inputText value="#{_bean.editedItem.code}" id="code"
+                                         disabled="#{_bean.isReadOnly()}"
+                                         required="#{param['isRequired'] == 'true'}" 
+                                         maxlength="50"
+                                         onkeypress="checkEsc();"
+                                         requiredMessage="#{bundle.Field} [#{bundle.Code}] #{bundle.MustBeFilled}"                                 
+                                         onchange="return itemChange = 1;"/>
+                    </h:panelGrid>
+                </h:panelGrid>
+
+                <h:panelGrid columns="1" styleClass="ui-grid-col-12 without-spaces">
                     <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
                     <p:inputText value="#{_bean.editedItem.name}" id="nameItem"
                                  placeholder="#{bundle.EnterPartnerWithoutQuotation}"
@@ -31,16 +46,7 @@
                                  styleClass="ui-grid-col-12"
                                  onchange="return itemChange = 1;">
                     </p:inputText>
-
-                    <p:outputLabel value="#{bundle.Code}:" indicateRequired="true"/>            
-                    <p:inputText value="#{_bean.editedItem.code}" id="code"
-                                 disabled="#{_bean.isReadOnly()}"
-                                 required="#{param['isRequired'] == 'true'}" 
-                                 maxlength="50"
-                                 onkeypress="checkEsc();"
-                                 requiredMessage="#{bundle.Field} [#{bundle.Code}] #{bundle.MustBeFilled}"                                 
-                                 onchange="return itemChange = 1;"/>                                        
-
+                    
                     <p:outputLabel value="#{bundle.FullName}:" />                
                     <h:panelGroup styleClass="ui-grid-col-12">
                         <div class="ui-inputgroup">
@@ -57,10 +63,35 @@
                                              actionListener="#{partnersCardBean.makeFullName()}"/>
                         </div>
                     </h:panelGroup>
-                </p:panelGrid>
+                </h:panelGrid>
+
+                <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces">  
+                    <h:panelGrid columns="1" styleClass="without-spaces">
+                        <p:outputLabel value="#{bundle.Inn}:" indicateRequired="true"/>            
+                        <p:inputMask id="inn" value="#{_bean.editedItem.inn}" 
+                                     mask="9999999999"
+                                     disabled="#{_bean.isReadOnly()}"
+                                     required="#{param['isRequired'] == 'true'}"                                      
+                                     onkeypress="checkEsc();"
+                                     requiredMessage="#{bundle.Field} [#{bundle.Inn}] #{bundle.MustBeFilled}"                                 
+                                     onchange="return itemChange = 1;">                            
+                        </p:inputMask>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" styleClass="without-spaces">
+                        <p:outputLabel value="#{bundle.Kpp}:" indicateRequired="true"/>            
+                        <p:inputMask id="kpp" value="#{_bean.editedItem.kpp}"
+                                     mask="999999999"
+                                     disabled="#{_bean.isReadOnly()}"
+                                     required="#{param['isRequired'] == 'true'}"                                      
+                                     onkeypress="checkEsc();"
+                                     requiredMessage="#{bundle.Field} [#{bundle.Kpp}] #{bundle.MustBeFilled}"                                 
+                                     onchange="return itemChange = 1;">
+                        </p:inputMask>
+                    </h:panelGrid>
+                </h:panelGrid>
                 
-                <p:panelGrid columns="2" columnClasses="ui-grid-col-6 col-padding, ui-grid-col-6 col-padding" styleClass="ui-grid-col-12 without-spaces" >
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces"> 
+                    <h:panelGrid columns="1" styleClass="without-spaces" >
                         <p:outputLabel value="#{bundle.EMail}:" />
                         <p:inputText id="email" value="#{_bean.editedItem.email}" 
                                      onkeypress="checkEsc();"
@@ -72,17 +103,17 @@
                             <p:keyFilter regEx="/[a-zA-Zа-яА-Я_0-9\.\-@]/i" preventPaste="false"/>
                             <f:validator validatorId="escom.emailValidator" />
                         </p:inputText>
-                    </p:panelGrid>
+                    </h:panelGrid>
 
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                    <h:panelGrid columns="1" styleClass="without-spaces" >
                         <p:outputLabel value="#{bundle.Phone}:" />
                         <p:inputMask id="phone" value="#{_bean.editedItem.phone}"
                                      disabled="#{_bean.isReadOnly()}"
                                      mask="+9 (999) 999-9999" styleClass="ui-grid-col-12"                                 
                                      onkeypress="checkEsc();"
                                      onchange="return itemChange = 1;"/>
-                    </p:panelGrid>
-                </p:panelGrid>
+                    </h:panelGrid>
+                </h:panelGrid>
             </p:panelGrid>
         </p:tab> 
         

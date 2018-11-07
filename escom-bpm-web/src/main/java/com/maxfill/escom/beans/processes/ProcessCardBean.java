@@ -33,6 +33,7 @@ import com.maxfill.services.workflow.Workflow;
 import com.maxfill.services.worktime.WorkTimeService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
+import com.maxfill.utils.Tuple;
 import java.text.DateFormat;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
@@ -235,7 +236,6 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             getScheme().getTimers().removeAll(forRemoveTimers);
         }
         
-        PrimeFaces.current().ajax().update("mainFRM:mainTabView:accord");
         PrimeFaces.current().ajax().update("mainFRM:explToolBar");
         onItemChange();
     }
@@ -272,7 +272,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         onRun(runOptions.get(0).getName());
     }
     public void onRun(String option){
-        Set<String> errors = new HashSet<>();
+        Set<Tuple> errors = new HashSet<>();
         Process process = getEditedItem();
         calculateDeadline(errors);
         validatePlanDate(process, errors);
@@ -280,7 +280,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         processFacade.validateCanRun(process, getCurrentUser(), errors);
         workflow.initScheme(process, null, getCurrentUser(), errors);
         if (!errors.isEmpty()){
-            MsgUtils.showErrorsMsg(errors);
+            MsgUtils.showTupleErrsMsg(errors);
             return;
         }
         onItemChange();
@@ -290,7 +290,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             process = processFacade.find(getEditedItem().getId());
             forShow = new ArrayList<>(workflow.start(process, getCurrentUser(), params, errors));
             if (!errors.isEmpty()){
-                MsgUtils.showErrorsMsg(errors);
+                MsgUtils.showTupleErrsMsg(errors);
             } else {
                 getEditedItem().getState().setCurrentState(process.getState().getCurrentState());
                 getEditedItem().setScheme(process.getScheme());
@@ -328,14 +328,14 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * @param planDate 
      * @param errors 
      */
-    public void validatePlanDate(Process process, Set<String> errors){                
+    public void validatePlanDate(Process process, Set<Tuple> errors){                
         Date planDate = process.getPlanExecDate();
         Date today = new Date();
         if (today.after(planDate)){
             FacesContext context = FacesContext.getCurrentInstance();
             UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:planEndDate");
             input.setValid(false);
-            errors.add("DeadlineProcessInPastTime");            
+            errors.add(new Tuple("DeadlineProcessInPastTime", new Object[]{}));            
             context.validationFailed();
         }
     }    
@@ -343,7 +343,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     /**
      * Проверка снятых замечаний
      */
-    private void validateRemarks(Doc doc,  Set<String> errors){
+    private void validateRemarks(Doc doc,  Set<Tuple> errors){
         if (doc == null) return;
         doc = docBean.getLazyFacade().find(doc.getId());        
         Remark remark = doc.getDetailItems().stream()
@@ -351,7 +351,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
                 .findFirst()
                 .orElse(null);
         if (remark != null){
-            errors.add("CannotStartProcessUnprocessedRemarks");
+            errors.add(new Tuple("CannotStartProcessUnprocessedRemarks", new Object[]{}));
         }
     }    
     
@@ -438,11 +438,11 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * Вычисление планового срока исполнения
      */
     public void calculateDeadline(){        
-        Set<String> errors = new HashSet<>();
+        Set<Tuple> errors = new HashSet<>();
         Date planDate = calculateDeadline(errors);
         
         if (!errors.isEmpty()){
-            MsgUtils.showErrorsMsg(errors);
+            MsgUtils.showTupleErrsMsg(errors);
             return;
         }
         
@@ -450,13 +450,13 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         MsgUtils.succesFormatMsg("DeadlineCalcWorkingCalendar", new Object[]{strDate});
     }
       
-    public Date calculateDeadline(Set<String> errors ){
+    public Date calculateDeadline(Set<Tuple> errors ){
         Process process = getEditedItem();
         if (deadLineDeltaDay == 0 && deadLineDeltaHour == 0){
-            errors.add("DeadlineIncorrect");            
+            errors.add(new Tuple("DeadlineIncorrect", new Object[]{}));            
         }
         if (process.getCompany() == null){
-            errors.add("CompanyNotSet");
+            errors.add(new Tuple("CompanyNotSet", new Object[]{}));
         }
         int deltasec = deadLineDeltaDay * 86400;
         deltasec = deltasec + deadLineDeltaHour * 3600;

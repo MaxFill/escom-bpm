@@ -2,16 +2,17 @@ package com.maxfill.model.basedict.assistant;
 
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.process.Process_;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.user.User;
-import java.util.Comparator;
-import static java.util.Comparator.naturalOrder;
-import static java.util.Comparator.nullsFirst;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -79,5 +80,25 @@ public class AssistantFacade extends BaseDictFacade<Assistant, User, AssistantLo
                         && assist.getUser().getStaff() != null)
                 .map(assist->assist.getUser().getStaff())                
                 .collect(Collectors.toList());
+    }
+    
+    /**
+     * Формирует список руководителей для указанного сотрудника
+     * @param slave
+     * @param currentUser
+     * @return 
+     */
+    public List<User> findChiefsByUser(User slave, User currentUser){
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(User.class);
+        Root root = cq.from(Assistant.class);        
+        Predicate crit2 = builder.equal(root.get("deleted"), false);
+        Predicate crit3 = builder.equal(root.get(Assistant_.user), slave);
+        Predicate crit4 = builder.equal(root.get("actual"), true);
+        cq.select(root.get("owner")).where(builder.and(crit2, crit3, crit4));        
+        TypedQuery<User> query = em.createQuery(cq);         
+        return query.getResultStream()
+                    .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
+                    .collect(Collectors.toList());
     }
 }

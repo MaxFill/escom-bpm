@@ -1,6 +1,7 @@
 package com.maxfill.escom.utils;
 
 import com.maxfill.dictionary.DictBundles;
+import com.maxfill.utils.Tuple;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -81,7 +82,15 @@ public final class MsgUtils{
      * @param errorKeys список ключей для ресурса msg
      */
     public static void showErrorsMsg(Set<String> errorKeys){
-         errorKeys.stream().limit(10).forEach(error->errorMsg(error));
+        errorKeys.stream().limit(10).forEach(error->errorMsg(error));
+    }
+    
+    /**
+     * Отображение 10-ти сообщений об ошибке. На входе список ключей для ресурса msg
+     * @param tuples - список ключей для ресурса msg и значения new Object[]{}
+     */
+    public static void showTupleErrsMsg(Set<Tuple> tuples){
+        tuples.stream().limit(10).forEach(tuple->errorFormatMsg((String)tuple.a, (Object[])tuple.b));
     }
     
     /**

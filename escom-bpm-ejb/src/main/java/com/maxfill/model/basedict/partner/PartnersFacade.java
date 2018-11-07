@@ -23,6 +23,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import org.apache.commons.lang.StringUtils;
 
 /* Контрагенты */
 @Stateless
@@ -70,6 +71,28 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
         Query q = em.createQuery(cq);       
         return q.getResultList();
     }
+    
+    @Override
+    protected void dublicateCheckAddCriteria(CriteriaBuilder builder, Root<Partner> root, List<Predicate> criteries, Partner partner){
+        boolean setInnKpp = false;
+        
+        if (StringUtils.isNotBlank(partner.getInn())){
+            criteries.add(builder.equal(root.get(Partner_.inn), partner.getInn()));
+            setInnKpp = true;
+        }
+        if (StringUtils.isNotBlank(partner.getKpp())){
+            criteries.add(builder.equal(root.get(Partner_.kpp), partner.getKpp()));
+            setInnKpp = true;
+        }
+        
+        if (!setInnKpp){
+            criteries.add(builder.equal(root.get("name"), partner.getName()));
+        }
+        
+        if (partner.getId() != null){
+            criteries.add(builder.notEqual(root.get("id"), partner.getId()));
+        }
+    } 
     
     @Override
     protected void detectParentOwner(Partner partner, BaseDict parent, BaseDict owner){

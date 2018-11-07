@@ -81,7 +81,7 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
         
     public Staff() {
     }
-
+    
     @Override
     public StaffStates getState() {
         return state;

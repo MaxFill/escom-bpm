@@ -37,13 +37,13 @@
                          actionListener="#{userSettingsBean.saveSettings()}"/>
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" dynamic="true">
             <p:tab title="#{bundle.password}">
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
+                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
                                     
-                    <p:panelGrid columns="1" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
+                    <p:panelGrid columns="1" rendered="#{!sessionBean.currentUser.ldap}" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
                         <p:outputLabel value="#{msg.PasswordSecurityInfo}"/>
                     </p:panelGrid>
                 
-                    <p:panelGrid columns="2" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}"
+                    <p:panelGrid columns="2" rendered="#{!sessionBean.currentUser.ldap}"
                                  columnClasses="col-padding"
                                  styleClass="ui-grid-col-5 ui-panelgrid-blank col-padding">
                         <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
@@ -68,12 +68,12 @@
 
                     <p:separator/>
                     <p:commandButton id="btnMake" icon="ui-icon-circle-check" value="#{bundle.ChangePassword}"                            
-                            rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}"
+                            rendered="#{!sessionBean.currentUser.ldap}"
                             actionListener="#{userSettingsBean.onChangePassword()}">
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>
                     
-                    <p:outputPanel style="width: 400px; height: 200px;" rendered="#{sessionBean.currentUser.LDAPname.isEmpty()}">
+                    <p:outputPanel style="width: 400px; height: 200px;" rendered="#{sessionBean.currentUser.ldap}">
                         <br/>
                         <h3>#{msg.UsedLDAPauth}</h3>
                     </p:outputPanel>
@@ -81,7 +81,7 @@
             </p:tab>
             
             <p:tab title="#{bundle.Other}">
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}" styleClass="ui-grid-col-12 col-padding">
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" rendered="#{!sessionBean.currentUser.ldap}" styleClass="ui-grid-col-12 col-padding">
                     <p:outputLabel value="#{bundle.UseSimpleCard}:"/>
                     <p:selectBooleanCheckbox value="#{sessionBean.userSettings.simpleCard}" />
                 </p:panelGrid>

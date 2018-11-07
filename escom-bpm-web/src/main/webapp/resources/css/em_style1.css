@@ -110,6 +110,10 @@ body{
     background-color: yellow !important;
 }
 
+.expired{
+    color: red !important;
+}
+
 .subProcess{
     font-weight: bold !important;
     font-style: italic !important;

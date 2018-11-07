@@ -21,6 +21,7 @@ import java.util.Set;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 
 /* Контрагенты */
@@ -57,15 +58,26 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
             errors.add(error);
         }
         
-        existPartner = getFacade().findByNameAndTypeExclId(partner.getName(), partner.getType(), partnerId);
-        if (!existPartner.isEmpty()) {
-            UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:nameItem");
-            input.setValid(false);
-            Object[] params = new Object[]{getTitleName()};
-            String error = MessageFormat.format(MsgUtils.getMessageLabel("PartnerIsExsist"), params);
-            errors.add(error);
-        }
-        //super.checkItemBeforeSave(partner, context, errors);
+        if (StringUtils.isBlank(partner.getInn()) && StringUtils.isBlank(partner.getKpp())){ //то проверка по имени
+            existPartner = getFacade().findByNameAndTypeExclId(partner.getName(), partner.getType(), partnerId);
+            if (!existPartner.isEmpty()) {
+                UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:nameItem");
+                input.setValid(false);
+                Object[] params = new Object[]{getTitleName()};
+                String error = MessageFormat.format(MsgUtils.getMessageLabel("PartnerIsExsist"), params);
+                errors.add(error);
+            }
+        } else {        
+            Tuple result = getFacade().findDublicateExcludeItem(partner);   //проверка по ИНН КПП
+            if (result.b != null) {
+                UIInput inn = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:inn");
+                UIInput kpp = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:kpp");
+                inn.setValid(false);
+                kpp.setValid(false);
+                String error = MessageFormat.format(MsgUtils.getMessageLabel("PartnerIsExsist"), new Object[]{partner.getInn(), partner.getKpp()});
+                errors.add(error);
+            }
+        }    
     }
     
     @Override

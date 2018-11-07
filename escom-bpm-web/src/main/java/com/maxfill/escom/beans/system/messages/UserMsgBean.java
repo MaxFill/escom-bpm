@@ -127,7 +127,7 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
         if (process != null){
             filters.put("process", process);
         } else 
-            if (doc != null){
+            if (doc != null && doc.getId() != null){
                 filters.put("document", doc);
             } else {
                 filters.put("addressee", sessionBean.getCurrentUser());

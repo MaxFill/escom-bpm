@@ -156,6 +156,7 @@ public final class EscomBeanUtils {
      */
     public static String makeDuration(Date dateStart, Date dateEnd){
         if (dateStart == null || dateEnd == null) return "";
+        if (dateStart.after(dateEnd)) return "";
         Duration duration = Duration.between(dateStart.toInstant(), dateEnd.toInstant());
         StringBuilder dr = new StringBuilder();
         dr.append("d").append("д.").append("H").append("ч.").append("mm").append("м.");

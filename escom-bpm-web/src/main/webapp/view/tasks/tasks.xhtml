@@ -21,6 +21,16 @@
                     <p:ajax update="mainFRM" listener="#{taskListBean.onChangeChBoxType()}"/>
                 </p:selectBooleanCheckbox>
             </h:panelGrid>
+            
+            <h:panelGrid columns="2" styleClass="without-spaces">
+                <p:outputLabel id="lbExecutor" value="#{bundle.Executor}:"  />
+                <p:selectOneMenu id="selExecutor" value="#{taskListBean.executor}" filter="true" filterMatchMode="startsWith"
+                                styleClass="ui-grid-col-12"
+                                converter="staffConvertor" placeholder="#{bundle.Select}">
+                    <f:selectItems value="#{taskListBean.executors}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}"/>                                    
+                </p:selectOneMenu>
+            </h:panelGrid>  
+            
             <h:panelGrid columns="3" styleClass=" without-spaces"> 
                 <h:panelGrid columns="1" styleClass=" without-spaces"> 
                     <p:outputLabel value="#{bundle.PlanEndDate}:" />
@@ -32,7 +42,7 @@
                                     navigator="true" yearRange="c-12:c+20"
                                     disabled="#{taskListBean.showOnlyExecute}"
                                     locale="#{sessionBean.locale}"
-                                    pattern="dd.MM.yyyy HH:mm:ss">
+                                    pattern="dd.MM.yyyy HH:mm">
                         </p:calendar>
                         #{bundle.At}
                         <p:calendar value="#{taskListBean.dateEnd}" id="dateEnd"
@@ -41,7 +51,7 @@
                                     showHour="true" showMinute="true"
                                     disabled="#{taskListBean.showOnlyExecute}"
                                     locale="#{sessionBean.locale}"
-                                    pattern="dd.MM.yyyy HH:mm:ss">
+                                    pattern="dd.MM.yyyy HH:mm">
                         </p:calendar>
                     </h:panelGrid>
                 </h:panelGrid>
@@ -55,10 +65,10 @@
                         </p:column>
                     </p:selectManyMenu>
                 </h:panelGrid>
-                    
+                
                 <p:commandButton value="#{bundle.Find}" id="btnSearche" actionListener="#{taskListBean.onRefresh()}">
-                    <f:param name="isRequired" value="true"/>
-                </p:commandButton>                
+                        <f:param name="isRequired" value="true"/>
+                </p:commandButton>
             </h:panelGrid>
         </p:panel>
 
@@ -77,6 +87,10 @@
                     
             <p:column width="16" sortBy="#{item.iconName}" >                
                 <p:graphicImage value="/resources/icon/#{item.iconName}-20.png" /> 
+            </p:column>
+            
+            <p:column headerText="#{bundle.Number}" sortBy="#{item.fullRegNumber}">
+                <h:outputLabel value="#{item.fullRegNumber}"/>
             </p:column>
 
             <p:column headerText="#{bundle.Task}" >

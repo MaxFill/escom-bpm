@@ -264,6 +264,10 @@ public class FolderExplBean extends ExplorerTreeBean{
         return sb.toString();
     }
     
+    public boolean isFullSearche(){
+        return StringUtils.isNotBlank(conf.getFullSearcheConnect());
+    }
+    
     /* GETS & SETS */
     
     @Override

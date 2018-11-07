@@ -24,5 +24,4 @@ public interface AttacheService {
     Attaches uploadAtache(Map<String, Object> params, InputStream inputStream) throws IOException;
     void doCopy(Attaches sourceAttache, Attaches targetAttache);
     String makeFolderZIP(Folder folder, User user, String os);
-    Tuple cleanUpFileStorage();
 }

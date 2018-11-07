@@ -31,6 +31,7 @@ import com.maxfill.model.basedict.processType.ProcessType;
 import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.DateUtils;
+import com.maxfill.utils.Tuple;
 import java.text.DateFormat;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
@@ -200,7 +201,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
      * @param result
      * @param errors 
      */
-    private void checkTaskBeforeExecute(Task task, Result result, Set<String> errors ){        
+    private void checkTaskBeforeExecute(Task task, Result result, Set<Tuple> errors ){        
         switch (result.getName()){
             case DictResults.RESULT_CANCELLED :{
                 checkReport(task, errors);
@@ -209,29 +210,29 @@ public class TaskCardBean extends BaseCardBean<Task>{
             case DictResults.RESULT_REFUSED :{
                 checkReport(task, errors);
                 if (!isHaveActualRemarks(task, errors)){
-                    errors.add(MsgUtils.getMessageLabel("NoYourRemarksActionRequiresRemarks"));
+                    errors.add(new Tuple("NoYourRemarksActionRequiresRemarks", new Object[]{}));
                 }
                 break;
             }
             case DictResults.RESULT_AGREE_WITH_REMARK :{
                 checkReport(task, errors);                
                 if (!isHaveActualRemarks(task, errors)){
-                    errors.add(MsgUtils.getMessageLabel("NoYourRemarksActionRequiresRemarks"));
+                    errors.add(new Tuple("NoYourRemarksActionRequiresRemarks", new Object[]{}));
                 }
                 break;
             }
             case DictResults.RESULT_AGREED :{
                 if (isHaveActualRemarks(task, errors)){
-                    errors.add(MsgUtils.getMessageLabel("ActionNotAvailableHaveActualRemarks"));
+                    errors.add(new Tuple("ActionNotAvailableHaveActualRemarks", new Object[]{}));
                 }
                 break;
             }
         }        
     }
     
-    private void checkReport(Task task, Set<String> errors){
+    private void checkReport(Task task, Set<Tuple> errors){
         if (StringUtils.isEmpty(task.getComment()) || task.getComment().length() < 3){
-            errors.add(MsgUtils.getMessageLabel("ReportIsNotFilled"));
+            errors.add(new Tuple("ReportIsNotFilled", new Object[]{}));
         }
     }
     
@@ -241,7 +242,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
      * @param user
      * @param errors 
      */
-    private boolean isHaveActualRemarks(Task task, Set<String> errors){
+    private boolean isHaveActualRemarks(Task task, Set<Tuple> errors){
         Process process = task.getScheme().getProcess();
         Doc doc = process.getDocument();
         if (doc == null) return false;
@@ -304,11 +305,11 @@ public class TaskCardBean extends BaseCardBean<Task>{
             task.setComment(MsgUtils.getBandleLabel(resultName));
         }
 
-        Set<String> errors = new HashSet<>();
+        Set<Tuple> errors = new HashSet<>();
                                  
         checkTaskBeforeExecute(task, result, errors);
         if (!errors.isEmpty()){
-            MsgUtils.showErrors(errors);            
+            MsgUtils.showTupleErrsMsg(errors);            
             return "";            
         }
         doSaveItem();
@@ -321,7 +322,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
         Process process = processFacade.find(task.getScheme().getProcess().getId());
         forShow = new ArrayList<>(workflow.executeTask(process, task, result, getCurrentUser(), new HashMap<>(), errors));
         if (!errors.isEmpty()){
-            MsgUtils.showErrorsMsg(errors);
+            MsgUtils.showTupleErrsMsg(errors);
             return "";
         }        
         

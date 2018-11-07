@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
-import org.primefaces.behavior.confirm.ConfirmBehavior;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
@@ -159,7 +158,7 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
     
     public LazyLoadModel getLazyDataModel(){
         if (lazyModel == null){
-            lazyModel = new LazyLoadModel(null, this);
+            lazyModel = new LazyLoadModel(null, this);            
         }
         return lazyModel;
     }

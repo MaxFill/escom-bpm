@@ -18,6 +18,7 @@ import com.maxfill.model.basedict.userGroups.UserGroups;
 import com.maxfill.escom.beans.users.settings.UserSettings;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.docs.attaches.AttacheBean;
+import com.maxfill.escom.beans.users.settings.DashBoardSettings;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.basedict.staff.StaffFacade;
 import com.maxfill.model.basedict.post.Post;
@@ -69,11 +70,16 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.*;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsFirst;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.inject.Named;
+import org.apache.commons.collections4.MapUtils;
+import org.primefaces.event.DashboardReorderEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import org.primefaces.model.chart.MeterGaugeChartModel;
@@ -147,7 +153,11 @@ public class SessionBean implements Serializable{
     private ProcessTypesBean processTypeBean;
     
     @PostConstruct
-    public void init() {                  
+    public void init(){        
+        temeInit(); 
+    }   
+    
+    public void initDashBoard(){
         dashboardModel = new DefaultDashboardModel();
         DashboardColumn column1 = new DefaultDashboardColumn();
         DashboardColumn column2 = new DefaultDashboardColumn();
@@ -155,33 +165,41 @@ public class SessionBean implements Serializable{
         DashboardColumn column4 = new DefaultDashboardColumn();
         DashboardColumn column5 = new DefaultDashboardColumn();
         DashboardColumn column6 = new DefaultDashboardColumn();
-         
-        column5.addWidget("charts");
         
-        column4.addWidget("admObjects"); 
-        column4.addWidget("services");
-        column4.addWidget("loggers");
-        
-        column3.addWidget("orgStructure");
-        column3.addWidget("dictsExplorer"); 
-        
-        column2.addWidget("docsExplorer");        
-        column2.addWidget("processes");
-        
-        column1.addWidget("userParams");
-        column1.addWidget("tasks");
-        column1.addWidget("messages");
- 
         dashboardModel.addColumn(column1);
         dashboardModel.addColumn(column2);
         dashboardModel.addColumn(column3); 
         dashboardModel.addColumn(column4);
         dashboardModel.addColumn(column5);
         dashboardModel.addColumn(column6);
+        
+        if (getUserSettings().getDashBoard().isEmpty()){
+            column5.addWidget("charts");
 
-        temeInit(); 
-    }   
+            column4.addWidget("admObjects"); 
+            column4.addWidget("services");
+            column4.addWidget("loggers");
+
+            column3.addWidget("orgStructure");
+            column3.addWidget("dictsExplorer"); 
+
+            column2.addWidget("docsExplorer");        
+            column2.addWidget("processes");
+
+            column1.addWidget("userParams");
+            column1.addWidget("tasks");
+            column1.addWidget("messages");
+        } else {
+            getUserSettings().getDashBoard().stream()
+                    .sorted(Comparator.comparing(DashBoardSettings::getItemIndex, nullsFirst(naturalOrder())))
+                    .forEach(dbSettings->{
+                        DashboardColumn col = dashboardModel.getColumn(dbSettings.getColIndex());
+                        col.addWidget(dbSettings.getItemIndex(), dbSettings.getWidget());
+                    });
+        }
+    }
     
+    /* *** *** * /
     /* Добавление права объекта источника в буфер  */
     public void addSourceRight(String key, Right right){
         sourceRightMap.put(key, right);
@@ -218,13 +236,20 @@ public class SessionBean implements Serializable{
     public String getItemStyle(BaseDict item){
         if (item == null) return "";
         StringBuilder sb = new StringBuilder();
-            
+        
+        //добавляем стиль для текущего состояния
         sb.append(item.getState().getCurrentState().getName()).append(" ");
+        
         if (item.getBeginDate() != null && item.getPlanExecDate() != null){
-            if (item.getBeginDate().after(item.getPlanExecDate())){
-                sb.append("error-info");
-            }                
+            WithDatesPlans wpd = (WithDatesPlans) item;
+            
+            //добавляем стиль для просроченных
+            if (wpd.getFactExecDate() == null && item.getPlanExecDate().before(new Date())){
+                sb.append("expired").append(" ");
+            } 
         }
+        
+        //добавляем стиль для процессо и подпроцессов
         if (item instanceof Process){
             if (item.getParent() == null){
                 sb.append("process");
@@ -235,7 +260,7 @@ public class SessionBean implements Serializable{
         return sb.toString();
     }
     
-    /* ПРОЧИЕ МЕТОДЫ */
+    /* ПРОЧИЕ МЕТОДЫ */   
     
     public void onUploadFile(FileUploadEvent event) throws IOException{       
         attaches.clear();
@@ -329,19 +354,15 @@ public class SessionBean implements Serializable{
     
     /* Обработка события выхода из программы, завершения сессии */
     public void onSessionExit() {
-        doSessionExit("/faces/" + SysParams.LOGOUT_PAGE);
-    }
-    
-    /* Завершение сессии пользователя  */           
-    private void doSessionExit(String page) {
-        HttpServletRequest request = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();        
+        ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();        
+        HttpServletRequest request = (HttpServletRequest) ectx.getRequest();
         if (currentUser != null) {
             doSaveUserSettings();
             appBean.clearUserLock(currentUser);
-            authLogFacade.addAuthExit(currentUser.getLogin(), request);
-        }        
-        redirectToPage(page, Boolean.TRUE);
-    }  
+            authLogFacade.addAuthExit(currentUser.getLogin(), request);            
+        } 
+        ectx.invalidateSession();
+    }    
     
     /**
      * Обработка события закрытия диалога лицензионного соглашения
@@ -355,38 +376,7 @@ public class SessionBean implements Serializable{
     /* Переход на начальную страницу программы */
     public String goToIndex(){
         return "/view/index?faces-redirect=true";
-    }
-    
-    /* Сохранение настроек текущего пользователя в базу данных */
-    private void doSaveUserSettings(){
-        if (userSettings == null) return;
-        try {
-            currentUser = getRefreshCurrentUser();
-            userSettings.setTheme(primefacesTheme);
-            String settings = userSettings.toString();
-            byte[] compressXML = EscomUtils.compress(settings);
-            currentUser.setUserSettings(compressXML);
-            userFacade.edit(currentUser);
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    /* Возвращает обновлённую версию текущего пользователя  */
-    public User getRefreshCurrentUser(){
-        currentUser = userFacade.find(currentUser.getId());
-        return currentUser;
-    }
-    
-    /* Является ли текущий пользователь администратором  */
-    public boolean isUserAdmin(){
-        if (currentUser == null) return false;
-        if (DictRights.USER_ADMIN_ID.equals(currentUser.getId())){
-            return true;
-        }
-        UserGroups groupAdmin = currentUser.getUsersGroupsList().stream().filter(userGroup -> userGroup.getId() == 1).findFirst().orElse(null);
-        return groupAdmin != null;
-    }
+    }    
 
     /**
      * Обработка события после открытия экранной формы рабочего места
@@ -402,7 +392,7 @@ public class SessionBean implements Serializable{
      * Открытие окна смены пароля в случае если у пользователя установлен признак необходимости его смены
      */
     public void checkUserMastChangePwl(){
-        if (currentUser != null && currentUser.isNeedChangePwl()){
+        if (currentUser != null && !currentUser.isLdap() && currentUser.isNeedChangePwl()){
             openSettingsForm();
         }
     }
@@ -730,7 +720,51 @@ public class SessionBean implements Serializable{
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         } 
-    }    
+    }        
+    
+    /* *** ПОЛЬЗОВАТЕЛЬ *** */
+    
+    /* Сохранение настроек текущего пользователя в базу данных */
+    private void doSaveUserSettings(){
+        if (userSettings == null) return;
+        try {
+            currentUser = getRefreshCurrentUser();
+            userSettings.setTheme(primefacesTheme);
+                        
+            userSettings.getDashBoard().clear();
+            AtomicInteger colIndex = new AtomicInteger(0);
+            dashboardModel.getColumns()
+                    .forEach(col->{                        
+                        AtomicInteger itemIndex = new AtomicInteger(0);
+                        List<String> widgets = col.getWidgets();
+                        widgets.forEach(widget-> userSettings.getDashBoard()
+                                        .add(new DashBoardSettings(widget, itemIndex.getAndIncrement(), colIndex.get())));
+                        colIndex.getAndIncrement();
+                    });
+            String settings = userSettings.toString();
+            byte[] compressXML = EscomUtils.compress(settings);
+            currentUser.setUserSettings(compressXML);
+            userFacade.edit(currentUser);
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /* Возвращает обновлённую версию текущего пользователя  */
+    public User getRefreshCurrentUser(){
+        currentUser = userFacade.find(currentUser.getId());
+        return currentUser;
+    }
+    
+    /* Является ли текущий пользователь администратором  */
+    public boolean isUserAdmin(){
+        if (currentUser == null) return false;
+        if (DictRights.USER_ADMIN_ID.equals(currentUser.getId())){
+            return true;
+        }
+        UserGroups groupAdmin = currentUser.getUsersGroupsList().stream().filter(userGroup -> userGroup.getId() == 1).findFirst().orElse(null);
+        return groupAdmin != null;
+    }
     
     /* УСТАНОВКА И ИЗМЕНЕНИЕ ЛОКАЛИ */
     
@@ -767,7 +801,7 @@ public class SessionBean implements Serializable{
     public MeterGaugeChartModel getMeterFileSize() {
         if (meterFileSize == null){
             totalfilesSize = new BigDecimal(attacheFacade.sumFilesSize());
-            totalfilesSize = totalfilesSize.divide(new BigDecimal(1048576), 3, BigDecimal.ROUND_HALF_UP);
+            totalfilesSize = totalfilesSize.divide(new BigDecimal(1048576000), 4, BigDecimal.ROUND_HALF_UP);
             Integer filesQuote = configuration.getDiskQuote();        
             List<Number> intervals = new ArrayList<>();
             intervals.add(filesQuote * 30 / 100);
@@ -783,7 +817,11 @@ public class SessionBean implements Serializable{
         }
         return meterFileSize;
     }
-    
+
+    public void setMeterFileSize(MeterGaugeChartModel meterFileSize) {
+        this.meterFileSize = meterFileSize;
+    }
+        
     public void setOpenFormName(String openFormName) {
         this.openFormName = openFormName;
     }

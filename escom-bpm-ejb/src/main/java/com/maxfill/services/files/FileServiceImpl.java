@@ -43,14 +43,17 @@ public class FileServiceImpl implements FileService{
             Files.createDirectories(Paths.get(sb.toString()));       
             sb.append(File.separator).append(guid).append(".").append(fileExt);
             Files.copy(inputStream, Paths.get(sb.toString()));                                  
-                    
+            //LOGGER.log(Level.INFO, "UPLOAD: file is copy [" + sb.toString() + "]", "");
+            
             if (!"PDF".equals(fileExt.toUpperCase())){
                 String convPDF = conf.getConvertorPDF();
                 if (StringUtils.isNotBlank(convPDF)){
+                    //LOGGER.log(Level.INFO, "UPLOAD: makeCopyToPDF attache=[" + attache.getFullName() + "]", "");    
                     makeCopyToPDF(conf.getUploadPath() + attache.getFullName(), convPDF);
                 }
             } 
             if (attache.getDoc() != null){
+               //LOGGER.log(Level.INFO, "UPLOAD: updateFullTextIndex doc=[" + attache.getDoc().getName() + "]", "");    
                searcheService.updateFullTextIndex(attache.getDoc());
             }
         } catch (IOException e) {

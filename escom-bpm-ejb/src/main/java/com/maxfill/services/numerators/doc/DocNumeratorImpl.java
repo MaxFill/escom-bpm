@@ -9,6 +9,7 @@ import com.maxfill.model.basedict.numeratorPattern.NumeratorPattern;
 import com.maxfill.model.basedict.numeratorPattern.counter.Counter;
 import com.maxfill.services.numerators.NumeratorBase;
 import com.maxfill.utils.EscomUtils;
+import com.maxfill.utils.Tuple;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -69,21 +70,21 @@ public class DocNumeratorImpl extends NumeratorBase implements DocNumeratorServi
     
     /* Регистрация документа  */
     @Override
-    public void registratedDoc(Doc doc, Set<String> errors){
+    public void registratedDoc(Doc doc, Set<Tuple> errors){
         Date dateReg = doc.getItemDate();
         if (dateReg == null){
             dateReg = new Date();
             doc.setItemDate(dateReg);
         }
         if (doc.getDocType() == null){
-            errors.add("DOCTYPE_NO_SET");
+            errors.add(new Tuple("DOCTYPE_NO_SET", new Object[]{}));
         }
         if (!errors.isEmpty()){
             return;
         }
         NumeratorPattern numPattern = doc.getDocType().getNumerator();
         if (numPattern == null){
-            errors.add("NUMERATOR_NO_SET");
+            errors.add(new Tuple("NUMERATOR_NO_SET", new Object[]{}));
             return;
         }
         Map<String, Object> params = new HashMap<>();

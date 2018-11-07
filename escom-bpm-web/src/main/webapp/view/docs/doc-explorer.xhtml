@@ -36,7 +36,7 @@
                 <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
         </p:selectOneMenu> 
         
-        <p:selectBooleanCheckbox itemLabel="#{bundle.FullTextSearche}" widgetVar="cbFullSearche"
+        <p:selectBooleanCheckbox itemLabel="#{bundle.FullTextSearche}" widgetVar="cbFullSearche" rendered="#{_bean.isFullSearche()}"
                                  title="#{bundle.FullTextSearcheMode}"
                                  value="#{_bean.model.fullTextSearche}">
         </p:selectBooleanCheckbox>
@@ -127,7 +127,7 @@
 
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
-        <p:column id="colCompany" headerText="#{bundle.Company}" rendered="false"
+        <p:column id="colCompany" headerText="#{bundle.Company}" 
                   visible="#{_detailBean.isVisibleColumn('colCompany')}"
                   sortBy="#{item.companyName}" width="90" priority="3">
             <h:outputText value="#{item.companyName}"/>

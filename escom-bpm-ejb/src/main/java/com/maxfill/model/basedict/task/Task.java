@@ -199,6 +199,12 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
             return "task";
         }
     }  
+
+    @Override
+    public String getFullRegNumber() {
+        return getId().toString(); 
+    }
+    
     
     /* GETS & SETS */
     

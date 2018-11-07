@@ -119,10 +119,12 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
                 facade.makeRightItem(editItem, getCurrentUser());
             }
             if (!facade.isHaveRightEdit(editItem)){
+                /*
                 String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
                 String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
                 errors.add(error);
-                return prepViewItem(item, paramsMap, errors);
+                */ //нет смысла в сообщении об ошибке, он не даст открыться форме!
+                return prepViewItem(item, paramsMap, new HashSet<>());
             }
             openItemCard(editItem, DictEditMode.CHILD_MODE, paramsMap, errors);
             return editItem;

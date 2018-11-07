@@ -4,7 +4,7 @@
                  xmlns:pe="http://primefaces.org/ui/extensions"
                  xmlns:h="http://xmlns.jcp.org/jsf/html">
 
-    <p:panelGrid id="fileUploadFRM" columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+    <h:panelGrid id="fileUploadFRM" columns="1" styleClass="ui-grid-col-12 without-spaces">
         <h:panelGroup rendered="#{!_bean.isTrashSelected()}">
             <p:panel styleClass="ui-grid-col-12" rendered="#{_bean.treeSelectedNode == null}">
                 <p:outputLabel value="#{''.concat(bundle.FolderIsNotSelected).concat('. ').concat(bundle.ForCreateObjectNeedSelectGroup)}"/>
@@ -30,6 +30,6 @@
              <pe:tooltip for="file" value="#{bundle.DragAndDropFile}" mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10" hideDelay="5"
                          styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
          </h:panelGroup>
-    </p:panelGrid>
+    </h:panelGrid>
 
 </ui:composition>

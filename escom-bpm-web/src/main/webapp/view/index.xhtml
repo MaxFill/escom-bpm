@@ -79,7 +79,7 @@
                     </span>
 
                     <p:commandButton icon="ico_exit" value="#{bundle.CloseSession}" title="#{bundle.ExitProgramm}"
-                                     onstart="return isClose = 1;"                                     
+                                     onstart="PF('dlgExit').show(); return isClose = 1;"                                     
                                      actionListener="#{sessionBean.onSessionExit()}"/>
                 </f:facet>
             </p:toolbar>
@@ -90,13 +90,18 @@
 
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12"> 
                 <p:dashboard id="board" model="#{sessionBean.dashboardModel}"  >
-
+                    <p:ajax event="reorder"  />
                     <p:panel id="charts" header="#{bundle.Info}" rendered="#{sessionBean.userAdmin}" toggleable="true" styleClass="dash-panel">
                         <p:chart type="metergauge" model="#{sessionBean.meterFileSize}" style="width:250px;height:200px" />
-                        <h:panelGrid columns="3" >
-                            <p:outputLabel value="#{bundle.CurrentSize}:"/> 
-                            <p:outputLabel value="#{sessionBean.totalfilesSize}"/>
-                            <p:outputLabel value="Gb."/>
+                        <h:panelGrid columns="4" >
+                            <h:outputLabel value="#{bundle.CurrentSize}:"/> 
+                            <h:outputLabel value="#{sessionBean.totalfilesSize}"/>
+                            <h:outputLabel value="Gb."/>
+                            <p:commandButton icon="ico_refresh" title="#{bundle.Refresh}" 
+                                            onstart="PF('statusDialog').show()"
+                                            oncomplete="PF('statusDialog').hide();"
+                                            actionListener="#{sessionBean.setMeterFileSize(null)}" update="charts">
+                            </p:commandButton>
                         </h:panelGrid>
                     </p:panel>
                     
@@ -337,24 +342,25 @@
     </ui:define>
 
     <ui:define name="customJavaScript">
-        <script type="text/javascript">
-            var isClose = 0;
-            function OpenFolder(sFolderUrl) {
-                ITHit.WebDAV.Client.DocManager.OpenFolderInOsFileManager(sFolderUrl, sFolderUrl, ProtocolInstallCallback);
-            }
-
-            function ProtocolInstallCallback(message) {
-                var installerFilePath = "http://www.ajaxbrowser.com/ITHitService/WebDAVAJAXLibrary/Plugins/" +
-                        ITHit.WebDAV.Client.DocManager.GetInstallFileName();
-
-                if (confirm("This action requires a protocol installation. Select OK to download the protocol installer.")) {
-                    window.open(installerFilePath);
-                }
-            }
-        </script> 
     </ui:define>
 
     <ui:define name="dialogs"> 
+        <p:dialog header="#{msg.YouExitFromProgramm}" modal="true" closable="false" closeOnEscape="false" resizable="false" widgetVar="dlgExit" width="500" height="220">
+            <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
+                <p:panelGrid layout="grid" columns="2" columnClasses="ui-grid-col-5, ui-grid-col-7">
+                    <p:graphicImage name="/images/escom_logo.jpg"  /> 
+                    <h:panelGroup>
+                        <h2>
+                            <h:outputLabel value="#{bundle.Goodbye}"/> 
+                        </h2>
+                    </h:panelGroup>
+                </p:panelGrid>
+                <p:separator/>
+                <p:link href="#{sessionBean.makePageURL('/login')}" value="#{bundle.GotoLogin}" style="float: right;" rendered="false"/>
+                <p:link href="http://www.escom-bpm.com" value="#{bundle.EscomWWW}" style="float: right;" />
+            </p:panelGrid>
+        </p:dialog>
+        
         <p:dialog header="#{bundle.About}" modal="true" closeOnEscape="true" resizable="true" widgetVar="dlgAbout">
             <h:form id="logFRM">  
                 <p:defaultCommand target="logFRM:btnClose" />

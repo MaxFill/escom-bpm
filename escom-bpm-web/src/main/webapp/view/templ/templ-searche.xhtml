@@ -62,7 +62,7 @@
                                      value="#{_bean.model.onlyActualItem}">
             </p:selectBooleanCheckbox> 
             
-            <p:outputLabel value="#{bundle.KeyWord}:"/>
+            <p:outputLabel value="#{bundle.Name}:"/>
             <h:panelGroup styleClass="ui-grid-col-12">
                 <div class="ui-inputgroup">
                     <p:inputText id="nameSearche" widgetVar="searchName" title="#{bundle.KeyWordSearche}"
@@ -114,6 +114,7 @@
                     <p:calendar value="#{_bean.model.dateCreateStart}" id="dateCreateStart" 
                                 widgetVar="dateCreateStartSearche"
                                 navigator="true" yearRange="c-120:c+20"
+                                showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
                                 locale="#{sessionBean.locale}"
                                 required="#{_bean.model.dateCreateSearche and param['isRequired'] == 'true'}"
                                 requiredMessage="#{bundle.Field} [#{bundle.DateCreate}: #{bundle.With}] #{bundle.MustBeFilled}"
@@ -125,6 +126,7 @@
                     <p:calendar value="#{_bean.model.dateCreateEnd}" id="dateCreateEnd" 
                                 widgetVar="dateCreateEndSearche"
                                 navigator="true" yearRange="c-120:c+20"
+                                showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
                                 locale="#{sessionBean.locale}"
                                 required="#{_bean.model.dateCreateSearche and param['isRequired'] == 'true'}"
                                 requiredMessage="#{bundle.Field} [#{bundle.DateCreate}: #{bundle.At}] #{bundle.MustBeFilled}"
@@ -146,6 +148,7 @@
                     <p:calendar value="#{_bean.model.dateChangeStart}" id="dateChangeStart"
                                 widgetVar="dateChangeStartSearche"
                                 navigator="true" yearRange="c-120:c+20"
+                                showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
                                 locale="#{sessionBean.locale}"
                                 required="#{_bean.model.dateChangeSearche and param['isRequired'] == 'true'}"
                                 requiredMessage="#{bundle.Field} [#{bundle.DateChange}: #{bundle.With}] #{bundle.MustBeFilled}"
@@ -157,6 +160,7 @@
                     <p:calendar value="#{_bean.model.dateChangeEnd}" id="dateChangeEnd"
                                 widgetVar="dateChangeEndSearche"
                                 navigator="true" yearRange="c-120:c+20"
+                                showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
                                 locale="#{sessionBean.locale}"
                                 required="#{_bean.model.dateChangeSearche and param['isRequired'] == 'true'}"
                                 requiredMessage="#{bundle.Field} [#{bundle.DateChange}: #{bundle.At}] #{bundle.MustBeFilled}"
@@ -165,22 +169,21 @@
                 </p:panelGrid>
             </h:panelGroup>
 
-            <p:panelGrid layout="grid" columns="2" columnClasses="ui-grid-col-6 col-padding, ui-grid-col-6 col-padding" styleClass="ui-grid-col-12 without-spaces">
+            <h:panelGrid columns="2" styleClass="without-spaces">
                 <p:commandButton id="searcheBtn" value="#{bundle.Find}" title="#{bundle.MakeSearche}"
-                                 icon="ui-icon-search" 
-                                 styleClass="ui-grid-col-12"
-                                 action="#{_bean.onSearcheItem}"
-                                 update="#{_tblUpdate}"
+                                 icon="ui-icon-search"                                  
+                                 actionListener="#{_bean.onSearcheItem}"
+                                 update="mainFRM:tblDetail mainFRM:messages"
                                  onstart="PF('statusDialog').show()"
                                  oncomplete="PF('statusDialog').hide(); initDND();">
                     <f:param name="isRequired" value="true"/>
                 </p:commandButton>
-                <p:commandButton value="#{bundle.Reset}" title="#{bundle.ResetSearcheCriteria}"
-                                 icon="ui-icon-closethick"
-                                 styleClass="ui-grid-col-12">
-                    <p:ajax update="eastFRM" oncomplete="clearSearche(); initDND();"/>
+                <p:commandButton icon="ui-icon-closethick" value="#{bundle.Reset}" title="#{bundle.ResetSearcheCriteria}" 
+                                 update="eastFRM" 
+                                 oncomplete="clearSearche(); initDND();"
+                                 actionListener="#{_bean.onClearSearche()}">                    
                 </p:commandButton>
-            </p:panelGrid>
+            </h:panelGrid>
 
         </p:panelGrid>
     </p:panelGrid>

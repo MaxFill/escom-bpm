@@ -1,4 +1,3 @@
-
 package com.maxfill.escom.beans.docs;
 
 import com.maxfill.escom.beans.explorer.SearcheModel;
@@ -9,6 +8,7 @@ import com.maxfill.model.basedict.partner.Partner;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 /* Расширение поиска Документов  */
@@ -23,7 +23,7 @@ public class DocsSearche extends SearcheModel{
     private List<DocType> docTypes;
     private Partner partnerSearche;
     private Company companySearche;
-    
+       
     @Override
     public void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<BaseDict> searcheGroups, Map<String, Object> addParams){
         if (companySearche != null){
@@ -39,11 +39,13 @@ public class DocsSearche extends SearcheModel{
             paramDATE.put("itemDate", dateArray);
         }
         if (!docTypes.isEmpty()){
-            paramIN.put("docType", docTypes);
+            List<Integer> docTypeIds = docTypes.stream().map(item -> item.getId()).collect(Collectors.toList());
+            addParams.put("docTypes", docTypeIds);
         }
         if (partnerSearche != null){
            paramEQ.put("partner", partnerSearche); 
-        }        
+        }  
+        
     }        
        
     /* GETS & SETS */

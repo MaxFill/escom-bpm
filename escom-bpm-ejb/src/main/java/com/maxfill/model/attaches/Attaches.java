@@ -18,6 +18,7 @@ import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
@@ -31,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 /* Вложения */
 @Entity
 @Table(name = "attaches", indexes = {@Index(name="Attaches_GUID_INDEX", columnList = "Guide", unique = true)})
+@NamedQuery(name="Attaches.findByGUID", query="SELECT c.id FROM Attaches c WHERE c.guid = :paramGUID") 
 public class Attaches implements Serializable, Dict {
     private static final long serialVersionUID = -4633936978772232516L;
 

@@ -28,6 +28,7 @@ import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.basedict.remark.Remark;
 import com.maxfill.model.basedict.remark.RemarkFacade;
 import com.maxfill.services.numerators.doc.DocNumeratorService;
+import com.maxfill.utils.Tuple;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -219,7 +220,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     /* *** СООБЩЕНИЯ *** */
     
     /**
-     * Открытие формы просмотра сообщений, связанных с процессом
+     * Открытие формы просмотра сообщений
      */
     public void onShowMessages(){
         Map<String, List<String>> paramMap = getParamsMap();
@@ -231,8 +232,15 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
      * Создание сообщения
      */
     public void onCreateMessage(){
-        Map<String, List<String>> params = getParamsMap();        
-        sessionBean.openDialogFrm(DictFrmName.FRM_NOTIFY, params);
+        Map<String, List<String>> params = getParamsMap();       
+        if (getEditedItem().getId() != null){
+            sessionBean.openDialogFrm(DictFrmName.FRM_NOTIFY, params);
+            return;
+        } 
+        onItemChange();
+        if (doSaveItem()){
+            sessionBean.openDialogFrm(DictFrmName.FRM_NOTIFY, params);
+        }        
     }
     
     /* *** ПРОЦЕССЫ *** */
@@ -288,12 +296,12 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
 
     /* Формирование регистрационного номера документа. Вызов с экранной формы */
     public void onGenerateRegNumber(Doc doc){
-        Set<String> errors = new HashSet<>();
+        Set<Tuple> errors = new HashSet<>();
         docNumeratorService.registratedDoc(doc, errors);
         if (errors.isEmpty()){
             onItemChange();
         } else {
-            MsgUtils.showErrors(errors);
+            MsgUtils.showTupleErrsMsg(errors);
         }
     }
     

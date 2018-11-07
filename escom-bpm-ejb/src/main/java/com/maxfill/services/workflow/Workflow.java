@@ -22,6 +22,7 @@ import com.maxfill.model.basedict.process.timers.ProcTimer;
 import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.result.Result;
 import com.maxfill.model.basedict.user.User;
+import com.maxfill.utils.Tuple;
 import java.util.Map;
 
 import javax.ejb.Local;
@@ -46,19 +47,19 @@ public interface Workflow {
     void removeElement(WFConnectedElem element, Scheme scheme, Set <String> errors);
     void removeConnector(AnchorElem from, AnchorElem to, Scheme scheme, Set <String> errors);
     
-    Scheme initScheme(Process process, ProcTempl procTempl, User currentUser, Set<String> errors);
+    Scheme initScheme(Process process, ProcTempl procTempl, User currentUser, Set<Tuple> errors);
     void packScheme(Scheme scheme);
     void unpackScheme(Scheme scheme, User currentUser);
-    void validateScheme(Scheme scheme, Boolean checkTasks, Set<String> errors);
-    void clearScheme(Process process, User currentUser, Map<String, Object> params, Set<String> errors);
+    void validateScheme(Scheme scheme, Boolean checkTasks, Set<Tuple> errors);
+    void clearScheme(Process process, User currentUser, Map<String, Object> params, Set<Tuple> errors);
     void clearElements(Scheme scheme);
     
-    Set<BaseDict> run(Process process, WFConnectedElem startElement, Set<SubProcessElem> exeSubProc, User currentUser, Map<String, Object> params, Set<String> errors);
+    Set<BaseDict> run(Process process, WFConnectedElem startElement, Set<SubProcessElem> exeSubProc, User currentUser, Map<String, Object> params, Set<Tuple> errors);
     void stop(Process process, User user);
-    Set<BaseDict> start(Process process, User user, Map<String, Object> params, Set<String> errors);
+    Set<BaseDict> start(Process process, User user, Map<String, Object> params, Set<Tuple> errors);
     
-    Set<BaseDict> executeTask(Process process, Task task, Result result, User user, Map<String, Object> params, Set<String> errors);
-    void executeTimer(ProcTimer procTimer, Set<String> errors);
+    Set<BaseDict> executeTask(Process process, Task task, Result result, User user, Map<String, Object> params, Set<Tuple> errors);
+    void executeTimer(ProcTimer procTimer, Set<Tuple> errors);
     
     void makeProcessReport(Process process, User user);
 }

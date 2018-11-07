@@ -97,7 +97,7 @@ public class SearcheModel implements Serializable {
     
     /* Добавление в параметры поискового запроса специфичных полей и условий */
     protected void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<BaseDict> searcheGroups, Map<String, Object> addParams){};
-
+    
     public boolean isFullTextSearche() {
         return fullTextSearche;
     }

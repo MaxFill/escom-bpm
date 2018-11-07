@@ -70,6 +70,19 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         super.dublicateCheckAddCriteria(builder, root, criteries, doc);
     }        
     
+     /* Дополнения при выполнении поиска через форму поиска */
+    @Override
+    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams){
+        if (addParams.containsKey("docTypes")){
+            List<Integer> docTypeIds = (List<Integer>) addParams.get("docTypes");
+            if (!docTypeIds.isEmpty()) { 
+                Join join = root.join("docType");
+                Predicate predicate = join.get("id").in(docTypeIds);
+                predicates.add(predicate);
+            } 
+        }
+    }
+    
     /**
      * Переопределяет доступ к методу, т.к. основной private
      * @param item

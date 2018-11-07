@@ -202,11 +202,9 @@
                         actionListener="#{docCardBean.prepareSendMailDoc('asAttache')}"/>
         </p:menuButton>   
         <p:menuButton value="#{bundle.Messages}" icon="ico_message-16" >
-            <p:menuitem icon="ui-icon-mail-closed" value="#{bundle.CreateMessage}"
-                        disabled="#{_bean.editedItem.id == null}"
+            <p:menuitem icon="ui-icon-mail-closed" value="#{bundle.CreateMessage}"                        
                         actionListener="#{_bean.onCreateMessage()}"/>
             <p:menuitem icon="ui-icon-folder-open" value="#{bundle.Messages}"
-                        disabled="#{_bean.editedItem.id == null}"
                         actionListener="#{docCardBean.onShowMessages()}"/>                
         </p:menuButton>
     </ui:define>

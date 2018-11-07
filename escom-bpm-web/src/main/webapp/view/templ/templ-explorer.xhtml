@@ -61,7 +61,7 @@
                     <p:remoteCommand name="dropToTable" actionListener="#{_bean.dropToTable}" oncomplete="initDND()"/>
                     <p:remoteCommand name="dropToNavig" actionListener="#{_bean.dropToNavig}" oncomplete="initDND()"/>
                     <p:remoteCommand name="formSize" immediate="true" actionListener="#{sessionBean.onFormSize()}" />                     
-                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
                         <p:toolbar id="explToolBar">
                             <f:facet name="left">                                
                                 <p:commandButton id="btnRefreshRight" icon="ui-icon-refresh" 
@@ -125,15 +125,17 @@
                                     <p:menuitem value="#{bundle.ClearTrash}" icon="ui-icon-close" title="#{bundle.FullClearTrash}"
                                                 disabled="#{_bean.isEmptyDetails()}"
                                                 update="mainFRM"
-                                                actionListener="#{_bean.onClearTrash()}"
-                                                oncomplete="initDND()">
+                                                onstart="PF('statusDialog').show();"
+                                                oncomplete="PF('statusDialog').hide(); initDND();"
+                                                actionListener="#{_bean.onClearTrash()}">
                                         <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.OperationIsNotReversible}" icon="ui-icon-alert" />
                                     </p:menuitem>
                                     <p:menuitem value="#{bundle.ClearCheckedTrash}" icon="ui-icon-close"                                                 
                                                 update="mainFRM"
+                                                onstart="PF('statusDialog').show();"
+                                                oncomplete="PF('statusDialog').hide(); initDND();"
                                                 disabled="#{_bean.checkedItems.isEmpty()}"
-                                                actionListener="#{_bean.onClearCheckedContentTrash()}"
-                                                oncomplete="initDND()">
+                                                actionListener="#{_bean.onClearCheckedContentTrash()}">
                                         <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.OperationIsNotReversible}" icon="ui-icon-alert" />
                                     </p:menuitem> 
                                     <p:separator/>
@@ -150,7 +152,8 @@
                                                 disabled="#{_bean.checkedItems.isEmpty()}"
                                                 update="westFRM mainFRM"
                                                 actionListener="#{_bean.onMoveCheckedContentToTrash()}"
-                                                oncomplete="initDND()">
+                                                onstart="PF('statusDialog').show();"
+                                                oncomplete="PF('statusDialog').hide(); initDND();">
                                         <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
                                     </p:menuitem>
                                     <p:separator />
@@ -177,7 +180,7 @@
                         <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-grid-col-12 without-spaces">
                             <p:autoUpdate />
                         </p:messages>
-
+                        
                         <ui:include src="/view/templ/navigator.xhtml"/>
                         <ui:include src="/view/templ/table.xhtml"/>       
 

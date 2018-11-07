@@ -3,7 +3,7 @@
                 xmlns:f="http://java.sun.com/jsf/core"    
                 xmlns:h="http://java.sun.com/jsf/html" 
                 xmlns:p="http://primefaces.org/ui">
-       
+           
     <p:dataTable id="tblDetail" value="#{_bean.lazyDataModel}" var="item" lazy="true" widgetVar="tblDetail"
                  emptyMessage="#{bundle.EmptyTable}"
                  paginator="true" paginatorPosition="bottom" first="#{_bean.currentPage}" 
@@ -27,7 +27,7 @@
                 </h:panelGroup>                        
             </p:panelGrid>
         </f:facet>
-        
+
         <p:ajax event="rowSelect" update="mainFRM:explToolBar" oncomplete="initDND();" />
         <p:ajax event="rowDblselect" listener="#{_bean.onRowDblClckOpen}"
                 oncomplete="document.getElementById('mainFRM:editCardBtn').click();"/>
@@ -35,9 +35,9 @@
         <p:ajax event="rowUnselectCheckbox" update="mainFRM:explToolBar" oncomplete="initDND()"/>
         <p:ajax event="toggleSelect" update="mainFRM:explToolBar" oncomplete="initDND();"/>
         <p:ajax event="page" listener="#{_bean.onPageChange}" oncomplete="initDND();"/>             
-        
+
         <p:column id="colCheck" width="16" selectionMode="multiple" style="text-align:center"/>
-        
+
         <p:column id="colIcon" width="20" sortBy="#{item.iconName}" headerText="" visible="#{_detailBean.isVisibleColumn('colIcon')}">
             <p:graphicImage id="itemIcon" value="/resources/icon/#{item.iconName}.png" styleClass="#{item.deleted ? '' : 'dropoint'}"/>
             <h:outputLabel value="[#{item.id}]"/>
@@ -58,13 +58,13 @@
         <ui:insert name="specDetailColumns" />
         <ui:insert name="specTreeColumns"/>
         <ui:insert name="specRootColumns"/>
-        
+
         <p:column id="colStateIcon" headerText="" width="16"
                   visible="#{_detailBean.isVisibleColumn('colStateIcon')}"
                   sortBy="#{item.stateName}">
             <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>            
         </p:column>
-        
+
         <p:column id="colDateChange" headerText="#{bundle.DateChange}" width="75" 
                   visible="#{_detailBean.isVisibleColumn('colDateChange')}"
                   sortBy="#{item.dateChange}">
@@ -109,7 +109,7 @@
                     </p:commandButton>
                 </div>
             </h:panelGroup>
-                        
+
             <h:panelGroup rendered="#{!item.deleted and _bean.explorerViewMode}">
                 <div class="ui-inputgroup">
                     <p:commandButton title="#{bundle.Edit}" icon="ui-icon-pencil"
@@ -175,5 +175,4 @@
             </h:panelGroup> 
         </p:column>
     </p:dataTable>
-  
 </ui:composition>

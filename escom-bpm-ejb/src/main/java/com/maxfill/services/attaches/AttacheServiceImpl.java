@@ -9,7 +9,6 @@ import com.maxfill.model.basedict.folder.Folder;
 import com.maxfill.model.basedict.user.User;
 import com.maxfill.services.files.FileService;
 import com.maxfill.utils.EscomUtils;
-import com.maxfill.utils.Tuple;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,10 +23,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.ejb.Asynchronous;
@@ -83,6 +80,7 @@ public class AttacheServiceImpl implements AttacheService{
         attache.setAuthor(author);
         attache.setDateCreate(new Date());
         attache.setDoc(doc);
+        //LOGGER.log(Level.INFO, "UPLOAD: attache [" + fileName + "] created!", "");
         fileService.doUpload(attache, inputStream);      
         return attache;
     }
@@ -228,26 +226,4 @@ public class AttacheServiceImpl implements AttacheService{
         return zipFile;
     }
     
-    @Override
-    public Tuple cleanUpFileStorage(){
-        AtomicInteger countDel = new AtomicInteger(0);
-        AtomicInteger countTotal = new AtomicInteger(0);
-        try (Stream<Path> paths = Files.walk(Paths.get(configuration.getUploadPath()))) {
-            paths
-                .filter(Files::isRegularFile)
-                .forEach(p -> {
-                    String name = p.toFile().getName();
-                    String fileNameWithOutExt = FilenameUtils.removeExtension(name);
-                    List<Attaches> attaches = attacheFacade.findAttachesByGUID(fileNameWithOutExt);
-                    if (attaches.isEmpty()){
-                        countDel.incrementAndGet();
-                        p.toFile().delete();
-                    }
-                    countTotal.incrementAndGet();
-                });
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
-        return new Tuple(countDel.intValue(), countTotal.intValue());
-    }
 }

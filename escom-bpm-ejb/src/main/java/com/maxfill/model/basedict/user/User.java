@@ -13,6 +13,7 @@ import javax.persistence.*;
 import static javax.persistence.GenerationType.TABLE;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Сущность "Пользователь"
@@ -132,7 +133,9 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
         tempId = COUNT.incrementAndGet();
     }
     
-    /* GETS & SETS */    
+    public boolean isLdap(){
+        return StringUtils.isNotBlank(LDAPname);
+    }
 
     @Override
     public String getFullName() {
@@ -143,6 +146,8 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
         }
     }
 
+    /* GETS & SETS */    
+    
     public String getLocale() {
         return locale;
     }

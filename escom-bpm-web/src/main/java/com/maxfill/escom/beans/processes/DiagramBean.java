@@ -39,6 +39,7 @@ import com.maxfill.model.basedict.statusesDoc.StatusesDoc;
 import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.task.TaskFacade;
 import com.maxfill.services.workflow.Workflow;
+import com.maxfill.utils.Tuple;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -1088,7 +1089,7 @@ public class DiagramBean extends BaseViewBean<BaseView>{
         scheme.setPackElements(selectedTempl.getElements());
         workflow.unpackScheme(scheme, getCurrentUser());
         workflow.clearElements(scheme);
-        Set<String> errors = new HashSet<>();
+        Set<Tuple> errors = new HashSet<>();
         workflow.clearScheme(scheme.getProcess(), getCurrentUser(), new HashMap<>(), errors);
         restoreModel();
         PrimeFaces.current().ajax().update("mainFRM");        
@@ -1096,7 +1097,7 @@ public class DiagramBean extends BaseViewBean<BaseView>{
         addElementContextMenu();        
         onItemChange();
         if (!errors.isEmpty()){         
-            MsgUtils.showErrors(errors);
+            MsgUtils.showTupleErrsMsg(errors);
         }
     }
     
@@ -1104,10 +1105,10 @@ public class DiagramBean extends BaseViewBean<BaseView>{
      * Сохранение модели процесса в шаблон
      */
     public void onSaveModelAsTempl(){
-        Set<String> errors = new HashSet<>();
+        Set<Tuple> errors = new HashSet<>();
         workflow.validateScheme(scheme, false, errors);
         if (!errors.isEmpty()){
-            MsgUtils.showErrorsMsg(errors);
+            MsgUtils.showTupleErrsMsg(errors);
             return;
         }
         workflow.packScheme(scheme);

@@ -175,6 +175,7 @@ public class LoginBean extends BaseViewBean{
         userSettings.setLanguage(selectedLang.getName());
         sessionBean.setUserSettings(userSettings);
         sessionBean.setPrimefacesTheme(userSettings.getTheme());
+        sessionBean.initDashBoard();
         appBean.addBusyLicence(user, httpSession);
     }             
     

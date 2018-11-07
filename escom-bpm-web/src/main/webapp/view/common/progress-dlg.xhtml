@@ -1,0 +1,14 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui">
+
+    <p:dialog id="progressDlg" header="#{bundle.Exec}" resizable="false" modal="true" closable="false" closeOnEscape="false" widgetVar="progressDlg" height="50px" width="300px">        
+        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
+            <p:progressBar id="progressBar" widgetVar="pbAjax" ajax="true" value="#{_bean.progress}" labelTemplate="{value}%" global="false">
+                <p:ajax event="complete" listener="#{_bean.onComplete}" />
+            </p:progressBar>
+        </p:panelGrid>
+        <p:commandButton id="btnStart" type="button" onclick="PF('pbAjax').start();" style="display: none;"/>
+    </p:dialog>
+    
+</ui:composition>

@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.core.lazyload;
 
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.Dict;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -44,7 +45,6 @@ public class LazyLoadModel<T extends Dict> extends LazyDataModel<T>{
 
         int dataSize = bean.countItems();
         this.setRowCount(dataSize);
-
         return datasource;
     }
 }

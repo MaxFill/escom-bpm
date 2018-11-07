@@ -74,13 +74,13 @@
                     </h:panelGroup>
                 </h:panelGrid>
 
-                <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12"  styleClass="without-spaces">
+                <h:panelGrid columns="1" styleClass="without-spaces">
                     <p:outputLabel value="#{bundle.TermExecution}:"/>
                     <h:panelGrid columns="2" styleClass="without-spaces">
                         <h:outputLabel value="#{bundle.With}"/>                    
                         <p:calendar value="#{monitorBean.dateStart}" id="dateStart"
                                     widgetVar="dateCreateStartSearche"
-                                    showHour="true" showMinute="true" pages="3"
+                                    showHour="true" showMinute="true" pages="1"
                                     navigator="true" yearRange="c-10:c+20"
                                     locale="#{sessionBean.locale}"
                                     pattern="dd.MM.yyyy HH:mm:ss"
@@ -92,14 +92,14 @@
                         <p:calendar value="#{monitorBean.dateEnd}" id="dateEnd"
                                     widgetVar="dateCreateEndSearche"
                                     navigator="true" yearRange="c-10:c+20"
-                                    showHour="true" showMinute="true" pages="3"
+                                    showHour="true" showMinute="true" pages="1"
                                     locale="#{sessionBean.locale}"
                                     pattern="dd.MM.yyyy HH:mm:ss"
                                     required="false"
                                     requiredMessage="#{bundle.Field} #{bundle.DateEnd} #{bundle.MustBeFilled}">
                         </p:calendar>
                     </h:panelGrid>                                        
-                </p:panelGrid>
+                </h:panelGrid>
 
                 <h:panelGrid columns="1" styleClass="without-spaces">
                     <p:outputLabel value="#{bundle.States}:" />
@@ -114,9 +114,9 @@
                 <h:panelGrid columns="1" styleClass="without-spaces">
                     <p:tree id="treeProcTypes" value="#{monitorBean.procTypesTree}" var="procType" selectionMode="single" 
                             selection="#{monitorBean.selProcTypeNode}" 
-                            style="height: 140px; width: auto; overflow-y: auto;">
+                            style="height: 140px; width: 270px; overflow-y: auto;">
                         <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
-                            <h:outputText value="#{procType.nameEndElipse}"/>
+                            <h:outputText value="#{procType.nameEndElipse}" title="#{procType.nameEndElipse}"/>
                         </p:treeNode>
                     </p:tree>
                     <p:contextMenu for="treeProcTypes" >
@@ -152,7 +152,7 @@
                      currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord}"                     
                      sortBy="#{item.regNumber}"
                      rowStyleClass="#{sessionBean.getItemStyle(item)}"
-                     tableStyle="table-layout: auto; font-size: 90%;" styleClass="ui-grid-col-12 without-spaces">                
+                     tableStyle="table-layout: auto; font-size: 80%;" styleClass="ui-grid-col-12 without-spaces">                
 
             <p:column width="20" sortBy="#{item.iconName}" >
                 <p:spacer width="3"/>

@@ -1,5 +1,6 @@
 package com.maxfill.model.basedict.process;
 
+import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.basedict.processType.ProcessTypesFacade;
@@ -115,7 +116,6 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
      * @param parent
      * @param author
      * @param subProcEl
-     * @param caption
      * @return 
      */
     public Process createSubProcess(ProcessType owner, Process parent, User author, SubProcessElem subProcEl){        
@@ -144,11 +144,6 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     @Override
     public int replaceItem(Process oldItem, Process newItem) {
         return 0;
-    }
-
-    @Override
-    protected Integer getMetadatesObjId() {
-        return 20;
     }
 
     /**
@@ -280,11 +275,11 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
      * @param errors
      * @return 
      */
-    public void validateCanRun(Process process, User currentUser,  Set<String> errors){
+    public void validateCanRun(Process process, User currentUser,  Set<Tuple> errors){
         Process parent = process.getParent();
         if (parent == null) return; //нет ограничений на запуск, т.к. это не подпроцесс
         if(!Objects.equals(DictStates.STATE_RUNNING, process.getParent().getState().getCurrentState().getId())){
-            errors.add("SubprocessCannotBeStarted");
+            errors.add(new Tuple("SubprocessCannotBeStarted", new Object[]{}));
             return;
         }
         Scheme scheme = parent.getScheme();
@@ -294,7 +289,7 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
                 .map(entry->entry.getValue())
                 .findFirst().orElse(null);
         if (elem != null && !elem.isEnter()){            
-            errors.add("SubprocessCannotBeStarted");
+            errors.add(new Tuple("SubprocessCannotBeStarted", new Object[]{}));
         }
     }
     
@@ -443,5 +438,12 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         cq.orderBy(builder.asc(root.get(Process_.result)));
         Query query = em.createQuery(cq);
         return query.getResultList();        
+    }
+    
+    /* *** СЛУЖЕБНЫЕ *** */
+    
+    @Override
+    protected Integer getMetadatesObjId() {
+        return DictMetadatesIds.OBJ_PROCESS;
     }
 }

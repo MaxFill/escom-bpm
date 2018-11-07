@@ -72,7 +72,8 @@
                 </f:facet>
             </p:panel>
 
-            <ui:insert name="form_scripts"/>            
+            <ui:insert name="form_scripts"/>
+            
             <ui:include src="/view/common/exeption-handler.xhtml"/>
             <ui:include src="/view/common/confirm-dlg.xhtml"/>
             <p:remoteCommand name="formSize" immediate="true" actionListener="#{sessionBean.onFormSize()}" />                            

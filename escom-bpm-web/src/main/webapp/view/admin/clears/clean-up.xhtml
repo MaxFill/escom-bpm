@@ -12,23 +12,31 @@
     <ui:define name="toolbarComponents" >
     </ui:define>
 
-    <ui:define name="centerFormContent">                
-        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">            
+    <ui:define name="centerFormContent"> 
+        <p:tabView orientation="left" id="mainTabView" >
+            <p:tab title="#{bundle.CleanUpFileStorage}">
+                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces"> 
 
-        <p:outputLabel value="#{bundle.CleanUpFileStorage}" />
-        <h:panelGrid id="pnInfo" columns="2">
-            <p:graphicImage value="/resources/icon/importance-20.png"/> 
-            <h:outputLabel value="#{msg.InfoCleanUpFileStorage}"/>
-        </h:panelGrid>
-
-        <p:separator/>
-        <p:commandButton value="#{bundle.RemovalNotRelatedFiles}" style="float: right;"
-                         onstart="PF('statusDialog').show();"
-                         oncomplete="PF('statusDialog').hide();"
-                         actionListener="#{clearsBean.onCleanUpFileStorage()}">
-            <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.AreYouSure}" icon="ui-icon-alert"/>
-        </p:commandButton>
-
-        </p:panelGrid>
+                    <h:panelGrid id="pnInfo" columns="2">                      
+                        <p:graphicImage value="/resources/icon/importance-20.png"/> 
+                        <h:outputLabel value="#{msg.InfoCleanUpFileStorage}"/>                        
+                    </h:panelGrid>
+                    
+                    <p:separator/>                    
+                    
+                    <p:commandButton value="#{bundle.RemovalNotRelatedFiles}" style="float: right;"
+                                     onstart="PF('progressDlg').show(); document.getElementById('mainFRM:btnStart').click();"                                      
+                                     actionListener="#{clearsBean.onCleanUpFileStorage()}"
+                                     update="mainFRM:progressBar">
+                        <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.AreYouSure}" icon="ui-icon-alert"/>
+                    </p:commandButton>                                        
+                    
+                </p:panelGrid>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+    
+    <ui:define name="form_scripts"> 
+       <ui:include src="/view/common/progress-dlg.xhtml"/>
     </ui:define>
 </ui:composition>

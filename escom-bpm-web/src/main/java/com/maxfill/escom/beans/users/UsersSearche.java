@@ -15,7 +15,7 @@ public class UsersSearche extends SearcheModel{
     private static final long serialVersionUID = -869171711508429153L;
 
     private String searcheLogin;
-
+    
     @Override
     public void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<BaseDict> searcheGroups, Map<String, Object> addParams){
         if (StringUtils.isNotBlank(searcheLogin)) {

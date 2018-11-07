@@ -269,7 +269,7 @@
         </sql>
     </changeSet>
     
-        <changeSet id="processes_add_linkUID" author="filatov" context="initdata" runOnChange="true">
+    <changeSet id="processes_add_linkUID" author="filatov" context="initdata" runOnChange="true">
        <preConditions onFail="MARK_RAN">
            <not>
                <columnExists tableName="processes" columnName="LinkUID" />
@@ -280,5 +280,21 @@
                <constraints nullable="true"/>
            </column>
        </addColumn>       
+    </changeSet>
+    
+    <changeSet id="partners_add_Inn_Kpp" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="partners" columnName="Inn" />
+            </not>
+        </preConditions>
+        <addColumn tableName="partners">
+            <column name="Inn" type="varchar(32)" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="Kpp" type="varchar(32)" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
     </changeSet>
 </databaseChangeLog> 

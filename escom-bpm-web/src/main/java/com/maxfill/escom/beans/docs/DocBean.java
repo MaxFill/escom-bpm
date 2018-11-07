@@ -20,7 +20,9 @@ import com.maxfill.model.basedict.docStatuses.DocStatuses;
 import com.maxfill.model.basedict.docType.DocType;
 import com.maxfill.model.basedict.folder.Folder;
 import com.maxfill.model.basedict.process.ProcessFacade;
+import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.statusesDoc.StatusesDoc;
+import com.maxfill.model.basedict.user.User;
 import java.io.IOException;
 import java.text.MessageFormat;
 import javax.ejb.EJB;
@@ -160,8 +162,10 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     
     @Override
     public SearcheModel initSearcheModel() {
-        SearcheModel sm = new DocsSearche();
-        sm.setAuthorSearche(getCurrentUser());
+        DocsSearche sm = new DocsSearche();
+        User user = getCurrentUser();
+        sm.setAuthorSearche(user);        
+        sm.setCompanySearche(staffFacade.findCompanyForStaff(user.getStaff()));
         return sm;
     }
 

@@ -74,6 +74,14 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
     @Size(max = 256)
     private String phone;
     
+    @Column(name = "Inn")
+    @Size(max = 32)
+    private String inn;
+    
+    @Column(name = "Kpp")
+    @Size(max = 32)
+    private String kpp;
+    
     @JoinTable(name = "partnersInGroup", joinColumns = {
         @JoinColumn(name = "PartnerId", referencedColumnName = "ID")}, inverseJoinColumns = {
         @JoinColumn(name = "GroupId", referencedColumnName = "Id")})
@@ -182,6 +190,20 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
         this.templRegNumber = templRegNumber;
     }
 
+    public String getInn() {
+        return inn;
+    }
+    public void setInn(String inn) {
+        this.inn = inn;
+    }
+
+    public String getKpp() {
+        return kpp;
+    }
+    public void setKpp(String kpp) {
+        this.kpp = kpp;
+    }
+        
     @Override
     public String getEmail() {
         return email;

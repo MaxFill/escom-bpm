@@ -36,6 +36,18 @@
                 <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('curatorSearche').selectValue();"/>
             </div>
         </h:panelGroup>
+        
+        <p:outputLabel value="#{bundle.Number}:"/>
+        <h:panelGroup styleClass="ui-grid-col-12">
+            <div class="ui-inputgroup">
+                <p:inputText title="#{bundle.HelpSearcheContext}" value="#{_bean.model.numberSearche}"
+                         widgetVar="numberSearche"
+                         styleClass="ui-grid-col-12"
+                         onkeypress="keyPress();">
+                </p:inputText>
+                <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('numberSearche').jq.val('');"/>
+            </div>
+        </h:panelGroup>
     </ui:define>
 
     <!-- специфичные поля таблицы обозревателя -->

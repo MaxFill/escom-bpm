@@ -25,18 +25,4 @@ public class MetadatesFacade extends BaseFacade<Metadates>{
         return q.getResultList();
     }
 
-    /**
-     * Возвращает объект метаданных по его имени
-     * @param objectName
-     * @return
-     */
-    public Metadates findByObjectName(String objectName) {
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Metadates> cq = builder.createQuery(Metadates.class);
-        Root<Metadates> root = cq.from(Metadates.class);
-        Predicate crit1 = builder.equal(root.get(Metadates_.objectName), objectName);
-        cq.select(root).where(builder.and(crit1));
-        TypedQuery<Metadates> query = em.createQuery(cq);
-        return query.getSingleResult();
-    }
 }

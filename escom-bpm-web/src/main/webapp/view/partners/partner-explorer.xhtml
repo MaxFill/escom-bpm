@@ -24,6 +24,12 @@
         <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{_bean.isNowShowDetail()}">
             #{item.code}
         </p:column>
+        <p:column headerText="#{bundle.Inn}" sortBy="#{item.inn}" rendered="#{_bean.isNowShowDetail()}">
+            #{item.inn}
+        </p:column>
+        <p:column headerText="#{bundle.Kpp}" sortBy="#{item.kpp}" rendered="#{_bean.isNowShowDetail()}">
+            #{item.kpp}
+        </p:column>
     </ui:define> 
         
     <!-- специфичные поля таблицы обозревателя Tree -->
@@ -42,6 +48,30 @@
                              onkeypress="keyPress();">
                 </p:inputText>
                 <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchCode').jq.val('');"/>
+            </div>
+        </h:panelGroup>
+        <p:outputLabel value="#{bundle.Inn}:"/>
+        <h:panelGroup styleClass="ui-grid-col-12">
+            <div class="ui-inputgroup">
+                <p:inputText title="#{bundle.HelpSearcheContext}" widgetVar="searchInn"
+                             styleClass="ui-grid-col-12"
+                             value="#{_bean.model.inn}"
+                             placeholder="#{bundle.InputCreteriaForSearche}"
+                             onkeypress="keyPress();">
+                </p:inputText>
+                <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchInn').jq.val('');"/>
+            </div>
+        </h:panelGroup>
+        <p:outputLabel value="#{bundle.Kpp}:"/>
+        <h:panelGroup styleClass="ui-grid-col-12">
+            <div class="ui-inputgroup">
+                <p:inputText title="#{bundle.HelpSearcheContext}" widgetVar="searchKpp"
+                             styleClass="ui-grid-col-12"
+                             value="#{_bean.model.kpp}"
+                             placeholder="#{bundle.InputCreteriaForSearche}"
+                             onkeypress="keyPress();">
+                </p:inputText>
+                <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchKpp').jq.val('');"/>
             </div>
         </h:panelGroup>
     </ui:define>

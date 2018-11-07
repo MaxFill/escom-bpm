@@ -812,7 +812,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                     break;
                 }
                 case DictDetailSource.PROCESS_SOURCE:{
-                    loadItems = loadDocs(first, pageSize, sortField, sortOrder, makeFilters(filters));
+                    loadItems = loadDocs(first, pageSize, sortField, sortOrder, makeFilters(filters));                    
                     break;
                 }
                 default:{
@@ -1300,6 +1300,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         } 
         setSource(DictDetailSource.SEARCHE_SOURCE);
         refreshLazyData();        
+        getLazyDataModel();
         
         switch (currentTab) {
             case DictExplForm.TAB_TREE: {
@@ -1316,9 +1317,13 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 }
                 break;
             }
-        }        
+        }         
     }    
-            
+    
+    public void onClearSearche(){
+        model = searcheBean.initSearcheModel();
+    }
+    
     /* Выполняет поиск объектов с учётом критериев поиска  */
     public List<BaseDict> doSearcheItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
         List<BaseDict> searcheGroups = new ArrayList<>();
@@ -1386,9 +1391,6 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         setCurrentViewModeDetail();        
         makeJurnalHeader(MsgUtils.getBandleLabel(searcheBean.getMetadatesObj().getBundleJurnalName()), MsgUtils.getBandleLabel("SearcheResult"), "DisplaysObjectsSelectedSearche");
         navigator = null;
-        if (result.isEmpty()) {
-            MsgUtils.warnMsg("NO_SEARCHE_FIND");            
-        }
         return result;
     }
 
@@ -1972,7 +1974,11 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     public void setDefSortField(String defSortField) {
         this.defSortField = defSortField;
     }    
-    
+
+    public List<BaseDict> getLoadItems() {        
+        return loadItems;
+    }
+        
     @Override
     public boolean isEastShow(){
         return true;

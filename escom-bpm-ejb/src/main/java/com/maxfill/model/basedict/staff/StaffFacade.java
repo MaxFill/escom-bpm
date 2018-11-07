@@ -275,8 +275,9 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         if (staff.getCompany() != null && staff.getOwner() == null){
             return staff.getCompany();
         }
-        if (staff.getOwner() != null){
-            return staff.getOwner().getCompany();
+        Department dept = staff.getOwner();
+        if (dept != null){
+            return dept.getCompany();
         }
         return null;
     }
