@@ -19,7 +19,6 @@ import com.maxfill.model.basedict.company.Company;
 import com.maxfill.model.basedict.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.basedict.user.User;
 import com.maxfill.services.mail.MailSettings;
-import com.maxfill.services.numerators.doc.DocNumeratorService;
 import com.maxfill.services.searche.SearcheService;
 import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
@@ -45,6 +44,7 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import com.maxfill.model.basedict.doc.numerator.DocNumerator;
 
 @Stateless
 public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocStates> {
@@ -56,7 +56,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     @EJB
     private FoldersFacade folderFacade;
     @EJB
-    private DocNumeratorService docNumeratorService;
+    private DocNumerator docNumeratorService;
     
     public DocFacade() {
         super(Doc.class, DocLog.class, DocStates.class);

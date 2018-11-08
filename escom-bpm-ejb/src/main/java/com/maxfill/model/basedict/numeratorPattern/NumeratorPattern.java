@@ -73,13 +73,27 @@ public class NumeratorPattern extends BaseDict<NumeratorPattern, NumeratorPatter
     @NotNull
     @Column(name = "IsResetNewYear")
     private Boolean resetNewYear = true;
-            
+     
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "IsSerialNumber")
+    private boolean serialNumber;
+    
     @OneToMany(mappedBy = "numerator")
     private List<DocType> docTypeList;    
     
     public NumeratorPattern() {
     }
 
+    /* GETS & SETS */
+
+    public boolean isSerialNumber() {
+        return serialNumber;
+    }
+    public void setSerialNumber(boolean serialNumber) {
+        this.serialNumber = serialNumber;
+    }    
+    
     @Override
     public NumeratorPatternStates getState() {
         return state;
@@ -133,6 +147,8 @@ public class NumeratorPattern extends BaseDict<NumeratorPattern, NumeratorPatter
         this.id = id;
     }
 
+    /* *** *** */
+    
     @Override
     public int hashCode() {
         int hash = 0;

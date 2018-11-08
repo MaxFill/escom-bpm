@@ -25,7 +25,7 @@ public class CountersExplBean extends BaseViewBean{
     @Override
     public String getFormName() {
         return DictFrmName.FRM_COUNTERS;
-    }
+    }    
     
     public void onDeleteItem(Counter item){
         counterFacade.remove(item);

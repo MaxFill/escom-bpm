@@ -349,11 +349,14 @@
             <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
                 <p:panelGrid layout="grid" columns="2" columnClasses="ui-grid-col-5, ui-grid-col-7">
                     <p:graphicImage name="/images/escom_logo.jpg"  /> 
-                    <h:panelGroup>
-                        <h2>
-                            <h:outputLabel value="#{bundle.Goodbye}"/> 
-                        </h2>
-                    </h:panelGroup>
+                    <h:panelGrid columns="1">
+                        <p:outputLabel value="#{bundle.YourSessionIsClosed}" />
+                        <h:panelGroup>
+                            <h2>
+                                <h:outputLabel value="#{bundle.Goodbye}"/> 
+                            </h2>
+                        </h:panelGroup>
+                    </h:panelGrid>
                 </p:panelGrid>
                 <p:separator/>
                 <p:link href="#{sessionBean.makePageURL('/login')}" value="#{bundle.GotoLogin}" style="float: right;" rendered="false"/>

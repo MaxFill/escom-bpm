@@ -261,7 +261,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
     @Override
     protected void onAfterSaveItem(User user) {
         super.onAfterSaveItem(user);
-        if (user.isNeedChangePwl()){
+        if (user.isNeedChangePwl() && !user.isLdap()){
             String msg = MsgUtils.getMessageLabel("YouNeedChangePassword");
             getFacade().sendSystemMsg(user, msg);
         }

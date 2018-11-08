@@ -23,7 +23,8 @@ public abstract class NumeratorBase implements NumeratorService{
     /* Откат регистрационного номера */    
     @Override
     public void doRollBackRegistred(BaseDict item) {
-        Counter counter = doGetCounter(item);
+        NumeratorPattern numPattern = getNumeratorPattern(item);
+        Counter counter = doGetCounter(item, numPattern);
         Integer templNumber = item.getNumber();
         if (templNumber != null) {
             Integer number = counter.getNumber();
@@ -38,30 +39,34 @@ public abstract class NumeratorBase implements NumeratorService{
     
     /* Получение счётчика объекта. Возвращается всегда актуальный
      * счётчик, для учёта изменений сделанных в других сессиях */
-    protected Counter doGetCounter(BaseDict item) {
-        String counterName = doGetCounterName(item);
+    protected Counter doGetCounter(BaseDict item, NumeratorPattern numPattern) {
+        String counterName = doGetCounterName(item, numPattern);
         List<Counter> counters = getCounterFacade().findCounterByName(counterName);
         if (counters.isEmpty()) {
-            Counter numerator = new Counter();
-            numerator.setName(counterName);
-            numerator.setNumber(0);
-            getCounterFacade().create(numerator);
-            return numerator;
+            Counter counter = new Counter();
+            counter.setName(counterName);
+            counter.setNumber(0);
+            counter.setCompanyName("---");
+            counter.setTypeName("---");
+            getCounterFacade().create(counter);
+            return counter;
         } else {
             return counters.get(0);
         }
     }
     
-    protected abstract String doGetCounterName(BaseDict item);
-    
+    protected abstract String doGetCounterName(BaseDict item, NumeratorPattern numPattern);    
+    protected abstract NumeratorPattern getNumeratorPattern(BaseDict item);
+  
     public CounterFacade getCounterFacade() {
         return counterFacade;
     }
    
     /* Формирование регистрационного номера объекта по заданной маске  */
     @Override
-    public String doRegistrNumber(BaseDict item, NumeratorPattern numPattern, Map<String, Object> params, Date dateReg) {
-        Counter counter = doGetCounter(item);
+    public String doRegistrNumber(BaseDict item, Map<String, Object> params, Date dateReg) {
+        NumeratorPattern numPattern = getNumeratorPattern(item);
+        Counter counter = doGetCounter(item, numPattern);
         Integer number = doGetNextRegNumber(counter);
         item.setNumber(number);        
         int leadingZeros = numPattern.getLeadingZeros();

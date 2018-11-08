@@ -1,8 +1,6 @@
 package com.maxfill.model.basedict.numeratorPattern.counter;
 
 import com.maxfill.model.Dict;
-import com.maxfill.model.basedict.company.Company;
-import com.maxfill.model.basedict.docType.DocType;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -10,12 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  * Счётчик нумератора

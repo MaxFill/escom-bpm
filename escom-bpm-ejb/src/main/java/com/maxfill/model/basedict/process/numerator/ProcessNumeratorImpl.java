@@ -1,4 +1,4 @@
-package com.maxfill.services.numerators.process;
+package com.maxfill.model.basedict.process.numerator;
 
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.BaseDict;
@@ -23,7 +23,7 @@ import org.apache.commons.lang3.StringUtils;
  * Нумератор для процессов
  */ 
 @Stateless
-public class ProcessNumeratorImpl extends NumeratorBase implements ProcessNumeratorService{    
+public class ProcessNumeratorImpl extends NumeratorBase implements ProcessNumerator{    
     @EJB
     private ProcessTypesFacade processTypesFacade;
     @EJB
@@ -32,17 +32,19 @@ public class ProcessNumeratorImpl extends NumeratorBase implements ProcessNumera
     /**
      * Возвращает счётчик для объекта
      * @param item
+     * @param numPattern
      * @return 
      */
     @Override
-    protected Counter doGetCounter(BaseDict item) {
+    protected Counter doGetCounter(BaseDict item, NumeratorPattern numPattern) {
         Process process = (Process) item;
-        String counterName = doGetCounterName(process);
+        String counterName = doGetCounterName(process, numPattern);
         List<Counter> counters = getCounterFacade().findCounterByName(counterName);
         if (counters.isEmpty()) {
             Counter counter = new Counter();
             counter.setName(counterName);
             counter.setNumber(0);
+            counter.setCompanyName(process.getCompanyName());
             counter.setTypeName(process.getOwner().getName());
             counter.setYear(Integer.valueOf(EscomUtils.getYearYY(process.getItemDate())));
             getCounterFacade().create(counter);
@@ -55,24 +57,36 @@ public class ProcessNumeratorImpl extends NumeratorBase implements ProcessNumera
     /**
      * Формирование имени счётчика
      * @param item
+     * @param numPattern
      * @return 
      */
     @Override
-    protected String doGetCounterName(BaseDict item) {
+    protected String doGetCounterName(BaseDict item, NumeratorPattern numPattern) {
         Process process = (Process) item;
-        ProcessType procType = process.getOwner();        
-        StringBuilder sb = new StringBuilder(processFacade.getFRM_NAME());
+        ProcessType procType = process.getOwner();         
+        
+        StringBuilder sb = new StringBuilder();
+        if (process.getCompany() != null){
+            sb.append("Company_").append(process.getCompany().getId()).append("_");
+        }
+        
+        sb.append(processFacade.getFRM_NAME());
+        
         Process parent = process.getParent();
         if (parent != null){
             sb.append("_parent_").append(parent.getId());
         } else {
-            String counterName = procType.getGuide();
-            if (StringUtils.isEmpty(counterName)){
-                counterName = EscomUtils.generateGUID();
-                procType.setGuide(counterName);            
-                processTypesFacade.edit(procType);
+            if (numPattern.isSerialNumber()){
+                sb.append("_SerialNumber");
+            } else {
+                String counterName = procType.getGuide();
+                if (StringUtils.isEmpty(counterName)){
+                    counterName = EscomUtils.generateGUID();
+                    procType.setGuide(counterName);            
+                    processTypesFacade.edit(procType);
+                    sb.append("_").append(counterName);
+                }
             }
-            sb.append("_").append(counterName);
         }
         
         if (processTypesFacade.getProcTypeForOpt(procType).getNumerator().getResetNewYear()){                
@@ -95,7 +109,7 @@ public class ProcessNumeratorImpl extends NumeratorBase implements ProcessNumera
             dateReg = new Date();
             process.setItemDate(dateReg);
         }                
-        NumeratorPattern numPattern = processTypesFacade.getProcTypeForOpt(process.getOwner()).getNumerator();
+        NumeratorPattern numPattern = getNumeratorPattern(process);
         if (numPattern == null){
             errors.add(new Tuple("NUMERATOR_NO_SET", new Object[]{}));
             return;
@@ -111,7 +125,12 @@ public class ProcessNumeratorImpl extends NumeratorBase implements ProcessNumera
                 params.put("O", companyCode);
             }
         }
-        String number = doRegistrNumber(process, numPattern, params, dateReg);
+        String number = doRegistrNumber(process, params, dateReg);
         process.setRegNumber(number);        
+    }    
+
+    @Override
+    protected NumeratorPattern getNumeratorPattern(BaseDict item) {
+        return processTypesFacade.getProcTypeForOpt((ProcessType)item.getOwner()).getNumerator();
     }
 }

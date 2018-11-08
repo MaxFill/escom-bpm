@@ -56,7 +56,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     protected UserFacade userFacade;
     
     private Metadates metadatesObj;             //объект метаданных
-    private Boolean isItemRegisted;             //признак того что была выполнена регистрация (для отката при отказе)     
+    protected Boolean isItemRegisted;           //признак того что была выполнена регистрация (для отката при отказе)     
     private String itemOpenKey;
     private Integer typeEdit;                   //режим редактирования записи
     private T editedItem;                       //редактируемый объект 
@@ -257,7 +257,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     /* Отмена изменений в объекте, завершающие действия  */
     protected String doFinalCancelSave() {
         if (Boolean.TRUE.equals(isItemRegisted)) {
-            numeratorService.doRollBackRegistred(getEditedItem());
+            getNumerator().doRollBackRegistred(getEditedItem());
             isItemRegisted = false;
         }        
         return closeItemForm(SysParams.EXIT_NOTHING_TODO);  //закрыть форму объекта
@@ -453,7 +453,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
      * @return 
      */
     public boolean isHaveRightExec() {
-        return getFacade().isHaveRightEdit(editedItem);
+        return getFacade().isHaveRightExec(editedItem);
     }  
     
     /* Возвращает название для заголовка наследования дефолтных прав дочерних объектов */
@@ -633,6 +633,10 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     
     /* GETS & SETS */
 
+    public NumeratorService getNumerator(){
+        return numeratorService;
+    }
+    
     @Override
     public String getFormName() {
         return getFacade().getFRM_NAME().toLowerCase();

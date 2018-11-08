@@ -9,7 +9,7 @@ import com.maxfill.model.basedict.partnerTypes.PartnerTypes;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.doc.Doc_;
-import com.maxfill.model.basedict.numeratorPattern.NumeratorPattern;
+import com.maxfill.model.basedict.partner.numerator.PartnerNumerator;
 import com.maxfill.model.basedict.user.User;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +31,8 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
 
     @EJB
     private PartnersGroupsFacade partnersGroupsFacade;
+    @EJB
+    private PartnerNumerator partnerNumerator;
     
     public PartnersFacade() {
         super(Partner.class, PartnersLog.class, PartnerStates.class);
@@ -106,9 +108,8 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
     
     /* Установка специфичных атрибутов контрагента при его создании */
     @Override
-    public void setSpecAtrForNewItem(Partner partner, Map<String, Object> params){
-        NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
-        String number = numeratorService.doRegistrNumber(partner, numeratorPattern, null, new Date());
+    public void setSpecAtrForNewItem(Partner partner, Map<String, Object> params){        
+        String number = partnerNumerator.doRegistrNumber(partner, null, new Date());
         partner.setCode(number);
     }
     

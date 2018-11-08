@@ -297,4 +297,18 @@
             </column>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="numeratorPattern_add_IsSerialNumber" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="numeratorPattern" columnName="IsSerialNumber" />
+            </not>
+        </preConditions>
+        <addColumn tableName="numeratorPattern">
+            <column name="IsSerialNumber" type="BOOLEAN" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog> 

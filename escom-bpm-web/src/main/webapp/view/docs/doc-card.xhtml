@@ -144,8 +144,7 @@
                 
                 <p:commandButton icon="ico_process" value="#{bundle.CreateProcess}" style="float:right;"
                                  actionListener="#{procTemplBean.onOneSelectItem()}"
-                                 rendered="#{!_bean.isReadOnly()}"
-                                 disabled="#{_bean.isReadOnly()}">                     
+                                 disabled="#{!docCardBean.isCanCreateProcess()}">                     
                     <p:ajax event="dialogReturn" listener="#{docCardBean.onAfterSelectProcTempl}"
                             oncomplete="document.getElementById('mainFRM:btnCreateProc').click();" />
                 </p:commandButton>                
@@ -209,6 +208,14 @@
         </p:menuButton>
     </ui:define>
 
+    <ui:define name="extColumnsRights">
+        <p:column headerText="#{bundle.Execution}" styleClass="colRight">
+            <p:selectBooleanCheckbox value="#{right.execute}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}">
+                <p:ajax process="@this" oncomplete="itemChange = 1;"/>
+            </p:selectBooleanCheckbox>
+        </p:column>        
+    </ui:define>
+    
     <ui:define name="specMenuButtons">
     </ui:define>
     

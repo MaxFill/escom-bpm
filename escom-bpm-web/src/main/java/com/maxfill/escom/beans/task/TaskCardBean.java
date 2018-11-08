@@ -459,8 +459,13 @@ public class TaskCardBean extends BaseCardBean<Task>{
      */
     private Set<Staff> initExecutors(Task task){        
         Set<Staff> staffs = new HashSet<>();
-        //админ может выбрать любого
-        if (userFacade.isAdmin(getCurrentUser())){
+        boolean isCurator = false;
+        if (task.getScheme() != null){
+            Staff curator = task.getScheme().getProcess().getCurator();
+            isCurator = curator.getEmployee().equals(getCurrentUser());
+        }
+        //админ или куратор процесса может выбрать любого
+        if (userFacade.isAdmin(getCurrentUser()) || isCurator){
             return new HashSet<>(staffFacade.findActualStaff());            
         }        
         //владелец может выбрать себя или кого-то из своих замов

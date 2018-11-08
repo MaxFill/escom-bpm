@@ -7,12 +7,10 @@ import com.maxfill.model.basedict.company.Company;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.basedict.BaseDict;
-import com.maxfill.model.basedict.numeratorPattern.NumeratorPattern;
 import com.maxfill.model.core.rights.Rights;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.staff.Staff_;
 import com.maxfill.model.basedict.user.User;
-import com.maxfill.services.numerators.department.DepartmentNumeratorService;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,12 +25,13 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 
 import org.apache.commons.lang.StringUtils;
+import com.maxfill.model.basedict.department.numerator.DepartmentNumerator;
 
 @Stateless
 public class DepartmentFacade extends BaseDictFacade<Department, Company, DepartamentLog, DepartmentStates>{
 
     @EJB
-    private DepartmentNumeratorService departmentNumeratorService;
+    private DepartmentNumerator departmentNumerator;
     @EJB
     private CompanyFacade companyFacade;
     @EJB
@@ -264,9 +263,8 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
     }
     
     /* Формирование кода подразделения  */
-    public void makeCode(Department department){        
-        NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
-        String number = departmentNumeratorService.doRegistrNumber(department, numeratorPattern, null, new Date());
+    public void makeCode(Department department){
+        String number = departmentNumerator.doRegistrNumber(department, null, new Date());
         Company company = findCompany(department);
         StringBuilder sb = new StringBuilder();
         sb.append(company.getCode()).append(SysParams.CODE_SEPARATOR).append(number);

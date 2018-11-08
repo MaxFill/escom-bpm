@@ -42,8 +42,6 @@ import com.maxfill.model.basedict.user.UserFacade;
 import com.maxfill.model.basedict.userGroups.UserGroups;
 import com.maxfill.model.basedict.userGroups.UserGroupsFacade;
 import com.maxfill.services.notification.NotificationService;
-import com.maxfill.services.numerators.doc.DocNumeratorService;
-import com.maxfill.services.numerators.process.ProcessNumeratorService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
@@ -72,6 +70,8 @@ import javax.ejb.SessionContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import com.maxfill.model.basedict.doc.numerator.DocNumerator;
+import com.maxfill.model.basedict.process.numerator.ProcessNumerator;
 
 /**
  * Сервис реализует методы управления бизнес-процессами
@@ -104,9 +104,9 @@ public class WorkflowImpl implements Workflow {
     @EJB
     private NotificationService notificationService;
     @EJB
-    private DocNumeratorService docNumeratorService;
+    private DocNumerator docNumeratorService;
     @EJB
-    private ProcessNumeratorService processNumerator;    
+    private ProcessNumerator processNumerator;    
     @EJB
     private ProcTimerFacade procTimerFacade;
     @EJB

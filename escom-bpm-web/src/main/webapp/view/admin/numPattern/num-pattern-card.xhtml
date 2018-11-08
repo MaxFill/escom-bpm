@@ -40,8 +40,14 @@
                            min="0" max="10" size="6"
                            requiredMessage="#{bundle.Field} [#{bundle.LeadingZeros}] #{bundle.MustBeFilled}">
                 </p:spinner>
+
                 <p:selectBooleanCheckbox value="#{_bean.editedItem.resetNewYear}" 
                                          itemLabel="#{bundle.ResetNewYear}"
+                                         disabled="#{!_bean.isHaveRightEdit()}"
+                                         onchange="return itemChange = 1;"/>
+                
+                <p:selectBooleanCheckbox value="#{_bean.editedItem.serialNumber}" 
+                                         itemLabel="#{bundle.CreateSerialNumber}"
                                          disabled="#{!_bean.isHaveRightEdit()}"
                                          onchange="return itemChange = 1;"/>
             </p:panelGrid>   

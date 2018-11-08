@@ -36,7 +36,7 @@
                     <p:ajax event="rowEdit" listener="#{metadatesBean.onRightChange}" update="tblRightDoc" />
 
                     <p:headerRow>
-                        <p:column colspan="10">
+                        <p:column colspan="11">
                             <h:outputText value="#{bundle.State}: #{stateBean.getBundleName(right.state)}" />
                         </p:column>
                     </p:headerRow>
@@ -47,43 +47,50 @@
                             <h:outputText value="#{right.name}"/>
                         </p:panelGrid>
                     </p:column>
-                    <p:column headerText="#{bundle.Read}" styleClass="colRight">
+                    <p:column headerText="Read" styleClass="colRight">
                         <p:cellEditor>
                             <f:facet name="output"><p:selectBooleanCheckbox value="#{right.read}" disabled="true"/></f:facet>
                             <f:facet name="input"><p:selectBooleanCheckbox value="#{right.read}"/></f:facet>
                         </p:cellEditor>
                     </p:column>
-                    <p:column headerText="#{bundle.Change}" styleClass="colRight">
+                    <p:column headerText="Change" styleClass="colRight">
                         <p:cellEditor>
                             <f:facet name="output"><p:selectBooleanCheckbox value="#{right.update}" disabled="true"/></f:facet>
                             <f:facet name="input"><p:selectBooleanCheckbox value="#{right.update}"/></f:facet>
                         </p:cellEditor>
                     </p:column>
-                    <p:column headerText="#{bundle.Creating}" styleClass="colRight">
+                    <p:column headerText="Create" styleClass="colRight">
                         <p:cellEditor>
                             <f:facet name="output"><p:selectBooleanCheckbox value="#{right.create}" disabled="true"/></f:facet>
                             <f:facet name="input"><p:selectBooleanCheckbox value="#{right.create}"/></f:facet>
                         </p:cellEditor>
                     </p:column>
-                    <p:column headerText="#{bundle.Remove}" styleClass="colRight">
+                    <p:column headerText="Remove" styleClass="colRight">
                         <p:cellEditor>
                             <f:facet name="output"><p:selectBooleanCheckbox value="#{right.delete}" disabled="true"/></f:facet>
                             <f:facet name="input"><p:selectBooleanCheckbox value="#{right.delete}"/></f:facet>
                         </p:cellEditor>
                     </p:column>
-                    <p:column headerText="#{bundle.AddChildsRight}" styleClass="colRight">
+                    <p:column headerText="Add childs" styleClass="colRight">
                         <p:cellEditor>
                             <f:facet name="output"><p:selectBooleanCheckbox value="#{right.addChild}" disabled="true"/></f:facet>
                             <f:facet name="input"><p:selectBooleanCheckbox value="#{right.addChild}"/></f:facet>
                         </p:cellEditor>
                     </p:column>
-                    <p:column headerText="#{bundle.AddDetailRight}" styleClass="colRight">
+                    <p:column headerText="Exec" styleClass="colRight">
+                        <p:cellEditor>
+                            <f:facet name="output"><p:selectBooleanCheckbox value="#{right.execute}" disabled="true"/></f:facet>
+                            <f:facet name="input"><p:selectBooleanCheckbox value="#{right.execute}"/></f:facet>
+                        </p:cellEditor>
+                    </p:column> 
+                    
+                    <p:column headerText="Add details" styleClass="colRight">
                         <p:cellEditor>
                             <f:facet name="output"><p:selectBooleanCheckbox value="#{right.addDetail}" disabled="true"/></f:facet>
                             <f:facet name="input"><p:selectBooleanCheckbox value="#{right.addDetail}"/></f:facet>
                         </p:cellEditor>
                     </p:column>
-                    <p:column headerText="#{bundle.ChangeRight}" styleClass="colRight">
+                    <p:column headerText="Change Right" styleClass="colRight">
                         <p:cellEditor>
                             <f:facet name="output"><p:selectBooleanCheckbox value="#{right.changeRight}" disabled="true"/></f:facet>
                             <f:facet name="input"><p:selectBooleanCheckbox value="#{right.changeRight}"/></f:facet>

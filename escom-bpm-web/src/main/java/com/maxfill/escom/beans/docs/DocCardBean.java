@@ -27,7 +27,6 @@ import com.maxfill.model.basedict.procTempl.ProcTempl;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.basedict.remark.Remark;
 import com.maxfill.model.basedict.remark.RemarkFacade;
-import com.maxfill.services.numerators.doc.DocNumeratorService;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
@@ -51,6 +50,8 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import com.maxfill.model.basedict.doc.numerator.DocNumerator;
+import com.maxfill.services.numerators.NumeratorService;
 
 /**
  * Контролер формы "Карточка документа"
@@ -69,7 +70,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     private ProcessBean processBean;
     
     @EJB
-    private DocNumeratorService docNumeratorService;
+    private DocNumerator docNumeratorService;
     @EJB
     private DocFacade itemFacade;
     @EJB
@@ -102,10 +103,15 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     
     @Override
     protected void doPrepareOpen(Doc doc) {
-        if (getTypeEdit().equals(DictEditMode.INSERT_MODE) && getEditedItem().getAttachesList().size() >0){
-            onItemChange(); //установка признака что документ изменён
-        }
-        //doc.getAttachesList().size();
+        if (getTypeEdit().equals(DictEditMode.INSERT_MODE)){
+            if (getEditedItem().getAttachesList().size() >0){                
+                onItemChange(); //установка признака что документ изменён
+            }
+            if (getEditedItem().getRegNumber() != null){
+                onItemChange(); //установка признака что документ изменён
+                isItemRegisted = true;
+            }
+        }        
     }
      
     @Override
@@ -291,6 +297,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
         }
         doc.setRegNumber(null);
         onItemChange();
+        isItemRegisted = false;
         MsgUtils.warnMsg("DocRegCanceled");
     }
 
@@ -300,6 +307,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
         docNumeratorService.registratedDoc(doc, errors);
         if (errors.isEmpty()){
             onItemChange();
+            isItemRegisted = true;
         } else {
             MsgUtils.showTupleErrsMsg(errors);
         }
@@ -316,6 +324,11 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
         }
     }
     
+    @Override
+    public NumeratorService getNumerator(){
+        return docNumeratorService;
+    }
+        
     /* *** ВЛОЖЕНИЯ *** */
     
     /* Подготовка к отправке текущего документа на e-mail  */
@@ -537,6 +550,10 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
        return StringUtils.isBlank(doc.getRegNumber()) && doc.getDocType() != null && doc.getDocType().getNumerator() != null;
     }    
  
+    public boolean isCanCreateProcess(){
+        return isHaveRightExec();
+    }
+    
     /* ЗАМЕЧАНИЯ */
     
     @Override

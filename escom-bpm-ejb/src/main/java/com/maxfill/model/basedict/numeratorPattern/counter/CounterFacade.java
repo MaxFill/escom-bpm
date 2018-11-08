@@ -38,9 +38,8 @@ public class CounterFacade extends BaseFacade<Counter>{
         em.getEntityManagerFactory().getCache().evict(Counter.class);
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Counter> cq = builder.createQuery(Counter.class);
-        Root<Counter> c = cq.from(Counter.class);        
-        Predicate crit1 = builder.isNotNull(c.get("docType"));
-        cq.select(c).where(builder.and(crit1));
+        Root root = cq.from(Counter.class);
+        cq.select(root);
         Query q = em.createQuery(cq);       
         return q.getResultList(); 
     }

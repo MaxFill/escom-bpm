@@ -126,10 +126,13 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     private Set<ProcReport> reports = new HashSet<>();
     
     public Process() {
+    }        
+
+    @Override
+    public String getCompanyName() {
+        return company != null ? company.getName() : "";
     }
     
-    /* GETS & SETS */
-
     @Override
     public String getCuratorName(){
         return curator != null ? curator.getName() : "";
@@ -142,6 +145,8 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
         }
         return "subproc";
     }
+    
+    /* GETS & SETS */
     
     @Override
     public Date getItemDate() {
