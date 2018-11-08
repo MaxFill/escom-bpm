@@ -18,11 +18,7 @@
 
         <p:column width="16" sortBy="#{doc.iconName}">
             <p:graphicImage id="itemIcon" value="/resources/icon/#{doc.iconName}.png"/>  
-        </p:column>
-        
-        <p:column width="16" sortBy="#{doc.state.currentState.name}" priority="4">
-            <h:graphicImage id="iconDone" value="#{doc.state.currentState.icon}" title="#{stateBean.getBundleName(state.currentState)}"/>            
-        </p:column>
+        </p:column>       
         
         <p:column headerText="#{bundle.Number}" sortBy="#{doc.number}" priority="3">
             <h:outputText value="#{doc.regNumber}"/>
@@ -43,6 +39,10 @@
                            actionListener="#{docBean.onViewMainAttache(doc)}"/>
         </p:column>                       
 
+        <p:column width="16" sortBy="#{doc.state.currentState.name}" priority="4">
+            <h:graphicImage id="iconDone" value="#{doc.state.currentState.icon}" title="#{stateBean.getBundleName(doc.state.currentState)}"/>            
+        </p:column>
+        
         <p:column headerText="#{bundle.Commands}" > 
             <p:splitButton  value="#{bundle.Open}" title="#{bundle.Open}"                                                   
                             actionListener="#{_bean.setSelectedDoc(doc)}"

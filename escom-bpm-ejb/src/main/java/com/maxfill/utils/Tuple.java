@@ -19,6 +19,7 @@ public class Tuple <A, B> implements Serializable{
     
     @XmlElement(name = "ParamA")
     public A a;
+    
     @XmlElement(name = "ParamB")
     public B b;
 

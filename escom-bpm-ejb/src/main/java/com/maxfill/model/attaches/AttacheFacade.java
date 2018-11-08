@@ -102,7 +102,6 @@ public class AttacheFacade extends BaseFacade<Attaches>{
         CriteriaQuery cq = builder.createQuery(Long.class);
         Root root = cq.from(itemClass);
         List<Predicate> criteries = new ArrayList<>();
-        criteries.add(builder.equal(root.get("deleted"), false));
         criteries.add(builder.equal(root.get("author"), user));                
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);

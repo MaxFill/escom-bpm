@@ -450,10 +450,10 @@ public class WorkflowImpl implements Workflow {
         }
         
         if (scheme.getElements().getTasks().isEmpty() && MapUtils.isEmpty(scheme.getElements().getSubprocesses())){
-            errors.add(new Tuple("DiagramNotHaveTasks", null));
+            errors.add(new Tuple("DiagramNotHaveTasks", new Object[]{}));
         }
         if (scheme.getProcess().getCurator() == null || scheme.getProcess().getCurator().getEmployee() == null){
-            errors.add(new Tuple("CuratorNotSet", null));
+            errors.add(new Tuple("CuratorNotSet", new Object[]{}));
         }
         Date planEndDate = scheme.getProcess().getPlanExecDate();
         if (checkTasks){            

@@ -61,12 +61,11 @@ public class NotificationServiceImp implements NotificationService{
         AtomicInteger countTask = new AtomicInteger(0);
         staffFacade.findActualStaff().stream()
                 .forEach(staff->{
-                    taskFacade.findTaskByStaffStates(staff, states)
-                            .stream()
+                    taskFacade.findTaskByStaffStates(staff, states).stream()
                             .filter(task->task.getNextReminder() != null && task.getNextReminder().before(new Date()))
                             .forEach(task->{
                                 countTask.incrementAndGet();
-                                notification(task);
+                                notifReminder(task);
                             });
                 }
         );
@@ -81,7 +80,11 @@ public class NotificationServiceImp implements NotificationService{
         detailInfo.append("Execute timers: ").append(countTimers).append(SysParams.LINE_SEPARATOR);
     }
 
-    private void notification(Task task){        
+    /**
+     * Напоминание о задаче
+     * @param task 
+     */
+    private void notifReminder(Task task){        
         makeNotification(task, "Reminder");
         taskFacade.makeNextReminder(task);
         taskFacade.edit(task);

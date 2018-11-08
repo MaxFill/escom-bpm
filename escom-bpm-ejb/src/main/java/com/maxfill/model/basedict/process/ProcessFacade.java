@@ -77,8 +77,13 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         super(Process.class, ProcessLog.class, ProcessStates.class);
     }
 
+    /**
+     * Удаление процесса
+     * @param process 
+     */
     @Override
     public void remove(Process process){
+        process.getChildItems().forEach(p->remove(p));
         messagesFacade.removeMessageByProcess(process);
         if (process.getScheme() != null){
             process.getScheme().getTasks().forEach(task->{
@@ -154,7 +159,7 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     @Override
     public void setSpecAtrForNewItem(Process process, Map<String, Object> createParams){
         process.setDeltaDeadLine(0);
-        process.setDeadLineType("data");              
+        process.setDeadLineType("delta");              
         
         ProcessType processType = processTypesFacade.getProcTypeForOpt(process.getOwner());
         if (processType != null){
@@ -376,6 +381,11 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         return "/processes/process-explorer.xhtml";
     }  
     
+    /**
+     * Подсчёт колва ссылок из процессов на указанный документ
+     * @param doc
+     * @return 
+     */
     public Long findCountDocLinks(Doc doc){
         em.getEntityManagerFactory().getCache().evict(Process.class);
         CriteriaBuilder builder = em.getCriteriaBuilder();

@@ -43,7 +43,7 @@ public class AssistantBean extends BaseDetailsBean<Assistant, User>{
 
     @Override
     public BaseTableBean getDetailBean() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return null;
     }
 
     @Override

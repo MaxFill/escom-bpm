@@ -45,6 +45,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import com.maxfill.model.basedict.doc.numerator.DocNumerator;
+import com.maxfill.model.core.messages.UserMessagesFacade;
 
 @Stateless
 public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocStates> {
@@ -57,6 +58,8 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     private FoldersFacade folderFacade;
     @EJB
     private DocNumerator docNumeratorService;
+    @EJB
+    private UserMessagesFacade messagesFacade;
     
     public DocFacade() {
         super(Doc.class, DocLog.class, DocStates.class);
@@ -251,6 +254,15 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         searcheService.updateFullTextIndex(doc);
     }
 
+    /* Удаление документа  */
+    @Override
+    public void remove(Doc doc){
+        searcheService.deleteFullTextIndex(doc);
+        attacheService.deleteAttaches(doc.getAttachesList());
+        messagesFacade.removeMessageByDoc(doc);        
+        super.remove(doc);
+    }  
+    
     @Override
     public void setSpecAtrForNewItem(Doc doc, Map<String, Object> params) {
         Folder folder = doc.getOwner();
@@ -448,15 +460,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         params.put("size", Long.valueOf(part.getSize()));
         params.put("author", author);
         loadMailAttache(params, new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8.name())), doc);
-    }
-    
-    /* Удаление документа  */
-    @Override
-    public void remove(Doc doc){
-        searcheService.deleteFullTextIndex(doc);
-        attacheService.deleteAttaches(doc.getAttachesList());        
-        super.remove(doc);
-    }           
+    }         
 
     public Long findCountCompanyLinks(Company company){
         em.getEntityManagerFactory().getCache().evict(Doc.class);

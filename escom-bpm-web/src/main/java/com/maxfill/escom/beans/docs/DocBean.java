@@ -20,7 +20,6 @@ import com.maxfill.model.basedict.docStatuses.DocStatuses;
 import com.maxfill.model.basedict.docType.DocType;
 import com.maxfill.model.basedict.folder.Folder;
 import com.maxfill.model.basedict.process.ProcessFacade;
-import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.statusesDoc.StatusesDoc;
 import com.maxfill.model.basedict.user.User;
 import java.io.IOException;
@@ -37,7 +36,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
@@ -151,6 +149,11 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         return statusesForAdd.size();
     }
     
+    /**
+     * Проверка на зависимости перед удалением документа
+     * @param doc
+     * @param errors 
+     */
     @Override
     protected void checkAllowedDeleteItem(Doc doc, Set<String> errors){
         if (processFacade.findCountDocLinks(doc) > 0 ) {

@@ -10,6 +10,7 @@ import com.maxfill.model.basedict.user.UserFacade;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.attaches.AttacheFacade;
 import com.maxfill.model.basedict.doc.DocFacade;
+import com.maxfill.model.basedict.folder.FoldersFacade;
 import com.maxfill.model.basedict.partner.PartnersFacade;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.basedict.user.User;
@@ -41,6 +42,8 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
     private PartnersFacade partnersFacade;
     @EJB
     private AttacheFacade attacheFacade;
+    @EJB
+    private FoldersFacade folderFacacde;
     
     @Inject
     private UserGroupsBean groupsBean;  
@@ -153,6 +156,11 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
         if(!staffFacade.findStaffsByUser(user).isEmpty() || staffFacade.findCountUserLinks(user) > 0 ) {
             Object[] messageParameters = new Object[]{user.getShortFIO()};
             String error = MessageFormat.format(MsgUtils.getMessageLabel("UserUsedInStaffs"), messageParameters);
+            errors.add(error);
+        }
+        if(folderFacacde.findCountUserLinks(user) > 0 ) {
+            Object[] messageParameters = new Object[]{user.getShortFIO()};
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("UserUsedInFolders"), messageParameters);
             errors.add(error);
         }
     }

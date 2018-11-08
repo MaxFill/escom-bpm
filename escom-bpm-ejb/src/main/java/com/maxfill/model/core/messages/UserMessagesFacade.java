@@ -186,6 +186,21 @@ public class UserMessagesFacade extends BaseLazyFacade<UserMessages>{
         return query.executeUpdate();
     }
     
+    /**
+     * Удаление сообщений по документу
+     * @param doc
+     * @return 
+     */
+    public int removeMessageByDoc(Doc doc){
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaDelete<UserMessages> cd = builder.createCriteriaDelete(UserMessages.class);
+        Root root = cd.from(UserMessages.class);
+        Predicate crit1 = builder.equal(root.get(UserMessages_.document), doc);
+        cd.where(crit1);
+        Query query = em.createQuery(cd);
+        return query.executeUpdate();
+    }
+    
     public int removeMessageByTask(Task task){
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaDelete<UserMessages> cd = builder.createCriteriaDelete(UserMessages.class);

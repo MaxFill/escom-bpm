@@ -15,6 +15,7 @@ import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.doc.Doc;
+import com.maxfill.model.basedict.doc.DocFacade;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.process.options.RunOptions;
 import com.maxfill.model.basedict.process.options.RunOptionsFacade;
@@ -46,6 +47,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import javax.faces.component.UIInput;
 import javax.inject.Inject;
+import org.apache.commons.collections4.CollectionUtils;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.event.TabChangeEvent;
@@ -81,6 +83,8 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private ProcReportFacade procReportFacade;
     @EJB
     private WorkTimeService workTimeService;
+    @EJB
+    private DocFacade docFacade;
     
     private String exitParam = SysParams.EXIT_NOTHING_TODO;
     private ProcReport currentReport;  
@@ -531,12 +535,14 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * Обработка события выбора документа(ов) из селектора
      * @param event
      */
-    public void onDocsSelected(SelectEvent event){
-        List<Doc> docs = (List<Doc>) event.getObject();
-        if (docs.isEmpty()) return;        
-        getEditedItem().getDocs().addAll(docs); 
+    public void onDocsSelected(SelectEvent event){        
+        List<Doc> selectedDocs = (List<Doc>) event.getObject();
+        if (selectedDocs.isEmpty()) return;
+        List<Doc> procDocs = new ArrayList<>(getEditedItem().getDocs());
+        procDocs.addAll(selectedDocs);
+        getEditedItem().setDocs(procDocs);
         if (getEditedItem().getDocument() == null){
-            Doc doc = docs.get(0);
+            Doc doc = selectedDocs.get(0);
             getEditedItem().setDocument(doc);
         }
         onItemChange();
