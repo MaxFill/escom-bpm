@@ -295,9 +295,7 @@
                                           fileUploadListener="#{sessionBean.onUploadFile}" 
                                           onstart="PF('statusDialog').show()"
                                           oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:createDocBtn').click();">
-                            </p:fileUpload>
-                            <pe:tooltip for="fileDoc" value="#{bundle.DragAndDropFile}" mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10" 
-                                        styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
+                            </p:fileUpload>                           
                         </p:panelGrid>
                     </p:panel>
 

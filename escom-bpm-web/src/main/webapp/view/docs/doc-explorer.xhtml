@@ -194,9 +194,9 @@
                     oncomplete="initDND()"/>        
     </ui:define>
 
-    <ui:define name="treeTabs" rendered="false" >
-        <p:tab id="tabProc" title="#{bundle.Processes}" rendered="#{applicationBean.isCanUsesProcess()}">
-            <p:tree id="procTree" value="#{_bean.procTree}" var="treeItem"  
+    <ui:define name="treeTabs" >
+        <p:tab id="tabProc" title="#{bundle.Processes}" rendered="false">
+            <p:tree id="procTree" value="#{_bean.procTree}" var="treeItem"
                     selectionMode="single" animate="true" 
                     selection="#{_bean.procSelectedNode}" style="width: auto; overflow-y: auto;">
 

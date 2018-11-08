@@ -317,9 +317,9 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     public void checkRegNumber(Doc doc, Set<String> errors) {
         String regNumber = doc.getRegNumber();
         if (StringUtils.isNotBlank(regNumber)){
-            if (!getFacade().checkRegNumber(regNumber, doc)) {
-                String msg = MessageFormat.format(MsgUtils.getMessageLabel("REGNUMBER_IS_DUBLICATE"), new Object[]{doc.getOwner().getName(), regNumber});
-                errors.add(MsgUtils.getMessageLabel(msg));
+            boolean isDuble = getFacade().checkRegNumber(regNumber, doc);
+            if (!isDuble) {
+                errors.add(MessageFormat.format(MsgUtils.getMessageLabel("REGNUMBER_IS_DUBLICATE"), new Object[]{doc.getDocTypeName(), regNumber, doc.getCompanyName()}));                
             }
         }
     }

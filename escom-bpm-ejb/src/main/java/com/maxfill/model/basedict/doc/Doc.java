@@ -130,6 +130,11 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     }
     
     @Override
+    public String getIconName() {
+        return "doc16";
+    }
+    
+    @Override
     public String getCompanyName() {
         return company != null ? company.getName() : "";
     }
@@ -138,7 +143,9 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     public String getDocTypeName(){
         return docType != null ? docType.getName() : "";
     }
-        
+    
+    /* GETS & SETS */    
+    
     @Override
     public DocStates getState() {
         return state;
@@ -281,12 +288,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
             }
         }
         return roles;
-    }
-    
-    @Override
-    public String getIconName() {
-        return "doc16";
-    }
+    }    
 
     public DocType getDocType() {
         return docType;

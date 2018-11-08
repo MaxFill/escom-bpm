@@ -181,21 +181,33 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         return q.getResultList(); 
     }    
     
-    /* Ищет документы с указанным номером  */
+    /**
+     * Возвращает true если НЕ найдены документы с указанным номером, исключая указанный документ
+     * @param regNumber
+     * @param excludeDoc
+     * @return 
+     */
     public boolean checkRegNumber(String regNumber, Doc excludeDoc){
         em.getEntityManagerFactory().getCache().evict(Doc.class);
         CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Doc> criteriaQuery = builder.createQuery(Doc.class);
+        CriteriaQuery criteriaQuery = builder.createQuery(Doc.class);
         Root<Doc> root = criteriaQuery.from(Doc.class);
-        
-        Predicate[] predicates = new Predicate[3];
-        predicates[0] = builder.equal(root.get("regNumber"), regNumber);
-        predicates[1] = builder.equal(root.get("docType"), excludeDoc.getDocType());
-        predicates[2] = builder.notEqual(root.get("id"), excludeDoc.getId());
-
+        List<Predicate> criteries = new ArrayList<>();
+        criteries.add(builder.equal(root.get(Doc_.regNumber), regNumber));
+        criteries.add(builder.equal(root.get(Doc_.company), excludeDoc.getCompany()));
+        criteries.add(builder.equal(root.get("deleted"), false));
+        if (excludeDoc.getDocType() != null){
+            criteries.add(builder.equal(root.get(Doc_.docType), excludeDoc.getDocType()));
+        }
+        if (excludeDoc.getId() != null){
+            criteries.add(builder.notEqual(root.get("id"), excludeDoc.getId()));    
+        }
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);        
         criteriaQuery.select(root).where(builder.and(predicates)); 
         TypedQuery<Doc> query = em.createQuery(criteriaQuery);
-        return query.getResultList().isEmpty();
+        List<Doc> result = query.getResultList();
+        return result.isEmpty();
     }
     
     /* Удаление документов из папки  */ 

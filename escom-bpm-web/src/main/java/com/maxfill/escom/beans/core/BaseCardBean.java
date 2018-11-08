@@ -161,7 +161,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         if (isItemChange) {
             T item = getEditedItem();
             onBeforeSaveItem(item);
-            Set<String> errors = new LinkedHashSet<>();
+            Set<String> errors = new HashSet<>();
             FacesContext context = FacesContext.getCurrentInstance();
             checkItemBeforeSave(item, context, errors);
             if (!errors.isEmpty()) {                
