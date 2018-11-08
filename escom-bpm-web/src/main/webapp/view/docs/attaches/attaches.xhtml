@@ -105,7 +105,7 @@
                             <p:separator />
                             <p:menuitem icon="ui-icon-check" value="#{bundle.MakeMain}" title="#{bundle.MakeMainVersion}"
                                         process="versionsTBL"
-                                        disabled="#{_bean.isReadOnly()}"
+                                        disabled="#{_bean.isReadOnly() or attache.current}"
                                         update="versionsTBL"
                                         actionListener="#{_bean.makeCurrentVersion(attache)}">                                
                             </p:menuitem> 

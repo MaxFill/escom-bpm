@@ -120,6 +120,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
     public void doPrepareOpen(Task task){
         initDateFields(task);
         executors = initExecutors(task).stream()
+                .filter(staff->Objects.nonNull(staff))
                     .sorted(Comparator.comparing(Staff::getName, nullsFirst(naturalOrder())))
                     .collect(Collectors.toList());
     }

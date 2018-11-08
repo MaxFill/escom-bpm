@@ -345,7 +345,8 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     /* Добавление версии к документу   */
     public void addAttacheFromFile(FileUploadEvent event) throws IOException{
         onItemChange();        
-        docBean.addAttacheFromFile(getEditedItem(), event);
+        Attaches attache = docBean.addAttacheFromFile(getEditedItem(), event);
+        makeCurrentVersion(attache);
     }
     
     public void addAttacheFromScan(SelectEvent event){
