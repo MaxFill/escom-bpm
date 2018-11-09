@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Stream;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -105,7 +106,7 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         return q.getResultList();
     }
     
-    public List<Task> findTaskByStaffStates(Staff staff, List<State> states){
+    public Stream<Task> findTaskByStaffStates(Staff staff, List<State> states){
         em.getEntityManagerFactory().getCache().evict(Task.class);
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Task> cq = builder.createQuery(Task.class);
@@ -117,8 +118,7 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         predicates = criteries.toArray(predicates);
         cq.select(root).where(builder.and(predicates));
         TypedQuery<Task> q = em.createQuery(cq);
-        List<Task> results = q.getResultList();
-        return results;
+        return q.getResultStream();
     }               
     
     /**

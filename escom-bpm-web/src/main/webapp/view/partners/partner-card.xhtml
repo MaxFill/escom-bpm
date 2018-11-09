@@ -8,13 +8,14 @@
     <ui:param name="_bean" value="#{partnersCardBean}"/>
 
     <ui:define name="page_body">
-        <p:tab title="#{bundle.Explorer}"> 
-            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12">                
+        <p:tab title="#{bundle.Doc}"> 
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                
                 <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces">
                     <h:panelGrid columns="1" styleClass="ui-grid-col-12 without-spaces">
                         <p:outputLabel value="#{bundle.Type}:" />
                         <p:selectOneMenu value="#{_bean.editedItem.type}" id="type" converter="partnerTypesConvertor"
-                                         disabled="#{_bean.isReadOnly()}"                                     
+                                         disabled="#{_bean.isReadOnly()}" 
+                                         placeholder="#{bundle.Select}"
                                          filter="true" 
                                          onchange="return itemChange = 1;"                                 
                                          requiredMessage="#{bundle.Field} [#{bundle.Type}] #{bundle.MustBeFilled}">
@@ -35,7 +36,7 @@
                     </h:panelGrid>
                 </h:panelGrid>
 
-                <h:panelGrid columns="1" styleClass="ui-grid-col-12 without-spaces">
+                <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces">
                     <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
                     <p:inputText value="#{_bean.editedItem.name}" id="nameItem"
                                  placeholder="#{bundle.EnterPartnerWithoutQuotation}"
@@ -63,6 +64,16 @@
                                              actionListener="#{partnersCardBean.makeFullName()}"/>
                         </div>
                     </h:panelGroup>
+                    
+                    <p:outputLabel value="#{bundle.Address}:" />                                                            
+                    <p:inputTextarea value="#{_bean.editedItem.address}" 
+                                     disabled="#{_bean.isReadOnly()}"
+                                     onkeypress="checkEsc();"
+                                     rows="1" autoResize="true"
+                                     maxlength="250"
+                                     styleClass="ui-grid-col-12"
+                                     onchange="return itemChange = 1;">
+                    </p:inputTextarea>                    
                 </h:panelGrid>
 
                 <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces">  
@@ -86,6 +97,19 @@
                                      onkeypress="checkEsc();"
                                      requiredMessage="#{bundle.Field} [#{bundle.Kpp}] #{bundle.MustBeFilled}"                                 
                                      onchange="return itemChange = 1;">
+                        </p:inputMask>
+                    </h:panelGrid>
+                </h:panelGrid>
+                
+                <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces">  
+                    <h:panelGrid columns="1" styleClass="without-spaces">
+                        <p:outputLabel value="#{bundle.Ogrn}:" />            
+                        <p:inputMask value="#{_bean.editedItem.ogrn}" 
+                                     mask="9999999999999"
+                                     disabled="#{_bean.isReadOnly()}"                                                                       
+                                     onkeypress="checkEsc();"
+                                     requiredMessage="#{bundle.Field} [#{bundle.Ogrn}] #{bundle.MustBeFilled}"                                 
+                                     onchange="return itemChange = 1;">                            
                         </p:inputMask>
                     </h:panelGrid>
                 </h:panelGrid>

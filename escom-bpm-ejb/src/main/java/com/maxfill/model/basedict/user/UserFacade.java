@@ -166,9 +166,10 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<User> cq = builder.createQuery(User.class);
         Root<User> c = cq.from(User.class);        
-        Predicate crit1 = builder.equal(c.get("login"), login);
-        cq.select(c).where(builder.and(crit1));        
-        Query q = em.createQuery(cq);       
+        Predicate crit1 = builder.equal(c.get(User_.login), login);
+        Predicate crit2 = builder.equal(c.get(User_.LDAPname), login);
+        cq.select(c).where(builder.or(crit1, crit2)); 
+        Query q = em.createQuery(cq);
         return q.getResultList();
     }
 
@@ -370,24 +371,23 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         if (Objects.equals(pwl, user.getPassword())){
             return user;
         }
-        if (StringUtils.isNotBlank(user.getLDAPname()) && checkLdapUser(login, password)){
+        if (user.isLdap() && checkLdapUser(login, password)){
             return user;
         }
         return null;
     }
 
     /* Проверка подключения к LDAP серверу  */
-    public boolean checkLdapUser(String userName, char[] password){
-        boolean loginCorrect = false;
+    public boolean checkLdapUser(String userName, char[] password){        
         try {      
             LdapUtils.initLDAP(userName, String.valueOf(password), configuration.getLdapServer());
-            loginCorrect = true;
+            return true;
         } catch (AuthenticationException ex){
             LOGGER.log(Level.SEVERE, null, ex);
         } catch (Exception ex){
             LOGGER.log(Level.SEVERE, null, ex);
         }
-        return loginCorrect;
+        return false;
     }
     
     /* Проверка JWT token */

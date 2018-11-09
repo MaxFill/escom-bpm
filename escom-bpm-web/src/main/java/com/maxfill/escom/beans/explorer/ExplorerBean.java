@@ -170,17 +170,20 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     /* КАРТОЧКИ ОБЪЕКТОВ */
     
     /* КАРТОЧКИ: открытие карточки объекта для просмотра */
-    public void onViewDetailItem(){
-        BaseDict item = getCurrentItem();        
+    public void onViewDetailItem(BaseDict item){
+        currentItem = item;
+        onViewDetailItem();
+    }
+    public void onViewDetailItem(){        
         setTypeEdit(DictEditMode.VIEW_MODE);
-        if (isItemDetailType(item)){
-            editItem = tableBean.prepViewItem(item, tableBean.getParamsMap(), new HashSet<>());       
+        if (isItemDetailType(currentItem)){
+            editItem = tableBean.prepViewItem(currentItem, tableBean.getParamsMap(), new HashSet<>());       
         } else
-            if (isItemTreeType(item)){
-                editItem = treeBean.prepViewItem(item, tableBean.getParamsMap(), new HashSet<>());       
+            if (isItemTreeType(currentItem)){
+                editItem = treeBean.prepViewItem(currentItem, tableBean.getParamsMap(), new HashSet<>());       
             } else
-                if (isItemRootType(item)){
-                    editItem = rootBean.prepViewItem(item, tableBean.getParamsMap(), new HashSet<>());       
+                if (isItemRootType(currentItem)){
+                    editItem = rootBean.prepViewItem(currentItem, tableBean.getParamsMap(), new HashSet<>());       
                 }
     }
 

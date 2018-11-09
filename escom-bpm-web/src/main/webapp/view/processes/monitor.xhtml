@@ -25,6 +25,16 @@
                 
         <p:panel toggleable="true" header="#{bundle.Filter}" toggleSpeed="500" >            
             <h:panelGrid columns="5" styleClass="without-spaces">
+                <h:panelGrid columns="1" styleClass="without-spaces">
+                    <p:tree id="treeProcTypes" value="#{monitorBean.procTypesTree}" var="procType" selectionMode="single" 
+                            selection="#{monitorBean.selProcTypeNode}" 
+                            style="height: 140px; width: 270px; overflow-y: auto; overflow-x: auto;">
+                        <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+                            <h:outputText value="#{procType.nameEndElipse}" title="#{procType.nameEndElipse}"/>
+                        </p:treeNode>
+                    </p:tree>
+                </h:panelGrid>
+                
                 <h:panelGrid columns="2" styleClass="without-spaces">
                     <p:outputLabel value="#{bundle.Author}:" />
                     <ui:include src="/view/common/item-select-list-btn.xhtml" >
@@ -109,22 +119,7 @@
                             <h:outputText value="#{monitorBean.getLabelFromBundle(st.name)}" />
                         </p:column>
                     </p:selectManyMenu>
-                </h:panelGrid>
-
-                <h:panelGrid columns="1" styleClass="without-spaces">
-                    <p:tree id="treeProcTypes" value="#{monitorBean.procTypesTree}" var="procType" selectionMode="single" 
-                            selection="#{monitorBean.selProcTypeNode}" 
-                            style="height: 140px; width: 270px; overflow-y: auto;">
-                        <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
-                            <h:outputText value="#{procType.nameEndElipse}" title="#{procType.nameEndElipse}"/>
-                        </p:treeNode>
-                    </p:tree>
-                    <p:contextMenu for="treeProcTypes" >
-                        <p:menuitem icon="ui-icon-close" value="#{bundle.Reset}" 
-                                    update="treeProcTypes"
-                                    actionListener="#{monitorBean.clearSelectedProcType()}"/>
-                    </p:contextMenu>
-                </h:panelGrid>
+                </h:panelGrid>                
 
                 <h:panelGrid columns="1" rendered="#{!empty(monitorBean.allResults)}" styleClass="without-spaces">
                     <p:outputLabel value="#{bundle.Result}:" />

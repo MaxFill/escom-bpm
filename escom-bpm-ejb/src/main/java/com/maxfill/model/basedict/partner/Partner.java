@@ -82,6 +82,14 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
     @Size(max = 32)
     private String kpp;
     
+    @Column(name = "Ogrn")
+    @Size(max = 32)
+    private String ogrn;
+    
+    @Column(name = "Address")
+    @Size(max = 255)
+    private String address;
+        
     @JoinTable(name = "partnersInGroup", joinColumns = {
         @JoinColumn(name = "PartnerId", referencedColumnName = "ID")}, inverseJoinColumns = {
         @JoinColumn(name = "GroupId", referencedColumnName = "Id")})
@@ -113,6 +121,22 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
         tempId = COUNT.incrementAndGet();
     }
     
+    /* GETS & SETS */
+
+    public String getOgrn() {
+        return ogrn;
+    }
+    public void setOgrn(String ogrn) {
+        this.ogrn = ogrn;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
+    }
+        
     public Integer getTempId() {
         return tempId;
     }

@@ -392,7 +392,6 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         CriteriaQuery cq = builder.createQuery(Long.class);
         Root<Process> root = cq.from(Process.class);
         List<Predicate> criteries = new ArrayList<>();
-        criteries.add(builder.equal(root.get("deleted"), false));
         criteries.add(builder.equal(root.get(Process_.document), doc));                
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);

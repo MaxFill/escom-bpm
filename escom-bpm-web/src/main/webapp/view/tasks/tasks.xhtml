@@ -27,8 +27,9 @@
                 <p:selectOneMenu id="selExecutor" value="#{taskListBean.executor}" filter="true" filterMatchMode="startsWith"
                                 styleClass="ui-grid-col-12"
                                 converter="staffConvertor" placeholder="#{bundle.Select}">
-                    <f:selectItems value="#{taskListBean.executors}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}"/>                                    
-                </p:selectOneMenu>
+                    <f:selectItems value="#{taskListBean.executors}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}"/>  
+                    <p:ajax event="change" oncomplete="document.getElementById('mainFRM:btnSearche').click();"/>
+                </p:selectOneMenu>                
             </h:panelGrid>  
             
             <h:panelGrid columns="3" styleClass=" without-spaces"> 
@@ -66,10 +67,30 @@
                     </p:selectManyMenu>
                 </h:panelGrid>
                 
-                <p:commandButton value="#{bundle.Find}" id="btnSearche" actionListener="#{taskListBean.onRefresh()}">
-                        <f:param name="isRequired" value="true"/>
-                </p:commandButton>
+                <h:panelGrid columns="2" styleClass="without-spaces">
+                    <p:outputLabel value="#{bundle.Number}:" />
+                    <h:panelGroup>
+                        <div class="ui-inputgroup">
+                            <p:inputText value="#{taskListBean.number}" widgetVar="srcNumber"/>
+                            <p:commandButton styleClass="btnClear" title="#{bundle.Clear}" icon="ui-icon-close" onclick="PF('srcNumber').jq.val('');"/>                        
+                        </div>
+                    </h:panelGroup>
+                    <p:outputLabel value="#{bundle.Name}:" />
+                    <h:panelGroup>
+                        <div class="ui-inputgroup">
+                            <p:inputText value="#{taskListBean.name}" widgetVar="srcName"/>
+                            <p:commandButton styleClass="btnClear" title="#{bundle.Clear}" icon="ui-icon-close" onclick="PF('srcName').jq.val('');"/> 
+                        </div>
+                    </h:panelGroup>
+                </h:panelGrid>
             </h:panelGrid>
+            
+            <p:commandButton id="btnSearche" value="#{bundle.Find}"
+                    onstart="PF('statusDialog').show()"
+                    oncomplete="PF('statusDialog').hide();"
+                    actionListener="#{taskListBean.onRefresh()}">
+                <f:param name="isRequired" value="true"/>
+            </p:commandButton>
         </p:panel>
 
         <p:dataTable id="tasksTBL" value="#{taskListBean.lazyDataModel}" lazy="true"

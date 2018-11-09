@@ -18,12 +18,14 @@ import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import org.apache.commons.collections.CollectionUtils;
@@ -56,17 +58,21 @@ public class NotificationServiceImp implements NotificationService{
 
     @Override
     public void makeNotifications(StringBuilder detailInfo) {        
-        List<State> states = new ArrayList<>();
-        states.add(stateFacade.getRunningState());
+        List<State> states = Collections.singletonList(stateFacade.getRunningState());        
         AtomicInteger countTask = new AtomicInteger(0);
+        final Date curDate = new Date();
         staffFacade.findActualStaff().stream()
                 .forEach(staff->{
-                    taskFacade.findTaskByStaffStates(staff, states).stream()
-                            .filter(task->task.getNextReminder() != null && task.getNextReminder().before(new Date()))
-                            .forEach(task->{
-                                countTask.incrementAndGet();
+                    taskFacade.findTaskByStaffStates(staff, states)
+                        .forEach(task->{                                                        
+                            if (task.getNextReminder() != null && task.getNextReminder().before(new Date())){
                                 notifReminder(task);
-                            });
+                                countTask.incrementAndGet();
+                            }
+                            if (task.getPlanExecDate().before(curDate)){
+                                makeNotification(task, "ThisTaskOverdue");
+                            }
+                        });
                 }
         );
         detailInfo.append("Send task notifications: ").append(countTask).append(SysParams.LINE_SEPARATOR);
@@ -116,7 +122,19 @@ public class NotificationServiceImp implements NotificationService{
                 links.add(doc);
             }
         }
-        messagesFacade.createSystemMessage(task.getOwner().getEmployee(), sb.toString(), new StringBuilder(), links);
-    }    
-    
+        messagesFacade.createSystemMessage(resipient, sb.toString(), new StringBuilder(), links);        
+        
+        //дублирование уведомлений заместителям
+        resipient.getAssistants().stream()
+                .filter(assist->assist.getDuplicateChiefMessage() && assist.isActive())
+                .forEach(assist->{
+                    Locale assistlocale = userFacade.getUserLocale(assist.getUser());
+                    StringBuilder dubleMsg = new StringBuilder();
+                    dubleMsg.append(ItemUtils.getBandleLabel("DublicateMsg", assistlocale)).append(": ");
+                    dubleMsg.append("[").append(sb.toString()).append("]");
+                    StringBuilder content = new StringBuilder();
+                    content.append(ItemUtils.getFormatMessage("ReceivedSubscribDuplicateMsgChief", assistlocale, new Object[]{resipient.getShortFIO()}));
+                    messagesFacade.createSystemMessage(assist.getUser(), dubleMsg.toString(), content, links);
+                });
+    }
 }

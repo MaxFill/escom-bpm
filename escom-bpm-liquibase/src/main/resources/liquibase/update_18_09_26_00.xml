@@ -311,4 +311,32 @@
         </addColumn>
     </changeSet>
     
+    <changeSet id="partners_add_Ogrn_Adress" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="partners" columnName="Ogrn" />
+            </not>
+        </preConditions>
+        <addColumn tableName="partners">
+            <column name="Ogrn" type="varchar(32)" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="Address" type="varchar(255)" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="assistants_add_DuplicateChiefMessage" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="assistants" columnName="DuplicateChiefMessage" />
+            </not>
+        </preConditions>
+        <addColumn tableName="assistants">
+            <column name="DuplicateChiefMessage" type="BOOLEAN" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog> 

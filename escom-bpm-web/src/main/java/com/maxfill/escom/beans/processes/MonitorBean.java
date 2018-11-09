@@ -109,6 +109,7 @@ public class MonitorBean extends BaseViewBean<BaseView>{
                 .forEach(procType->{
                     TreeNode childNode = new DefaultTreeNode(procType, procTypesTree);
                     childNode.setExpanded(true);
+                    childNode.setSelected(true);
                     loadProcTypesTree(procType, childNode); 
                 });        
     }
@@ -167,7 +168,7 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     protected Map<String, Object> makeFilters(Map filters) {        
         filters.put("actual", true);
         filters.put("deleted", false);
-        filters.put("parent", null);
+        //filters.put("parent", null);
         if (selProcTypeNode != null){
             filters.put("owner", selProcTypeNode.getData());
         }
@@ -277,17 +278,7 @@ public class MonitorBean extends BaseViewBean<BaseView>{
                     TreeNode childNode = new DefaultTreeNode(procType, treeNode);
                     loadProcTypesTree(procType, childNode);
                });
-    }    
-    
-    public void clearSelectedProcType(){
-        selProcTypeNode = null;
-        procTypesTree.getChildren().forEach(treeNode->clearSelectedProcType(treeNode));
-        procTypesTree.setSelected(false);
-    }
-    public void clearSelectedProcType(TreeNode treeItem){
-        treeItem.setSelected(false);
-        treeItem.getChildren().forEach(treeNode->clearSelectedProcType(treeNode));
-    }
+    }        
     
     /* *** GETS & SETS *** */
 

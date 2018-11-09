@@ -100,7 +100,7 @@ public class LoginBean extends BaseViewBean{
         if(appBean.isNoAvailableLicence()) {
             errors.add(MsgUtils.prepFormatErrorMsg("ErrorCountLogin", new Object[]{}));
         }
-
+        
         if (user == null) {
             user = userFacade.checkUserLogin(userName, password.toCharArray());
         }

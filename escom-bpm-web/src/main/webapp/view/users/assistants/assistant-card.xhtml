@@ -9,7 +9,7 @@
 
     <ui:define name="page_body">
         <p:tab id="cardTab" title="#{bundle.Assistant}">  
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
                 
                 <p:outputLabel value="#{bundle.Chief}:"/>
                 <p:inputText id="nameItem" value="#{assistantCardBean.editedItem.owner.fullName}"
@@ -39,8 +39,9 @@
                         <f:selectItem itemLabel="#{bundle.Period}" itemValue="period" />
                         <p:ajax update="dateStart dateEnd" event="valueChange" onstart="itemChange = 1;"/>
                     </p:selectOneRadio> 
-                    <p:spacer/><p:spacer/>
-                    <h:panelGrid columns="4" styleClass="without-spaces">
+                    <p:spacer/>
+                    <p:spacer/>
+                    <h:panelGrid columns="2" styleClass="without-spaces">
                         <p:outputLabel value="#{bundle.With}"/>
                         <p:calendar value="#{assistantCardBean.editedItem.beginDate}" id="dateStart"
                                     showHour="true" showMinute="true"
@@ -49,7 +50,7 @@
                                     locale="#{sessionBean.locale}"
                                     pattern="dd.MM.yyyy HH:mm:ss"
                                     required="#{param['isRequired'] == 'true' and _bean.editedItem.substitutionType eq 'period'}"
-                                    requiredMessage="#{bundle.Field} [#{bundle.DateBegin}  #{bundle.MustBeFilled}">
+                                    requiredMessage="#{bundle.Field} [#{bundle.DateBegin}]  #{bundle.MustBeFilled}">
                         </p:calendar>
                         <p:outputLabel value="#{bundle.At}"/>
                         <p:calendar value="#{assistantCardBean.editedItem.endDate}" id="dateEnd"  
@@ -59,10 +60,14 @@
                                     locale="#{sessionBean.locale}"
                                     pattern="dd.MM.yyyy HH:mm:ss"
                                     required="#{param['isRequired'] == 'true' and _bean.editedItem.substitutionType eq 'period'}"
-                                    requiredMessage="#{bundle.Field} #{bundle.DateEnd} #{bundle.MustBeFilled}">
+                                    requiredMessage="#{bundle.Field} [#{bundle.DateEnd}] #{bundle.MustBeFilled}">
                         </p:calendar>
                     </h:panelGrid>
                 </h:panelGrid>
+                
+                <p:selectBooleanCheckbox value="#{_bean.editedItem.duplicateChiefMessage}"
+                                         itemLabel="#{bundle.DuplicateChiefMessageAssistant}">
+                </p:selectBooleanCheckbox>                                    
                 
             </p:panelGrid>
         </p:tab>

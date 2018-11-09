@@ -53,6 +53,9 @@ public class Assistant extends BaseDict<User, Assistant, Assistant, AssistantLog
     @Column(name="SubstitutionType")
     private String substitutionType = "always"; 
      
+    @Column(name="DuplicateChiefMessage")
+    private Boolean duplicateChiefMessage = false;
+            
     /* Начало срока замещения */
     @Column(name = "BeginDate")
     @Temporal(TemporalType.TIMESTAMP)
@@ -85,7 +88,20 @@ public class Assistant extends BaseDict<User, Assistant, Assistant, AssistantLog
             return super.getFullName(); 
         }    
     }
-        
+
+    @Override
+    public String getIconName() {
+        if (isActive()) return "user-active-20";
+        return "";
+    }
+    
+    //является ли заместитель действующим
+    public boolean isActive(){
+        if (getUser() == null || !isActual() || isDeleted()) return false;
+        if ("always".equals(getSubstitutionType())) return true;
+        Date curDate = new Date();
+        return curDate.after(beginDate) && curDate.before(endDate);
+    }
     
     /* GETS & SETS */
     
@@ -97,7 +113,14 @@ public class Assistant extends BaseDict<User, Assistant, Assistant, AssistantLog
     public void setId(Integer id) {
         this.id = id;
     }    
-    
+
+    public Boolean getDuplicateChiefMessage() {
+        return duplicateChiefMessage;
+    }
+    public void setDuplicateChiefMessage(Boolean duplicateChiefMessage) {
+        this.duplicateChiefMessage = duplicateChiefMessage;
+    }
+        
     @Override
     public Date getBeginDate() {
         return beginDate;

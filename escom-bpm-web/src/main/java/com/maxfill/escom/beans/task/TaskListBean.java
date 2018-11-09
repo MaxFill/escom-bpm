@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.apache.commons.lang.StringUtils;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
@@ -60,6 +61,8 @@ public class TaskListBean extends LazyLoadBean<Task>{
     private List<State> states = new ArrayList<>();
     private List<Staff> executors;
     private Staff executor;
+    private String number;
+    private String name;
     
     @Override
     public void doBeforeOpenCard(Map<String, String> params) {
@@ -175,6 +178,12 @@ public class TaskListBean extends LazyLoadBean<Task>{
                 filters.put("planExecDate", dateFilters);
             }
         }
+        if (StringUtils.isNotBlank(number)){
+            filters.put("id", number);
+        }
+        if (StringUtils.isNotBlank(name)){
+            filters.put("name", name);
+        }
         return filters;
     }
     
@@ -223,6 +232,20 @@ public class TaskListBean extends LazyLoadBean<Task>{
     }
     public void setExecutor(Staff executor) {
         this.executor = executor;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
         
 }

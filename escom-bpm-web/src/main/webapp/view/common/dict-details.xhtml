@@ -19,7 +19,7 @@
             <p:ajax event="toggleSelect" update="checkDelBtn" />
 
             <p:column width="15">
-                <h:graphicImage value="/resources/icon/user20.png" styleClass="img-required"/>
+                <h:graphicImage value="/resources/icon/#{item.iconName}.png" styleClass="img-required"/>
             </p:column>
             
             <p:column selectionMode="multiple" style="width:16px;text-align:center" />
@@ -29,7 +29,7 @@
             </p:column> 
 
             <p:column headerText="#{bundle.Actions}" style="text-align: center;" > 
-                <p:commandButton icon="ui-icon-folder-open" title="#{bundle.Open}" 
+                <p:commandButton icon="ico_look" title="#{bundle.Open}" 
                                  update="mainFRM:mainTabView:panelDetail"
                                  actionListener="#{_bean.onOpenDetail(item)}">              
                 </p:commandButton>

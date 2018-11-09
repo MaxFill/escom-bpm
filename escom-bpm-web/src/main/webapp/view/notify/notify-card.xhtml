@@ -33,9 +33,9 @@
                     </p:inputTextarea>
                     
                     <p:outputLabel value="#{bundle.Recipients}:" indicateRequired="true"/>
-                    <p:pickList id="pickList" value="#{_bean.users}" var="user" converter="usersConvertor"
+                    <p:pickList id="pickList" value="#{_bean.users}" var="user" converter="usersConvertor" 
                                 itemValue="#{user}" itemLabel="#{user.name}"
-                                showCheckbox="true"
+                                showCheckbox="true" showSourceFilter="true" filterMatchMode="contains"
                                 required="#{param['isRequired'] == 'true'}" 
                                 requiredMessage="#{bundle.Field} [#{bundle.Recipients}] #{bundle.MustBeFilled}">                            
                         <f:facet name="sourceCaption">#{bundle.Users}</f:facet>
