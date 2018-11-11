@@ -58,6 +58,11 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     private Staff curator;
 
     @XmlTransient
+    @JoinColumn(name = "Inspector", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private Staff inspector;
+        
+    @XmlTransient
     @JoinColumn(name = "Document", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private Doc document;       
@@ -147,7 +152,14 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     }
     
     /* GETS & SETS */
-    
+
+    public Staff getInspector() {
+        return inspector;
+    }
+    public void setInspector(Staff inspector) {
+        this.inspector = inspector;
+    }
+        
     @Override
     public Date getItemDate() {
         return itemDate;

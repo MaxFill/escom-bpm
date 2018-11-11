@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:panelGrid id="#{_itemPanel}" columns="1" styleClass="ui-grid-col-12 col-padding"> 
+        <p:outputLabel value="#{_titleItem}:"/>
+        <p:selectOneMenu id="#{_itemPanel}_item" value="#{_itemValue}" title="#{_titleItem}" 
+                         disabled="#{_disabled}" 
+                         valueChangeListener="#{_bean[_actionSelect]}"
+                         required="#{param['isRequired'] == _required}"
+                         requiredMessage="#{bundle.Field} [#{_titleItem}] #{bundle.MustBeFilled}"
+                         onchange="itemChange = 1;">
+            <p:ajax update="#{_itemPanel}_period #{_update}" partialSubmit="true" oncomplete="itemChange = 1;"/>
+            <f:selectItems value="#{sessionBean.PERIODS}"/>
+        </p:selectOneMenu>        
+                
+        <h:panelGrid id="#{_itemPanel}_period" columns="2" styleClass="col-padding">        
+            <p:outputLabel value="#{bundle.With}:" style="float: right;"/>
+            <p:calendar value="#{_beginDate}" inputStyle="width: 145px;"                        
+                        navigator="true" yearRange="c-120:c+20"
+                        showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
+                        locale="#{sessionBean.locale}"
+                        required="#{param['isRequired'] == _required}"
+                        requiredMessage="#{bundle.Field} [#{bundle.DateBegin}] #{bundle.MustBeFilled}"
+                        disabled="#{_disabled}">
+            </p:calendar>
+            <p:outputLabel value="#{bundle.At}:" style="float: right;" />
+            <p:calendar value="#{_endDate}" inputStyle="width: 145px;"
+                        navigator="true" yearRange="c-120:c+20"
+                        showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
+                        locale="#{sessionBean.locale}"
+                        required="#{param['isRequired'] == _required}"
+                        requiredMessage="#{bundle.Field} [#{bundle.DateEnd}] #{bundle.MustBeFilled}"
+                        disabled="#{_disabled}">
+            </p:calendar>
+        </h:panelGrid>       
+        
+    </h:panelGrid>
+    
+</ui:composition>

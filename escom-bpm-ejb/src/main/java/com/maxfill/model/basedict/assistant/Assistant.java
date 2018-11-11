@@ -54,7 +54,7 @@ public class Assistant extends BaseDict<User, Assistant, Assistant, AssistantLog
     private String substitutionType = "always"; 
      
     @Column(name="DuplicateChiefMessage")
-    private Boolean duplicateChiefMessage = false;
+    private boolean duplicateChiefMessage = false;
             
     /* Начало срока замещения */
     @Column(name = "BeginDate")
@@ -114,10 +114,10 @@ public class Assistant extends BaseDict<User, Assistant, Assistant, AssistantLog
         this.id = id;
     }    
 
-    public Boolean getDuplicateChiefMessage() {
+    public boolean isDuplicateChiefMessage() {
         return duplicateChiefMessage;
     }
-    public void setDuplicateChiefMessage(Boolean duplicateChiefMessage) {
+    public void setDuplicateChiefMessage(boolean duplicateChiefMessage) {
         this.duplicateChiefMessage = duplicateChiefMessage;
     }
         

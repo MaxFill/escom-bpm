@@ -51,7 +51,7 @@ public class ApplicationBean implements Serializable{
     private Licence licence = null;
     private String appName;
     private final Release release = new Release();
-
+    
     @EJB
     private Configuration configuration;
     @EJB

@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.naming.AuthenticationException;
@@ -188,6 +189,11 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         cq.select(root).where(builder.and(crit1, crit2));
         Query q = em.createQuery(cq);       
         return q.getResultList();
+    }
+    
+    public List<User> findUserByGroupID(Integer groupId, User curUser){
+        UserGroups userGroup = userGroupsFacade.find(groupId);
+        return userGroupsFacade.findDetails(userGroup, 0, 0, "", "", curUser);                
     }
     
     /**

@@ -30,10 +30,7 @@
                     <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
                                    rendered="#{!_bean.isFullPageMode() and _canClose == null ? true : _canClose}"
                                    actionListener="#{_bean.onCancelItemSave()}"  
-                                   onclick="sendFormSize('#{_bean.getFormName()}');
-                                                   if (itemChange == 1) {
-                                                       onChangeItem();
-                                                   }">
+                                   onclick="sendFormSize('#{_bean.getFormName()}');">
                         <h:outputText styleClass="ui-icon ui-icon-closethick" />
                     </p:commandLink>
                 </f:facet>

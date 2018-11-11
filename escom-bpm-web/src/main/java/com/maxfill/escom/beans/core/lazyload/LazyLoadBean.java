@@ -3,9 +3,9 @@ package com.maxfill.escom.beans.core.lazyload;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.model.Dict;
 import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.BaseLazyFacade;
 import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.utils.DateUtils;
 import java.util.ArrayList;
 import java.util.Comparator;
 import static java.util.Comparator.naturalOrder;
@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
@@ -40,6 +41,8 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
     /* Атрибуты для фильтра */
     protected Date dateStart;
     protected Date dateEnd;
+    protected String period = "curMonth";
+    
     protected Map<String,Object> filters = new HashMap <>();
 
     protected abstract BaseLazyFacade getLazyFacade();    
@@ -191,12 +194,25 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
         return visibleColumns.get(column);
     }
     
+    public void onPeriodChange(ValueChangeEvent event){
+        period = (String) event.getNewValue();       
+        dateStart = DateUtils.periodStartDate(period, dateStart);
+        dateEnd = DateUtils.periodEndDate(period, dateEnd);
+    }
+    
     /* *** GETS & SETS *** */
 
     public Map<String, Function<BaseDict, ?>> getExtractors() {
         return extractors;
     }
-    
+
+    public String getPeriod() {
+        return period;
+    }
+    public void setPeriod(String period) {
+        this.period = period;
+    }
+        
     public T getSelected() {
         return selected;
     }

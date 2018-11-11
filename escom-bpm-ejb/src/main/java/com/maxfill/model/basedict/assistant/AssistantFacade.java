@@ -40,6 +40,9 @@ public class AssistantFacade extends BaseDictFacade<Assistant, User, AssistantLo
     protected void dublicateCheckAddCriteria(CriteriaBuilder builder, Root<Assistant> root, List<Predicate> criteries, Assistant item){
        criteries.add(builder.equal(root.get("user"), item.getUser()));
        criteries.add(builder.equal(root.get("owner"), item.getOwner()));
+       if (item.getId() != null){
+            criteries.add(builder.notEqual(root.get("id"), item.getId()));
+        }
     }
 
     /**

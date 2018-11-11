@@ -294,7 +294,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     public List<T> findAll(){
         return getLazyFacade().findAll(getCurrentUser());
     }    
-    
+        
     /**
      * Формирует список дочерних объектов, доступных текущему пользователю
      * @param owner

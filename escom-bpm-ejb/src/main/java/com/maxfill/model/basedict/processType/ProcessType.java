@@ -9,6 +9,7 @@ import com.maxfill.model.basedict.procTempl.ProcTempl;
 import com.maxfill.model.basedict.process.options.RunOptions;
 import com.maxfill.model.basedict.result.Result;
 import com.maxfill.model.basedict.userGroups.UserGroups;
+import com.maxfill.model.basedict.processType.roles.ProcessRole;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
@@ -79,7 +80,7 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
         
     @JoinColumn(name = "RoleInProc", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private UserGroups roleInProc;
+    private UserGroups defaultTaskRole;     //роль по умолчанию для задач процесса
         
     @JoinColumn(name = "Numerator", referencedColumnName = "Id")
     @ManyToOne
@@ -89,6 +90,10 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     private List<ProcTempl> templates = new ArrayList<>();
 
+    /* Роли процесса */
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "procType")
+    private List<ProcessRole> processRoles = new ArrayList<>();
+     
     /* Процессы */
     @OneToMany
     @JoinColumn(name = "owner")
@@ -114,7 +119,7 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
         Gson gson = new Gson();        
         setRunOptionsJSON(gson.toJson(options.stream().map(o->o.getId()).collect(Collectors.toList()), List.class));
     }
-            
+        
     /* GETS & SETS */
 
     public NumeratorPattern getNumerator() {
@@ -131,13 +136,20 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
         this.guide = guide;
     }
 
-    public UserGroups getRoleInProc() {
-        return roleInProc;
+    public UserGroups getDefaultTaskRole() {
+        return defaultTaskRole;
     }
-    public void setRoleInProc(UserGroups roleInProc) {
-        this.roleInProc = roleInProc;
+    public void setDefaultTaskRole(UserGroups defaultTaskRole) {
+        this.defaultTaskRole = defaultTaskRole;
+    }    
+
+    public List<ProcessRole> getProcessRoles() {
+        return processRoles;
     }
-    
+    public void setProcessRoles(List<ProcessRole> processRoles) {
+        this.processRoles = processRoles;
+    }
+        
     @Override
     public String getCode() {
         return code;

@@ -131,10 +131,10 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         Map<String, Object> createParams = new HashMap<>();
         createParams.put("documents", Collections.singletonList(parent.getDocument()));        
         createParams.put("company", parent.getCompany());
-        createParams.put("curator", parent.getCurator());
+        createParams.put("curator", parent.getCurator());        
         if (subProcEl.getProctemplId() != null){
             createParams.put("template", procTemplFacade.find(subProcEl.getProctemplId()));
-        }
+        } 
         Process subProcess = createItem(author, parent, owner, createParams);
         
         subProcess.setDocs(parent.getDocs());                    
@@ -169,6 +169,8 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
                 Date planDate = workTimeService.calcWorkDayByCompany(new Date(), deltasec, process.getCompany());
                 process.setPlanExecDate(planDate);
             }
+                        
+            processType.getProcessRoles().forEach(role->addRole(process, role.getName()));            
         }
         
         if (createParams.containsKey("company")){
@@ -194,7 +196,11 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
                     setRoleCurator(process, curator);            
                 }
             }
-        }        
+        }
+        if (createParams.containsKey("inspector")) {
+            setRoleInspector(process, (Staff)createParams.get("inspector"));
+        }
+
         if (createParams.containsKey("curator")) {
             setRoleCurator(process, (Staff)createParams.get("curator"));
         } else { 
@@ -203,10 +209,12 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
             }
         }
         
+        //инициализация схемы процесса
+        ProcTempl procTempl = null;
         if (createParams.containsKey("template")){
-            ProcTempl procTempl = (ProcTempl)createParams.get("template");
-            workflow.initScheme(process, procTempl, process.getAuthor(), new HashSet<>());
-        }
+            procTempl = (ProcTempl)createParams.get("template");            
+        } 
+        workflow.initScheme(process, procTempl, process.getAuthor(), new HashSet<>());       
     }
 
     /**
@@ -233,9 +241,14 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     
     /* *** РОЛИ *** */    
     
-    public void setRoleCurator(Process process, Staff curator){
-        process.setCurator(curator);
-        process.doSetSingleRole(DictRoles.ROLE_CURATOR, curator.getEmployee());
+    public void setRoleCurator(Process process, Staff staff){
+        process.setCurator(staff);
+        process.doSetSingleRole(DictRoles.ROLE_CURATOR, staff.getEmployee());
+    }
+    
+    public void setRoleInspector(Process process, Staff staff){
+        process.setInspector(staff);
+        process.doSetSingleRole(DictRoles.ROLE_CURATOR, staff.getEmployee());
     }
     
     /**

@@ -18,8 +18,8 @@
         
         <h:panelGroup styleClass="ui-grid-col-12 col-padding">
             <div class="ui-inputgroup">
-                <p:selectOneMenu id="#{_itemPanel}_item" value="#{_itemValue}" title="#{_titleItem}" 
-                                 disabled="#{_disabled}" style="color: blue; width: 100%;"
+                <p:selectOneMenu id="#{_itemPanel}_item" value="#{_itemValue}" title="#{_titleItem}" styleClass="ui-grid-col-12" 
+                                 disabled="#{_disabled}" style="color: blue;"
                                  valueChangeListener="#{_bean[_actionSelect]}"
                                  required="#{param['isRequired'] == _required}"
                                  requiredMessage="#{bundle.Field} [#{_titleItem}] #{bundle.MustBeFilled}"

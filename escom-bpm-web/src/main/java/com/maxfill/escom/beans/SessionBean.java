@@ -77,6 +77,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import org.apache.commons.collections4.MapUtils;
 import org.primefaces.event.DashboardReorderEvent;
@@ -106,6 +107,20 @@ public class SessionBean implements Serializable{
     private final List<Attaches> attaches = new ArrayList<>();
     private BigDecimal totalfilesSize;
     private MeterGaugeChartModel meterFileSize;
+    
+    private final List<SelectItem> PERIODS = Collections.unmodifiableList(
+        new ArrayList<SelectItem>() {
+            private static final long serialVersionUID = 3109256773218160485L;
+            {
+                add(new SelectItem(null, MsgUtils.getBandleLabel("EmptySelData")));
+                add(new SelectItem("today", MsgUtils.getBandleLabel("Today")));
+                add(new SelectItem("curWeek", MsgUtils.getBandleLabel("CurrentWeek")));
+                add(new SelectItem("сurMonth", MsgUtils.getBandleLabel("CurrentMonth")));
+                add(new SelectItem("curQuarter", MsgUtils.getBandleLabel("CurrentQuarter")));
+                add(new SelectItem("curYear", MsgUtils.getBandleLabel("CurrentYear")));
+                add(new SelectItem("period", MsgUtils.getBandleLabel("Period")));
+            }
+        });
     
     //буфер бинов 
     private final ConcurrentHashMap<String, BaseView > openedBeans = new ConcurrentHashMap<>();
@@ -951,6 +966,10 @@ public class SessionBean implements Serializable{
         return configuration.getMaxFileSize();
     }
 
+    public List<SelectItem> getPERIODS() {
+        return PERIODS;
+    }
+    
     public class NotifMsg{
         private final String message;
         private final String url;
@@ -975,5 +994,5 @@ public class SessionBean implements Serializable{
         }
 
     }
-    
+     
 }

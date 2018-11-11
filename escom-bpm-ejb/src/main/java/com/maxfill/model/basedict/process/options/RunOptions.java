@@ -19,6 +19,7 @@ import javax.persistence.TableGenerator;
 @Entity
 @Table(name = "runOptions")
 public class RunOptions implements Serializable, Dict{
+    private static final long serialVersionUID = 8670664769545051294L;
     
     @TableGenerator(
         name = "runOptionsIdGen",

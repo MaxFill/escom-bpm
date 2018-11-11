@@ -23,9 +23,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import org.apache.commons.collections.CollectionUtils;
@@ -65,11 +65,11 @@ public class NotificationServiceImp implements NotificationService{
                 .forEach(staff->{
                     taskFacade.findTaskByStaffStates(staff, states)
                         .forEach(task->{                                                        
-                            if (task.getNextReminder() != null && task.getNextReminder().before(new Date())){
+                            if (task.getNextReminder() != null && task.getNextReminder().before(curDate)){
                                 notifReminder(task);
                                 countTask.incrementAndGet();
                             }
-                            if (task.getPlanExecDate().before(curDate)){
+                            if (task.getPlanExecDate() != null && task.getPlanExecDate().before(curDate)){
                                 makeNotification(task, "ThisTaskOverdue");
                             }
                         });
@@ -126,11 +126,11 @@ public class NotificationServiceImp implements NotificationService{
         
         //дублирование уведомлений заместителям
         resipient.getAssistants().stream()
-                .filter(assist->assist.getDuplicateChiefMessage() && assist.isActive())
+                .filter(assist->assist.isActive() && assist.isDuplicateChiefMessage())
                 .forEach(assist->{
                     Locale assistlocale = userFacade.getUserLocale(assist.getUser());
                     StringBuilder dubleMsg = new StringBuilder();
-                    dubleMsg.append(ItemUtils.getBandleLabel("DublicateMsg", assistlocale)).append(": ");
+                    dubleMsg.append(ItemUtils.getFormatMessage("DublicateMsg", assistlocale, new Object[]{resipient.getShortFIO()})).append(": ");
                     dubleMsg.append("[").append(sb.toString()).append("]");
                     StringBuilder content = new StringBuilder();
                     content.append(ItemUtils.getFormatMessage("ReceivedSubscribDuplicateMsgChief", assistlocale, new Object[]{resipient.getShortFIO()}));

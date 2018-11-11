@@ -56,9 +56,8 @@ public class AssistantCardBean extends BaseCardBeanGroups<Assistant, User>{
     }
     
     /**
-     * Действия перед сохранением пользователя
+     * Действия перед сохранением 
      * @param assistant
-     * @param user
      */
     @Override
     protected void onBeforeSaveItem(Assistant assistant){

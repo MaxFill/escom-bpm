@@ -15,7 +15,6 @@ import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.doc.Doc;
-import com.maxfill.model.basedict.doc.DocFacade;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.process.options.RunOptions;
 import com.maxfill.model.basedict.process.options.RunOptionsFacade;
@@ -47,7 +46,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import javax.faces.component.UIInput;
 import javax.inject.Inject;
-import org.apache.commons.collections4.CollectionUtils;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.event.TabChangeEvent;
@@ -83,8 +81,6 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private ProcReportFacade procReportFacade;
     @EJB
     private WorkTimeService workTimeService;
-    @EJB
-    private DocFacade docFacade;
     
     private String exitParam = SysParams.EXIT_NOTHING_TODO;
     private ProcReport currentReport;  
@@ -93,7 +89,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private final DefaultMenuModel runMenuModel = new DefaultMenuModel();
     private List<RunOptions> runOptions = new ArrayList<>();    
     private List<BaseDict> forShow;
-    
+    private List<Staff> inspectors;
     private int deadLineDeltaDay = 0;
     private int deadLineDeltaHour = 0;
     
@@ -244,7 +240,23 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         onItemChange();
     }
     
-    /* *** КУРАТОР *** */
+    /* *** РОЛИ *** */
+    
+    public boolean isShowInspector(){
+        return processFacade.isHaveRole(getEditedItem(), DictRoles.ROLE_INSPECTOR);
+    }
+    
+    public void onChangeInspector(SelectEvent event){
+        if (event.getObject() instanceof String) return;
+        List<Staff> items = (List<Staff>) event.getObject();
+        if (items.isEmpty()){return;}
+        Staff staff = items.get(0);
+        getEditedItem().setInspector(staff);
+    }
+    public void onChangeInspector(ValueChangeEvent event){
+        Staff staff = (Staff) event.getNewValue();
+        getEditedItem().setInspector(staff);
+    }    
     
     public void onChangeCurator(SelectEvent event){
         if (event.getObject() instanceof String) return;
@@ -665,7 +677,18 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     public void setRunOptions(List<RunOptions> runOptions) {
         this.runOptions = runOptions;
     }
-          
+
+    public List<Staff> getInspectors() {
+        if (inspectors == null){
+            inspectors = userFacade.findUserByGroupID(101, getCurrentUser()) //TODO id группы нужно задавать в видах процессов!
+                    .stream()                    
+                    .filter(user->user.getStaff() != null)
+                    .map(user->user.getStaff())
+                    .collect(Collectors.toList());
+        }
+        return inspectors;
+    }
+    
     /**
      * Получение из схемы списка задач процесса
      * @return 

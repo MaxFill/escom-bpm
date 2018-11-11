@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
+import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
 import java.util.Date;
@@ -12,6 +13,8 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 
 public final class DateUtils {
     public final static Logger LOGGER = Logger.getLogger(DateUtils.class.getName());
@@ -26,9 +29,63 @@ public final class DateUtils {
     public static final int SECONDS_PER_MINUTE = 60;
     public static final int SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
     public static final int SECONDS_PER_DAY = SECONDS_PER_HOUR * HOURS_PER_DAY;
+    public static final ZoneOffset ZONE_OFFSET = OffsetDateTime.now(ZoneId.systemDefault()).getOffset();
+
     
     private DateUtils() { }
 
+    public static Date periodStartDate(String period, Date dateStart){         
+        switch (period) {
+            case "today":{
+                dateStart = clearDate(new Date());
+                break;
+            }
+            case "curWeek":{
+                dateStart = firstDayWeek(LocalDate.now());
+                break;
+            }
+            case "сurMonth":{
+                dateStart = firstDayMounth(LocalDate.now());
+                break;
+            }
+            case "curQuarter":{
+                dateStart = firstDayQuarter(LocalDate.now());
+                break;
+            }
+            case "curYear":{
+                dateStart = firstDayYear(LocalDate.now());
+                break;
+            }
+        }
+        return dateStart;
+    }
+    
+    public static Date periodEndDate(String period, Date dateEnd){
+        switch (period) {
+            case "today":{
+                dateEnd = endDate(new Date());
+                break;
+            }
+            case "curWeek":{
+                dateEnd = lastDayWeek(LocalDate.now());
+                break;
+            }
+            case "сurMonth":{
+                dateEnd = lastDayMounth(LocalDate.now());
+                break;
+            }
+            case "curQuarter":{
+                dateEnd = lastDayQuarter(LocalDate.now());
+                break;
+            }
+            case "curYear":{
+                dateEnd = lastDayYear(LocalDate.now());
+                break;
+            }
+        }
+        return dateEnd;
+    }
+    
     /* Преобразование строки yyyy-MM-dd в дату */
     public static Date convertStrToDate(String dateStr){ 
         Date rezult = null;
@@ -76,9 +133,63 @@ public final class DateUtils {
         return calendar.getTime();
     }
 
+    /**
+     * Возвращает дату, как конец дня
+     * @param date
+     * @return 
+     */
+    public static Date endDate(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 99);
+        return calendar.getTime();
+    }
+    
+    public static Date firstDayWeek(LocalDate ld ){
+        ld = ld.with(ChronoField.DAY_OF_WEEK, 1);        
+        return Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }       
+    
+    public static Date firstDayMounth(LocalDate ld ){
+        return Date.from(ld.withDayOfMonth(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+    
+    public static Date firstDayYear(LocalDate ld){
+        LocalDate firstDay = ld.with(firstDayOfYear());
+        return Date.from(firstDay.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+        
+    public static Date firstDayQuarter(LocalDate ld){  
+        LocalDate firstDay = ld.with(ld.getMonth().firstMonthOfQuarter()).with(TemporalAdjusters.firstDayOfMonth());
+        return Date.from(firstDay.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+    
+    public static Date lastDayWeek(LocalDate ld){
+        ld = ld.with(ChronoField.DAY_OF_WEEK, 7);            
+        return Date.from(ld.atTime(23, 59, 59).toInstant(ZONE_OFFSET));
+    }
+    
+    public static Date lastDayMounth(LocalDate ld){        
+        return Date.from(ld.withDayOfMonth(ld.lengthOfMonth()).atTime(23, 59, 59).toInstant(ZONE_OFFSET));
+    }    
+    
+    public static Date lastDayYear(LocalDate ld){   
+        LocalDate lastDay = ld.with(lastDayOfYear());
+        return Date.from(lastDay.atTime(23, 59, 59).toInstant(ZONE_OFFSET));
+    }   
+    
+    public static Date lastDayQuarter(LocalDate ld){   
+        LocalDate firstDay = ld.with(ld.getMonth().firstMonthOfQuarter()).with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate lastDay = firstDay.plusMonths(2).with(TemporalAdjusters.lastDayOfMonth());        
+        return Date.from(lastDay.atTime(23, 59, 59).toInstant(ZONE_OFFSET));
+    }
+    
     /* Создание локальной даты  */
     public static LocalDate createLocalDate(){
-        return toLocalDate(new Date());
+        return LocalDate.now();
     }
     
     /* Преобразование даты в строку */ 

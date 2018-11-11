@@ -37,7 +37,8 @@
                              disabled="#{_bean.isReadOnly()}"
                              onchange="return itemChange = 1;">
                     <f:validateLength for="typeCode" maximum="10"/>
-                </p:inputText>                
+                </p:inputText> 
+                
             </p:panelGrid>
         </p:tab>
         
@@ -52,59 +53,115 @@
                     </p:inputSwitch> 
                 </h:panelGrid>
 
-                <h:panelGroup id="procOptionsGroup" >
-                    <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" rendered="#{!_bean.editedItem.inheritRunOptions}">
-                        <p:outputLabel value="#{bundle.ShowReportsTable}:" />
-                        <p:selectOneMenu value="#{_bean.editedItem.nameReports}"  
-                                         disabled="#{_bean.isReadOnly()}"
-                                         onchange="return itemChange = 1;"
-                                         styleClass="ui-grid-col-12"                                         
-                                         requiredMessage="#{bundle.Field} [#{bundle.ShowReportsTable}] #{bundle.MustBeFilled}">
-                            <f:selectItem value="#{null}" itemLabel="#{bundle.No}" itemValue="#{null}" />
-                            <f:selectItem itemLabel="#{bundle.ApprovalSheet}" itemValue="ApprovalSheet" />
-                            <f:selectItem itemLabel="#{bundle.ExecutionSheet}" itemValue="ExecutionSheet" />
-                        </p:selectOneMenu>
-                        
-                        <p:outputLabel value="#{bundle.Numerator}:" indicateRequired="true"/>
-                        <p:selectOneMenu id="numeratorMenu" value="#{_bean.editedItem.numerator}" converter="numPatternConvertor" 
-                                         disabled="#{_bean.isReadOnly()}"
-                                         onchange="return itemChange = 1;"
-                                         styleClass="ui-grid-col-12"
-                                         required="#{param['isRequired'] == 'true'}"
-                                         requiredMessage="#{bundle.Field} [#{bundle.Numerator}] #{bundle.MustBeFilled}">
-                            <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}" itemDisabled="true"/>
-                            <f:selectItems value="#{numeratorPatternBean.findAll()}" var="num" itemLabel="#{num.name}" itemValue="#{num}" />
-                        </p:selectOneMenu>
+                <h:panelGroup id="procOptionsGroup" >                    
+                    <p:accordionPanel id="accord" activeIndex="#{_bean.accordTab}" rendered="#{!_bean.editedItem.inheritRunOptions}">
+                        <p:tab title="#{bundle.Registration}" >
+                            <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                                <p:outputLabel value="#{bundle.Numerator}:" indicateRequired="true"/>
+                                <p:selectOneMenu id="numeratorMenu" value="#{_bean.editedItem.numerator}" converter="numPatternConvertor" 
+                                                 disabled="#{_bean.isReadOnly()}"
+                                                 onchange="return itemChange = 1;"
+                                                 styleClass="ui-grid-col-12"
+                                                 required="#{param['isRequired'] == 'true'}"
+                                                 requiredMessage="#{bundle.Field} [#{bundle.Numerator}] #{bundle.MustBeFilled}">
+                                    <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}" itemDisabled="true"/>
+                                    <f:selectItems value="#{numeratorPatternBean.findAll()}" var="num" itemLabel="#{num.name}" itemValue="#{num}" />
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                        </p:tab>
 
-                        <p:outputLabel value="#{bundle.DefaultDeadline}:" indicateRequired="true"/>
-                        <h:panelGroup>
-                            <div class="ui-inputgroup">
-                            <p:spinner id="deltaDay" value="#{processTypesCardBean.deadLineDeltaDay}" min="0" max="999" 
-                                       suffix="#{bundle.DayShort}" size="3"                                                
-                                       onchange="return itemChange = 1;"                                               
-                                       disabled="#{_bean.isReadOnly()}">                                        
-                            </p:spinner>
-                            <p:spacer width="1"/>
-                            <p:spinner id="deltaHour" value="#{processTypesCardBean.deadLineDeltaHour}" min="0" max="99" 
-                                       suffix="#{bundle.HourShort}" size="2"
-                                       onchange="return itemChange = 1;"
-                                       disabled="#{_bean.isReadOnly()}">
-                            </p:spinner>
-                            </div>
-                        </h:panelGroup>
-                                                
-                        <p:outputLabel value="#{bundle.RunOptions}:" indicateRequired="true"/>
-                        <p:pickList value="#{_bean.runOptions}" var="item" converter="runOptionsConverter"
-                                    disabled="#{_bean.isReadOnly()}"
-                                    showCheckbox="true" responsive="true"
-                                    onTransfer="itemChange = 1;"
-                                    required="#{param['isRequired'] == 'true'}"
-                                    requiredMessage="#{bundle.Field} [#{bundle.RunOptions}] #{bundle.MustBeFilled}"                                
-                                    itemLabel="#{_bean.getLabelFromBundle(item.getBundleName())}" itemValue="#{item}">
-                                <f:facet name="sourceCaption">#{bundle.Available}</f:facet>
-                                <f:facet name="targetCaption">#{bundle.Selected}</f:facet>
-                        </p:pickList>
-                    </p:panelGrid>
+                        <p:tab title="#{bundle.DefaultDeadline}" >
+                            <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                                <p:outputLabel value="#{bundle.DefaultDeadline}:" indicateRequired="true"/>
+                                <h:panelGroup>
+                                    <div class="ui-inputgroup">
+                                    <p:spinner id="deltaDay" value="#{_bean.deadLineDeltaDay}" min="0" max="999" 
+                                               suffix="#{bundle.DayShort}" size="3"                                                
+                                               onchange="return itemChange = 1;"                                               
+                                               disabled="#{_bean.isReadOnly()}">                                        
+                                    </p:spinner>
+                                    <p:spacer width="1"/>
+                                    <p:spinner id="deltaHour" value="#{_bean.deadLineDeltaHour}" min="0" max="99" 
+                                               suffix="#{bundle.HourShort}" size="2"
+                                               onchange="return itemChange = 1;"
+                                               disabled="#{_bean.isReadOnly()}">
+                                    </p:spinner>
+                                    </div>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </p:tab>
+
+                        <p:tab title="#{bundle.Roles}" >
+                            <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                                <p:dataTable id="tblRoles" value="#{_bean.editedItem.processRoles}" editable="true"
+                                             tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces"
+                                             emptyMessage="#{bundle.EmptyTable}" expandableRowGroups="true"
+                                             var="role" >
+                                    <p:ajax event="rowEdit" oncomplete="return itemChange = 1;"/>
+
+                                    <p:column headerText="#{bundle.Role}">
+                                        <p:cellEditor>
+                                            <f:facet name="output">
+                                                <p:outputLabel value="#{_bean.getLabelFromBundle(role.name)}"/>
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:selectOneMenu value="#{role.name}" >
+                                                   <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}"/>
+                                                   <f:selectItems value="#{processBean.ROLES}" />
+                                               </p:selectOneMenu>
+                                            </f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+
+                                    <p:column style="text-align: center; width: 5%;">
+                                        <p:rowEditor saveTitle="#{bundle.SaveChange}" rendered="#{!_bean.isReadOnly()}" cancelTitle="#{bundle.Cancel}" editTitle="#{bundle.Edit}" />
+                                    </p:column>
+
+                                    <p:column width="16" style="text-align: center;" >
+                                        <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}"
+                                                         update="tblRoles"
+                                                         disabled="#{_bean.isReadOnly()}"
+                                                         actionListener="#{_bean.onDeleteRole(role)}" >
+                                            <p:confirm header="#{bundle.Delete}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                                <p:commandButton value="#{bundle.Add}" update="tblRoles"
+                                                 actionListener="#{_bean.onAddRole()}">
+                                </p:commandButton>
+                            </p:panelGrid>
+                        </p:tab>
+
+                        <p:tab title="#{bundle.RunOptions}"> 
+                            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces"> 
+                                <p:pickList value="#{_bean.runOptions}" var="item" converter="runOptionsConverter"
+                                            disabled="#{_bean.isReadOnly()}"
+                                            showCheckbox="true" responsive="true"
+                                            onTransfer="itemChange = 1;"
+                                            required="#{param['isRequired'] == 'true'}"
+                                            requiredMessage="#{bundle.Field} [#{bundle.RunOptions}] #{bundle.MustBeFilled}"                                
+                                            itemLabel="#{_bean.getLabelFromBundle(item.getBundleName())}" itemValue="#{item}">
+                                        <f:facet name="sourceCaption">#{bundle.Available}</f:facet>
+                                        <f:facet name="targetCaption">#{bundle.Selected}</f:facet>
+                                </p:pickList>
+                            </p:panelGrid>    
+                        </p:tab>
+                        
+                        <p:tab title="#{bundle.Other}">  
+                            <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                                <p:outputLabel value="#{bundle.ShowReportsTable}:" />
+                                <p:selectOneMenu value="#{_bean.editedItem.nameReports}"  
+                                                 disabled="#{_bean.isReadOnly()}"
+                                                 onchange="return itemChange = 1;"
+                                                 styleClass="ui-grid-col-12"                                         
+                                                 requiredMessage="#{bundle.Field} [#{bundle.ShowReportsTable}] #{bundle.MustBeFilled}">
+                                    <f:selectItem value="#{null}" itemLabel="#{bundle.No}" itemValue="#{null}" />
+                                    <f:selectItem itemLabel="#{bundle.ApprovalSheet}" itemValue="ApprovalSheet" />
+                                    <f:selectItem itemLabel="#{bundle.ExecutionSheet}" itemValue="ExecutionSheet" />
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                        </p:tab>
+                    </p:accordionPanel>                    
                 </h:panelGroup>
             </p:panelGrid>
         </p:tab>
@@ -131,7 +188,7 @@
                                      requiredMessage="#{bundle.Field} [#{bundle.DefaultTaskName}] #{bundle.MustBeFilled}"/>
 
                         <p:outputLabel value="#{bundle.Role}:"/>
-                        <p:selectOneMenu value="#{_bean.editedItem.roleInProc}" filter="true" filterMatchMode="startsWith" title="#{bundle.Roles}"
+                        <p:selectOneMenu value="#{_bean.editedItem.defaultTaskRole}" filter="true" filterMatchMode="startsWith" title="#{bundle.Roles}"
                                          styleClass="ui-grid-col-12"
                                          disabled="#{_bean.isReadOnly()}"
                                          onchange="return itemChange = 1;"

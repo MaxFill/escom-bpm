@@ -51,6 +51,7 @@
                                     pattern="dd.MM.yyyy HH:mm:ss"
                                     required="#{param['isRequired'] == 'true' and _bean.editedItem.substitutionType eq 'period'}"
                                     requiredMessage="#{bundle.Field} [#{bundle.DateBegin}]  #{bundle.MustBeFilled}">
+                            <p:ajax event="dateSelect" onstart="itemChange = 1;" />
                         </p:calendar>
                         <p:outputLabel value="#{bundle.At}"/>
                         <p:calendar value="#{assistantCardBean.editedItem.endDate}" id="dateEnd"  
@@ -61,12 +62,14 @@
                                     pattern="dd.MM.yyyy HH:mm:ss"
                                     required="#{param['isRequired'] == 'true' and _bean.editedItem.substitutionType eq 'period'}"
                                     requiredMessage="#{bundle.Field} [#{bundle.DateEnd}] #{bundle.MustBeFilled}">
+                            <p:ajax event="dateSelect" onstart="itemChange = 1;" />
                         </p:calendar>
                     </h:panelGrid>
                 </h:panelGrid>
                 
                 <p:selectBooleanCheckbox value="#{_bean.editedItem.duplicateChiefMessage}"
                                          itemLabel="#{bundle.DuplicateChiefMessageAssistant}">
+                    <p:ajax oncomplete="itemChange = 1;"/>
                 </p:selectBooleanCheckbox>                                    
                 
             </p:panelGrid>

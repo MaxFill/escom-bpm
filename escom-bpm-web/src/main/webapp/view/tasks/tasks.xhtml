@@ -30,32 +30,20 @@
                     <f:selectItems value="#{taskListBean.executors}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}"/>  
                     <p:ajax event="change" oncomplete="document.getElementById('mainFRM:btnSearche').click();"/>
                 </p:selectOneMenu>                
-            </h:panelGrid>  
+            </h:panelGrid>                                                     
             
             <h:panelGrid columns="3" styleClass=" without-spaces"> 
-                <h:panelGrid columns="1" styleClass=" without-spaces"> 
-                    <p:outputLabel value="#{bundle.PlanEndDate}:" />
-                    <h:panelGrid columns="2" styleClass="without-spaces">
-                        #{bundle.With}
-                        <p:calendar value="#{taskListBean.dateStart}" id="dateStart"
-                                    widgetVar="dateCreateStartSearche"
-                                    showHour="true" showMinute="true" pages="2"
-                                    navigator="true" yearRange="c-12:c+20"
-                                    disabled="#{taskListBean.showOnlyExecute}"
-                                    locale="#{sessionBean.locale}"
-                                    pattern="dd.MM.yyyy HH:mm">
-                        </p:calendar>
-                        #{bundle.At}
-                        <p:calendar value="#{taskListBean.dateEnd}" id="dateEnd"
-                                    widgetVar="dateCreateEndSearche"
-                                    navigator="true" yearRange="c-12:c+20" pages="2"
-                                    showHour="true" showMinute="true"
-                                    disabled="#{taskListBean.showOnlyExecute}"
-                                    locale="#{sessionBean.locale}"
-                                    pattern="dd.MM.yyyy HH:mm">
-                        </p:calendar>
-                    </h:panelGrid>
-                </h:panelGrid>
+                <ui:include src="/view/common/period-select.xhtml" >
+                    <ui:param name="_itemValue" value="#{_bean.period}"/>
+                    <ui:param name="_titleItem" value="#{bundle.PlanEndDate}"/>
+                    <ui:param name="_beginDate" value="#{_bean.dateStart}"/>
+                    <ui:param name="_endDate" value="#{_bean.dateEnd}"/>
+                    <ui:param name="_required" value="false" />
+                    <ui:param name="_disabled" value="#{taskListBean.showOnlyExecute}"/>
+                    <ui:param name="_itemPanel" value="periodPanel"/>                    
+                    <ui:param name="_actionSelect" value="onPeriodChange"/>                    
+                    <ui:param name="_update" value=""/>
+                </ui:include>                 
                 
                 <h:panelGrid columns="1" styleClass="without-spaces">
                     <p:outputLabel value="#{bundle.States}:" />

@@ -374,7 +374,8 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
     
     @Override
     public void onOpenDetail(BaseDict item){
-        setSourceItem(item);        
+        setSourceItem(item); 
+        setSelectedDetail(item);
         assistantBean.prepEditChildItem((Assistant)item, getParamsMap());
     }
     

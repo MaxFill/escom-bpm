@@ -10,33 +10,27 @@
     <ui:define name="page_body">
         <p:tab title="#{bundle.Doc}"> 
             <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                
-                <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces">
-                    <h:panelGrid columns="1" styleClass="ui-grid-col-12 without-spaces">
-                        <p:outputLabel value="#{bundle.Type}:" />
-                        <p:selectOneMenu value="#{_bean.editedItem.type}" id="type" converter="partnerTypesConvertor"
-                                         disabled="#{_bean.isReadOnly()}" 
-                                         placeholder="#{bundle.Select}"
-                                         filter="true" 
-                                         onchange="return itemChange = 1;"                                 
-                                         requiredMessage="#{bundle.Field} [#{bundle.Type}] #{bundle.MustBeFilled}">
-                            <f:selectItems value="#{partnerTypesBean.findAll()}" var="types" itemLabel="#{types.name}" itemValue="#{types}" />
-                            <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}"/>                         
-                        </p:selectOneMenu>
-                    </h:panelGrid>
-                    
-                    <h:panelGrid columns="1" styleClass="without-spaces">
-                            <p:outputLabel value="#{bundle.Code}:" indicateRequired="true"/>            
-                            <p:inputText value="#{_bean.editedItem.code}" id="code"
-                                         disabled="#{_bean.isReadOnly()}"
-                                         required="#{param['isRequired'] == 'true'}" 
-                                         maxlength="50"
-                                         onkeypress="checkEsc();"
-                                         requiredMessage="#{bundle.Field} [#{bundle.Code}] #{bundle.MustBeFilled}"                                 
-                                         onchange="return itemChange = 1;"/>
-                    </h:panelGrid>
-                </h:panelGrid>
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12 without-spaces">
+                    <p:outputLabel value="#{bundle.Type}:" />
+                    <p:selectOneMenu value="#{_bean.editedItem.type}" id="type" converter="partnerTypesConvertor"
+                                     disabled="#{_bean.isReadOnly()}" 
+                                     placeholder="#{bundle.Select}"
+                                     filter="true" 
+                                     onchange="return itemChange = 1;"                                 
+                                     requiredMessage="#{bundle.Field} [#{bundle.Type}] #{bundle.MustBeFilled}">
+                        <f:selectItems value="#{partnerTypesBean.findAll()}" var="types" itemLabel="#{types.name}" itemValue="#{types}" />
+                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}"/>                         
+                    </p:selectOneMenu>
 
-                <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces">
+                    <p:outputLabel value="#{bundle.Code}:" indicateRequired="true"/>            
+                    <p:inputText value="#{_bean.editedItem.code}" id="code"
+                                 disabled="#{_bean.isReadOnly()}"
+                                 required="#{param['isRequired'] == 'true'}" 
+                                 maxlength="50"
+                                 onkeypress="checkEsc();"
+                                 requiredMessage="#{bundle.Field} [#{bundle.Code}] #{bundle.MustBeFilled}"                                 
+                                 onchange="return itemChange = 1;"/>
+
                     <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
                     <p:inputText value="#{_bean.editedItem.name}" id="nameItem"
                                  placeholder="#{bundle.EnterPartnerWithoutQuotation}"
@@ -74,7 +68,7 @@
                                      styleClass="ui-grid-col-12"
                                      onchange="return itemChange = 1;">
                     </p:inputTextarea>                    
-                </h:panelGrid>
+                </p:panelGrid>
 
                 <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces">  
                     <h:panelGrid columns="1" styleClass="without-spaces">

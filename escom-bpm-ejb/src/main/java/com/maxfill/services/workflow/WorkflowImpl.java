@@ -348,8 +348,10 @@ public class WorkflowImpl implements Workflow {
         Scheme scheme = process.getScheme();
         if (scheme == null){
             scheme = new Scheme(process);
-            if (defaultTempl != null){
-                //defaultTempl = processTypeFacade.getDefaultTempl(process.getOwner(), currentUser);            
+            if (defaultTempl == null){
+                defaultTempl = processTypeFacade.getDefaultTempl(process.getOwner(), currentUser);
+            }
+            if (defaultTempl != null){                
                 scheme.setPackElements(defaultTempl.getElements());
                 scheme.setName(defaultTempl.getName());
             }
@@ -571,7 +573,12 @@ public class WorkflowImpl implements Workflow {
         TaskElem startElement = scheme.getElements().getTasks().get(task.getTaskLinkUID());
         startElement.getTask().setResult(result.getName());
         taskFacade.taskDone(task, result, currentUser);
-
+        
+        //занесение в пареметры выполнения процесса опции запуска (если она есть)
+        if (result.getRunOptions() != null){
+            params.put(result.getRunOptions().getName(), true);
+        }
+        
         scheme.getTasks().remove(task);
         scheme.getTasks().add(task); //TODO это лишнее ?  
 
@@ -590,7 +597,8 @@ public class WorkflowImpl implements Workflow {
 
         params.put(EXECUTED_TASKS, executedTasks);
         params.put(LAST_TASK, task);
-                
+         
+        //выполнение процесса
         forShow = run(process, startElement, new HashSet<>(), currentUser, params, errors);
 
         if (!errors.isEmpty()){                            
@@ -602,6 +610,11 @@ public class WorkflowImpl implements Workflow {
         return forShow;
     }
     
+    /**
+     * Выполнение таймера
+     * @param procTimer
+     * @param errors 
+     */
     @Override
     public void executeTimer(ProcTimer procTimer, Set<Tuple> errors){
         User admin = userFacade.getAdmin();
@@ -715,7 +728,7 @@ public class WorkflowImpl implements Workflow {
                 subProcess.setResult(null);
                 subProcess.setFactExecDate(null);
                 processFacade.setRoleOwner(subProcess, curUser);
-                processFacade.edit(subProcess);
+                processFacade.edit(subProcess);                
                 if (subProcElem.isShowCard()){
                     processesForShow.add(subProcess);                    
                 } else {                
@@ -1247,6 +1260,15 @@ public class WorkflowImpl implements Workflow {
                 if (doc != null && StringUtils.isBlank(doc.getRegNumber())){
                     docNumeratorService.registratedDoc(doc, errors);
                 }
+                break;
+            }
+            case "createProcess": {
+                break;
+            }
+            case "createTask": {
+                break;
+            }
+            case "createDoc":{
                 break;
             }
         }

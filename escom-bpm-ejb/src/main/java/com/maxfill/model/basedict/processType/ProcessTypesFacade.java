@@ -7,7 +7,6 @@ import com.maxfill.model.basedict.procTempl.ProcTempl;
 import com.maxfill.model.basedict.procTempl.ProcessTemplFacade;
 import com.maxfill.model.core.rights.Rights;
 import com.maxfill.model.basedict.user.User;
-import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;

@@ -339,4 +339,57 @@
             </column>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="results_add_options" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="results" columnName="RunOption" />
+            </not>
+        </preConditions>
+        <addColumn tableName="results">
+            <column name="RunOption" type="INT" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="RunOption"
+                                baseTableName="results"
+                                constraintName="FK_Result_RunOptions_Link"
+                                referencedColumnNames="Id"
+                                onUpdate="NO ACTION"
+                                onDelete="NO ACTION"
+                                referencedTableName="runOptions"/>
+    </changeSet>
+    
+    <changeSet id="results_add_NewEditionSendToAll" author="filatov" context="initdata" runOnChange="true">
+        <sql>
+            INSERT resultsStates (Id, CurrentState,  PreviousState) VALUES(8, 7, 5);        
+            INSERT results (Id, Name, RunOption, IconName, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) 
+                    VALUES (8, N'NewEditionSendToAll', 1, N'play-16', 8, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            
+            INSERT resultsStates (Id, CurrentState,  PreviousState) VALUES(9, 7, 5);        
+            INSERT results (Id, Name, RunOption, IconName, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) 
+                    VALUES (9, N'SendJustDoNotAgree', 2, N'exit-16', 9, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+        </sql>
+    </changeSet>
+    
+    <changeSet id="processes_add_Inspector" author="filatov" context="initdata" runOnChange="true">
+       <preConditions onFail="MARK_RAN">
+           <not>
+               <columnExists tableName="processes" columnName="Inspector" />
+           </not>
+       </preConditions>
+       <addColumn tableName="processes">
+           <column name="Inspector" type="INT" >
+               <constraints nullable="true"/>
+           </column>
+       </addColumn>
+       <addForeignKeyConstraint baseColumnNames="Inspector"
+                                baseTableName="processes"
+                                constraintName="FK_Process_Inspector"
+                                referencedColumnNames="Id"
+                                onUpdate="NO ACTION"
+                                onDelete="NO ACTION"
+                                referencedTableName="staffs"/>
+    </changeSet>
+    
 </databaseChangeLog> 

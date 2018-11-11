@@ -8,6 +8,7 @@ import com.maxfill.model.basedict.process.options.RunOptionsFacade;
 import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import com.maxfill.model.basedict.result.ResultFacade;
 import com.maxfill.model.basedict.processType.ProcessType;
+import com.maxfill.model.basedict.processType.roles.ProcessRole;
 import com.maxfill.model.core.states.State;
 import com.maxfill.model.basedict.result.Result;
 import com.maxfill.utils.EscomUtils;
@@ -46,7 +47,8 @@ public class ProcessTypesCardBean extends BaseCardTree<ProcessType>{
     
     private int deadLineDeltaDay = 0;
     private int deadLineDeltaHour = 0;    
-
+    private String accordTab = null;
+    
     @Override
     public void doPrepareOpen(ProcessType processType){  
         initDateFields(processType);
@@ -92,6 +94,16 @@ public class ProcessTypesCardBean extends BaseCardTree<ProcessType>{
         return processTypesBean;
     }
 
+    public void onDeleteRole(ProcessRole role){
+        getEditedItem().getProcessRoles().remove(role);
+        onItemChange();
+    }
+    
+    public void onAddRole(){
+        getEditedItem().getProcessRoles().add(new ProcessRole(getEditedItem()));
+        onItemChange();
+    }
+    
     /* GETS & SETS */
     
     @Override
@@ -154,7 +166,14 @@ public class ProcessTypesCardBean extends BaseCardTree<ProcessType>{
     public void setDeadLineDeltaHour(int deadLineDeltaHour) {
         this.deadLineDeltaHour = deadLineDeltaHour;
     }
- 
+
+    public String getAccordTab() {
+        return accordTab;
+    }
+    public void setAccordTab(String accordTab) {
+        this.accordTab = accordTab;
+    }
+     
     @Override
     public ProcessTypesFacade getFacade() {
         return itemsFacade;

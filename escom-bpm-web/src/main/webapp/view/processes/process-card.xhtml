@@ -126,6 +126,17 @@
                         <ui:param name="_update" value=""/>
                     </ui:include>
                     
+                    <p:outputLabel value="#{bundle.Inspector}:" indicateRequired="true" rendered="#{_bean.isShowInspector()}"/>
+                    <p:selectOneMenu value="#{_bean.editedItem.inspector}" converter="staffConvertor"
+                                     title="#{bundle.Inspector}" styleClass="ui-grid-col-12"
+                                     disabled="#{_bean.isReadOnly()}" rendered="#{_bean.isShowInspector()}"
+                                     onchange="return itemChange = 1;"
+                                     required="#{param['isRequired'] == 'true'}"
+                                     requiredMessage="#{bundle.Field} [#{bundle.Inspector}] #{bundle.MustBeFilled}">
+                        <f:selectItems value="#{_bean.inspectors}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}" />
+                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
+                    </p:selectOneMenu>
+                    
                     <p:outputLabel value="#{bundle.ProcessCaption}:" indicateRequired="true" />
                     <p:inputText id="nameItem" value="#{processCardBean.editedItem.name}"
                                  styleClass="ui-grid-col-12" 

@@ -5,7 +5,7 @@ import com.maxfill.RightsDef;
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.model.core.metadates.MetadatesFacade;
-import com.maxfill.model.core.roles.RoleFacade;
+import com.maxfill.model.basedict.processType.roles.ProcessRoleFacade;
 import com.maxfill.model.core.states.StateFacade;
 import com.maxfill.model.basedict.user.UserFacade;
 import com.maxfill.model.basedict.BaseDict;
@@ -71,7 +71,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     @EJB
     protected RightsDef rightsDef;
     @EJB
-    protected RoleFacade roleFacade;
+    protected ProcessRoleFacade roleFacade;
     @EJB
     protected UserFacade userFacade;
 

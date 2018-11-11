@@ -202,5 +202,5 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
         }
         staff.setName(sb.toString());
     }
-
+    
 }

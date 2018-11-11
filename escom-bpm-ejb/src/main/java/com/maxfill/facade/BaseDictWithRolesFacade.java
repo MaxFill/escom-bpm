@@ -7,6 +7,7 @@ import com.maxfill.model.core.messages.UserMessagesFacade;
 import com.maxfill.model.core.states.BaseStateItem;
 import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.basedict.userGroups.UserGroups;
+import com.maxfill.model.basedict.userGroups.UserGroupsFacade;
 import com.maxfill.utils.ItemUtils;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 /**
- * Класс определяет методы, для работы с ролями
+ * Фасад для работы с ролями объекта
  * @param <T>
  * @param <O>
  * @param <L>
@@ -30,7 +31,9 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
 
     @EJB
     private UserMessagesFacade messagesFacade;    
-
+    @EJB
+    private UserGroupsFacade userGroupsFacade;
+    
     public BaseDictWithRolesFacade(Class <T> itemClass, Class <L> logClass, Class <S> stateClass) {
         super(itemClass, logClass, stateClass);
     }
@@ -58,16 +61,29 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
     }
 
     /**
+     * Проверяет, есть в объекте указанная роль
+     * @param item
+     * @param roleName
+     * @return 
+     */
+    public boolean isHaveRole(T item, String roleName){
+        if (StringUtils.isBlank(roleName)) return false;        
+        Map<String, Set<Integer>> roles = item.getRoles(); //все роли объекта
+        if (roles.isEmpty()) return false;
+        return roles.containsKey(roleName.toUpperCase());
+    } 
+            
+    /**
      * Проверка вхождения пользователя в роль c учётом заместителей
      * @param item
-     * @param groupId
+     * @param userGroupId
      * @param user
      * @return 
      */
     @Override
-    public boolean checkUserInRole(T item, Integer groupId, User user){
+    public boolean checkUserInRole(T item, Integer userGroupId, User user){
         //получаем актуальную роль
-        UserGroups group = roleFacade.find(groupId);
+        UserGroups group = userGroupsFacade.find(userGroupId);
         if (group == null) return false; //если не нашли
         
         //получаем имя роли

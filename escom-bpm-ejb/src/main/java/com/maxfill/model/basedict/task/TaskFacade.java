@@ -77,7 +77,7 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
     
     private void setDefaultTaskParams(Task task, Process process){
         ProcessType procType = processTypesFacade.getProcTypeForTasks(process.getOwner());
-        task.setRoleInProc(procType.getRoleInProc());
+        task.setRoleInProc(procType.getDefaultTaskRole());
         task.setName(procType.getDefaultTaskName());
         task.setAvaibleResultsJSON(procType.getAvaibleResultsJSON()); 
         

@@ -1,8 +1,7 @@
 package com.maxfill.model.basedict.result;
 
 import com.maxfill.model.basedict.BaseDict;
-import java.util.ArrayList;
-import java.util.List;
+import com.maxfill.model.basedict.process.options.RunOptions;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -13,7 +12,7 @@ import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -41,7 +40,11 @@ public class Result extends BaseDict<Result, Result, Result, ResultLog, ResultSt
     @GeneratedValue(strategy = TABLE, generator = "IdResultGen")
     @Column(name = "Id")
     private Integer id;    
-        
+            
+    @JoinColumn(name = "RunOption", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private RunOptions runOptions;
+    
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
@@ -57,7 +60,14 @@ public class Result extends BaseDict<Result, Result, Result, ResultLog, ResultSt
     public void setId(Integer id) {
         this.id = id;
     }  
-    
+
+    public RunOptions getRunOptions() {
+        return runOptions;
+    }
+    public void setRunOptions(RunOptions runOptions) {
+        this.runOptions = runOptions;
+    }
+        
     @Override
     public ResultStates getState() {
         return state;

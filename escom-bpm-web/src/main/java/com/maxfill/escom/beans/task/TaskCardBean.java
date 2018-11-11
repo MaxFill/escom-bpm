@@ -296,6 +296,10 @@ public class TaskCardBean extends BaseCardBean<Task>{
         return onExecute();        
     }        
     
+    /**
+     * Выполнение задачи
+     * @return 
+     */
     public String onExecute() {    
         Task task = getEditedItem();
 
