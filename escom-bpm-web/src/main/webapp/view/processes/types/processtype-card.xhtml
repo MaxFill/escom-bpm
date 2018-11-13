@@ -91,46 +91,7 @@
                             </p:panelGrid>
                         </p:tab>
 
-                        <p:tab title="#{bundle.Roles}" >
-                            <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
-                                <p:dataTable id="tblRoles" value="#{_bean.editedItem.processRoles}" editable="true"
-                                             tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces"
-                                             emptyMessage="#{bundle.EmptyTable}" expandableRowGroups="true"
-                                             var="role" >
-                                    <p:ajax event="rowEdit" oncomplete="return itemChange = 1;"/>
-
-                                    <p:column headerText="#{bundle.Role}">
-                                        <p:cellEditor>
-                                            <f:facet name="output">
-                                                <p:outputLabel value="#{_bean.getLabelFromBundle(role.name)}"/>
-                                            </f:facet>
-                                            <f:facet name="input">
-                                                <p:selectOneMenu value="#{role.name}" >
-                                                   <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}"/>
-                                                   <f:selectItems value="#{processBean.ROLES}" />
-                                               </p:selectOneMenu>
-                                            </f:facet>
-                                        </p:cellEditor>
-                                    </p:column>
-
-                                    <p:column style="text-align: center; width: 5%;">
-                                        <p:rowEditor saveTitle="#{bundle.SaveChange}" rendered="#{!_bean.isReadOnly()}" cancelTitle="#{bundle.Cancel}" editTitle="#{bundle.Edit}" />
-                                    </p:column>
-
-                                    <p:column width="16" style="text-align: center;" >
-                                        <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}"
-                                                         update="tblRoles"
-                                                         disabled="#{_bean.isReadOnly()}"
-                                                         actionListener="#{_bean.onDeleteRole(role)}" >
-                                            <p:confirm header="#{bundle.Delete}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
-                                        </p:commandButton>
-                                    </p:column>
-                                </p:dataTable>
-                                <p:commandButton value="#{bundle.Add}" update="tblRoles"
-                                                 actionListener="#{_bean.onAddRole()}">
-                                </p:commandButton>
-                            </p:panelGrid>
-                        </p:tab>
+                        <ui:include src="/view/processes/types/tabs/roles.xhtml"/> 
 
                         <p:tab title="#{bundle.RunOptions}"> 
                             <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces"> 

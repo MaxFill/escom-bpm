@@ -25,7 +25,7 @@
             <p:ajax event="toggleSelect" update="checkDelBtn" />
 
             <p:column width="15">
-                <h:graphicImage value="/resources/icon/folder_open20.png" styleClass="img-required" title="#{bundle.Group}"/>
+                <h:graphicImage value="/resources/icon/#{_image == null ? 'folder_open20.png': _image}" styleClass="img-required" title="#{bundle.Group}"/>
             </p:column>
             
             <p:column selectionMode="multiple" style="width:16px;text-align:center" />

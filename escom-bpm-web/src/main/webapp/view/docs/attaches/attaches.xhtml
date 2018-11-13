@@ -11,6 +11,8 @@
                                  actionListener="#{sessionBean.openScaningForm()}">
                     <p:ajax event="dialogReturn" listener="#{docCardBean.addAttacheFromScan}" update="versionsTBL"/>
                 </p:commandButton>
+                
+                <p:commandButton id="btnUpdate" update="versionsTBL" style="display: none;"/>
 
                 <p:fileUpload id="file" 
                               disabled="#{_bean.isReadOnly()}"
@@ -19,14 +21,16 @@
                               invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
                               invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
                               fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
-                              process="@this" style="width: 100%;"
-                              mode="advanced" auto="true"
-                              update="versionsTBL"
+                              process="@this" styleClass="ui-grid-col-12 col-padding"
+                              fileLimit="10"
+                              mode="advanced" auto="false" multiple="true"
                               dragDropSupport="true"
-                              label="#{bundle.AddVersionFromFile}" 
+                              label="#{bundle.SelectFiles}" 
                               cancelLabel="#{bundle.Cancel}"
-                              uploadLabel="#{bundle.SaveFiles}"
-                              fileUploadListener="#{docCardBean.addAttacheFromFile}">                
+                              uploadLabel="#{bundle.UploadToServer}"
+                              fileUploadListener="#{docCardBean.addAttacheFromFile}"
+                              onstart="PF('statusDialog').show();"
+                              oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:mainTabView:btnUpdate').click();">
                 </p:fileUpload>            
             </p:panelGrid>
 
@@ -57,15 +61,15 @@
                     </p:column>
 
                     <p:column headerText="#{bundle.Name}" sortBy="#{attache.name}" >
-                        <h:outputLabel value="#{attache.name}" />
+                        #{attache.name}
                     </p:column>
 
                     <p:column headerText="#{bundle.Path}" rendered="#{sessionBean.userAdmin}" >
-                        <h:outputLabel value="#{attacheBean.getAttachePath(attache)}" />
+                        #{attacheBean.getAttachePath(attache)}
                     </p:column>  
                     
                     <p:column headerText="#{bundle.Author}" sortBy="#{attache.author.shortFIO}" >
-                        <h:outputLabel value="#{attache.author.shortFIO}" />
+                        #{attache.author.shortFIO}
                     </p:column>   
 
                     <p:column headerText="#{bundle.DateCreate}" sortBy="#{attache.dateCreate}" >
@@ -92,7 +96,7 @@
                     </p:rowExpansion>
 
                     <p:column width="45">                    
-                        <p:splitButton  icon="ui-icon-search" title="#{bundle.View}" 
+                        <p:splitButton  icon="ico_look" title="#{bundle.View}" 
                                         actionListener="#{docBean.onViewAttache(attache)}">
                             <p:menuitem icon="ui-icon-pencil" value="#{bundle.EditFile}"
                                         rendered="#{attache.id != null and applicationBean.useModeshape}"

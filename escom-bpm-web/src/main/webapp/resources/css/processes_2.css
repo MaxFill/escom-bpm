@@ -71,6 +71,12 @@
     background-color: skyblue;
 }
 
+.ui-diagram-loop{
+    width:4em;
+    height:4em;
+    background-color: yellow;
+}
+
 .ui-diagram-message {
     width:4em;
     height:4em;
@@ -126,8 +132,8 @@
 }
 
 .ui-diagram-condition {
-    width:6em;
-    height:6em;
+    width:8em;
+    height:7em;
     background-color: #c306ab;
 }
 

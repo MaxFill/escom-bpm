@@ -87,7 +87,7 @@
         </addColumn>
     </changeSet>
 
-     <changeSet id="RunOptions_add_startOptions" author="filatov" context="initdata" runOnChange="true">
+    <changeSet id="RunOptions_add_startOptions" author="filatov" context="initdata" runOnChange="true">
         <sql>
             INSERT runOptions(Id, Name, BundleName, Icon) VALUES (0, N'run', N'Run', N'ui-icon-play');
             INSERT runOptions(Id, Name, BundleName, Icon) VALUES (1, N'send_all', N'NewEditionSendToAll', N'ui-icon-play');
@@ -392,4 +392,9 @@
                                 referencedTableName="staffs"/>
     </changeSet>
     
+    <changeSet id="conditions_add_LastRejected" author="filatov" context="initdata" runOnChange="true">
+        <sql>
+            INSERT conditions(Id, Name, Method, Params) VALUES (9, N'LastRejected', N'lastRejected', NULL);    
+        </sql>
+    </changeSet>
 </databaseChangeLog> 

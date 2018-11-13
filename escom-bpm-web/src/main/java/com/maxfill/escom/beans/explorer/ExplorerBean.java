@@ -287,42 +287,45 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     /* КАРТОЧКИ: обработка после закрытия карточки объекта  */
     public void onUpdateAfterCloseForm(SelectEvent event){ 
         String exitResult = (String) event.getObject();
-        if (!SysParams.EXIT_NOTHING_TODO.equals(exitResult)) {
-            switch (typeEdit){
-                case DictEditMode.EDIT_MODE: {
-                    try {
-                        editItem.setIconTree(currentItem.getIconTree());
-                        BeanUtils.copyProperties(currentItem, editItem);
-                        //onSetCurrentItem(editItem);
-                    } catch (IllegalAccessException | InvocationTargetException ex) {
-                        LOGGER.log(Level.SEVERE, null, ex);
-                    }
-                    if (isItemRootType(editItem) || isItemTreeType(editItem)){ 
-                        treeSelectedNode.getChildren().clear();
-                        BaseDict item = (BaseDict) treeSelectedNode.getData();
-                        item.setIconTree("ui-icon-folder-collapsed");
-                        onSelectInTree(treeSelectedNode);
-                    }
-                    break;
-                }
-                case DictEditMode.INSERT_MODE:{
-                    TreeNode newNode;
-                    if (isItemDetailType(editItem)) {
-                        //detailItems.add(editItem);
-                        loadItems.add(editItem);
-                        //onSetCurrentItem(editItem);
+        if (SysParams.EXIT_ONLY_REFRESH.equals(exitResult)){
+            onSelectInTree(treeSelectedNode);            
+        } else 
+            if (!SysParams.EXIT_NOTHING_TODO.equals(exitResult)) {
+                switch (typeEdit){                
+                    case DictEditMode.EDIT_MODE: {
+                        try {
+                            editItem.setIconTree(currentItem.getIconTree());
+                            BeanUtils.copyProperties(currentItem, editItem);
+                            //onSetCurrentItem(editItem);
+                        } catch (IllegalAccessException | InvocationTargetException ex) {
+                            LOGGER.log(Level.SEVERE, null, ex);
+                        }
+                        if (isItemRootType(editItem) || isItemTreeType(editItem)){ 
+                            treeSelectedNode.getChildren().clear();
+                            BaseDict item = (BaseDict) treeSelectedNode.getData();
+                            item.setIconTree("ui-icon-folder-collapsed");
+                            onSelectInTree(treeSelectedNode);
+                        }
                         break;
                     }
-                    if (isItemRootType(editItem)){
-                        newNode = addNewItemInTree(editItem, tree);
-                    } else {                        
-                        newNode = addNewItemInTree(editItem, treeSelectedNode);
-                    }                    
-                    onSelectInTree(newNode);
-                    break;
-                }
-            }             
-        }        
+                    case DictEditMode.INSERT_MODE:{
+                        TreeNode newNode;
+                        if (isItemDetailType(editItem)) {
+                            //detailItems.add(editItem);
+                            loadItems.add(editItem);
+                            //onSetCurrentItem(editItem);
+                            break;
+                        }
+                        if (isItemRootType(editItem)){
+                            newNode = addNewItemInTree(editItem, tree);
+                        } else {                        
+                            newNode = addNewItemInTree(editItem, treeSelectedNode);
+                        }                    
+                        onSelectInTree(newNode);
+                        break;
+                    }
+                }             
+            }        
         createParams.clear();        
     }
     

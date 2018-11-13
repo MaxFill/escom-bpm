@@ -317,11 +317,12 @@ public class TaskCardBean extends BaseCardBean<Task>{
             MsgUtils.showTupleErrsMsg(errors);            
             return "";            
         }
-        doSaveItem();
         
+        doSaveItem();
+                
         if (task.getScheme() == null){
             taskFacade.taskDone(task, result, getCurrentUser());
-            return closeTaskForm();
+            return closeTaskForm(); //завершаем задачу, если она не связана с процессом
         }
         
         Process process = processFacade.find(task.getScheme().getProcess().getId());
@@ -331,18 +332,13 @@ public class TaskCardBean extends BaseCardBean<Task>{
             return "";
         }        
         
-        if (!forShow.isEmpty()){
-            if (forShow.size() == 1){
-                Process subproc = (Process)forShow.get(0);
-                processBean.prepEditItem(subproc, getParamsMap());
-            } else {
-                PrimeFaces.current().ajax().update("initObjFRM");
-                PrimeFaces.current().executeScript("PF('InitObjectsWV').show();");                            
-            }
+        if (!forShow.isEmpty()){ //если есть что нужно инициализировать, то показываем диалоговое окно
+            PrimeFaces.current().ajax().update("initObjFRM");
+            PrimeFaces.current().executeScript("PF('InitObjectsWV').show();");            
             return "";
         }
-        return closeTaskForm();
-    }    
+        return closeTaskForm();                
+    }
     
     public void onUpdateProcesses(){
         forShow = forShow.stream()
@@ -467,7 +463,9 @@ public class TaskCardBean extends BaseCardBean<Task>{
         boolean isCurator = false;
         if (task.getScheme() != null){
             Staff curator = task.getScheme().getProcess().getCurator();
-            isCurator = curator.getEmployee().equals(getCurrentUser());
+            if (curator != null){
+                isCurator = curator.getEmployee().equals(getCurrentUser());
+            }
         }
         //админ или куратор процесса может выбрать любого
         if (userFacade.isAdmin(getCurrentUser()) || isCurator){

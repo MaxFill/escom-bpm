@@ -297,6 +297,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
                 Integer version = doc.getNextVersionNumber();
                 attache.setNumber(version);
                 attache.setDoc(doc);
+                attache.setCurrent(Boolean.TRUE);
                 String fileName = attache.getName();
                 doc.setName(fileName);
                 doc.getAttachesList().add(attache);                

@@ -7,6 +7,10 @@
 
     <ui:param name="_bean" value="#{monitorBean}"/>
 
+    <ui:define name="title">
+        #{monitorBean.formHeader}
+    </ui:define>
+    
     <ui:define name="menuActions" >
     </ui:define>
 
@@ -34,19 +38,27 @@
                         </p:treeNode>
                     </p:tree>
                 </h:panelGrid>
+                <h:panelGrid columns="1" styleClass="without-spaces">                    
+                    <p:selectManyMenu value="#{monitorBean.states}" converter="stateConvertor" var="st" showCheckbox="true" >
+                        <f:selectItems value="#{processBean.metadatesObj.statesList}" var="state" itemLabel="#{state.name}" itemValue="#{state}" />
+                        <p:column>
+                            <h:outputText value="#{monitorBean.getLabelFromBundle(st.name)}" />
+                        </p:column>
+                    </p:selectManyMenu>
+                </h:panelGrid>  
                 
                 <h:panelGrid columns="2" styleClass="without-spaces">
-                    <p:outputLabel value="#{bundle.Author}:" />
+                    <p:outputLabel value="#{bundle.Initiator}:" />
                     <ui:include src="/view/common/item-select-list-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{monitorBean.initiator}"/>
                         <ui:param name="_itemLabel" value="nameEndElipse"/>
                         <ui:param name="_required" value="#{false}"/>
                         <ui:param name="_disabled" value="#{false}"/>
-                        <ui:param name="_converter" value="usersConvertor" />
+                        <ui:param name="_converter" value="staffConvertor" />
                         <ui:param name="_itemPanel" value="ownerPanel"/>
                         <ui:param name="_titleItem" value="#{bundle.Initiator}"/>
-                        <ui:param name="_selectorBean" value="#{userBean}"/>
-                        <ui:param name="_items" value="#{userBean.findAll()}"/>
+                        <ui:param name="_selectorBean" value="#{staffBean}"/>
+                        <ui:param name="_items" value="#{staffBean.findActualStaff()}"/>
                         <ui:param name="_actionClear" value="setInitiator"/>
                         <ui:param name="_actionSelect" value="onChangeInitiator"/>
                         <ui:param name="_update" value=""/>
@@ -62,7 +74,7 @@
                         <ui:param name="_itemPanel" value="curatorPanel"/>
                         <ui:param name="_titleItem" value="#{bundle.Curator}"/>
                         <ui:param name="_selectorBean" value="#{staffBean}"/>
-                        <ui:param name="_items" value="#{staffBean.findAll()}"/>
+                        <ui:param name="_items" value="#{staffBean.findActualStaff()}"/>
                         <ui:param name="_actionClear" value="setCurator"/>
                         <ui:param name="_actionSelect" value="onChangeCurator"/>
                         <ui:param name="_update" value=""/>
@@ -88,7 +100,7 @@
                     <p:outputLabel value="#{bundle.TermExecution}:"/>
                     <h:panelGrid columns="2" styleClass="without-spaces">
                         <h:outputLabel value="#{bundle.With}"/>                    
-                        <p:calendar value="#{monitorBean.dateStart}" id="dateStart"
+                        <p:calendar value="#{monitorBean.dateStart}" id="dateStart" inputStyle="width: 145px;"
                                     widgetVar="dateCreateStartSearche"
                                     showHour="true" showMinute="true" pages="1"
                                     navigator="true" yearRange="c-10:c+20"
@@ -99,7 +111,7 @@
                         </p:calendar>
 
                         <h:outputLabel value="#{bundle.At}"/>
-                        <p:calendar value="#{monitorBean.dateEnd}" id="dateEnd"
+                        <p:calendar value="#{monitorBean.dateEnd}" id="dateEnd" inputStyle="width: 145px;"
                                     widgetVar="dateCreateEndSearche"
                                     navigator="true" yearRange="c-10:c+20"
                                     showHour="true" showMinute="true" pages="1"
@@ -110,16 +122,6 @@
                         </p:calendar>
                     </h:panelGrid>                                        
                 </h:panelGrid>
-
-                <h:panelGrid columns="1" styleClass="without-spaces">
-                    <p:outputLabel value="#{bundle.States}:" />
-                    <p:selectManyMenu value="#{monitorBean.states}" converter="stateConvertor" var="st" showCheckbox="true">
-                        <f:selectItems value="#{processBean.metadatesObj.statesList}" var="state" itemLabel="#{state.name}" itemValue="#{state}" />
-                        <p:column>
-                            <h:outputText value="#{monitorBean.getLabelFromBundle(st.name)}" />
-                        </p:column>
-                    </p:selectManyMenu>
-                </h:panelGrid>                
 
                 <h:panelGrid columns="1" rendered="#{!empty(monitorBean.allResults)}" styleClass="without-spaces">
                     <p:outputLabel value="#{bundle.Result}:" />

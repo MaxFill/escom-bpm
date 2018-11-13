@@ -254,6 +254,16 @@ public class WorkflowImpl implements Workflow {
     }
 
     @Override
+    public void addLoop(LoopElem loopElem, Scheme scheme, Set<String> errors) {
+        if (!errors.isEmpty()) return;
+        if (loopElem == null){
+            errors.add("WorkflowIncorrectData");
+        } else {
+            scheme.getElements().getLoops().put(loopElem.getUid(), loopElem);
+        }
+    }
+    
+    @Override
     public void addStart(StartElem start, Scheme scheme, Set<String> errors) {
         if (!errors.isEmpty()) return;
         if (start == null){
@@ -298,6 +308,8 @@ public class WorkflowImpl implements Workflow {
             scheme.getElements().getMessages().remove(element.getUid());
         } else if (element instanceof SubProcessElem){
             scheme.getElements().getSubprocesses().remove(element.getUid());
+        } else if (element instanceof LoopElem){
+            scheme.getElements().getLoops().remove(element.getUid());
         }
         removeConnectors(element, scheme);        
     }
@@ -393,7 +405,10 @@ public class WorkflowImpl implements Workflow {
             
             //линковка элементов модели c задачами
             elements.getTasks().forEach((key, taskEl)-> {
-                Task task = scheme.getTasks().stream().filter(t-> t.getTaskLinkUID().equals(key)).findFirst().orElse(null);                
+                Task task = scheme.getTasks().stream()
+                        .filter(t-> t.getTaskLinkUID().equals(key))
+                        .findFirst()
+                        .orElse(null);                
                 if (task == null){ 
                     UserGroups role = null;
                     if (taskEl.getRoleInProc() != null){
@@ -440,7 +455,8 @@ public class WorkflowImpl implements Workflow {
 
     @Override
     public void validateScheme(Scheme scheme, Boolean checkTasks, Set<Tuple> errors) {       
-        StartElem startElem = scheme.getElements().getStartElem();        
+        StartElem startElem = scheme.getElements().getStartElem();
+        Process process = scheme.getProcess();
         if (startElem == null && scheme.getElements().getEnters().isEmpty()){
             errors.add(new Tuple("DiagramNotHaveStart", new Object[]{}));
         }
@@ -454,13 +470,21 @@ public class WorkflowImpl implements Workflow {
         if (scheme.getElements().getTasks().isEmpty() && MapUtils.isEmpty(scheme.getElements().getSubprocesses())){
             errors.add(new Tuple("DiagramNotHaveTasks", new Object[]{}));
         }
-        if (scheme.getProcess().getCurator() == null || scheme.getProcess().getCurator().getEmployee() == null){
+        if (processFacade.isHaveRole(process, DictRoles.ROLE_CURATOR) && process.getCurator() == null){
             errors.add(new Tuple("CuratorNotSet", new Object[]{}));
         }
-        Date planEndDate = scheme.getProcess().getPlanExecDate();
+        Date planEndDate = process.getPlanExecDate();
         if (checkTasks){            
             for(Task task : scheme.getTasks()){ 
-                if (task.getOwner()==null && task.getRoleInProc()==null){
+                String executor = "";                
+                String roleName = "";
+                if (task.getOwner() != null ){
+                    executor = task.getOwner().getEmployeeFIO();
+                }
+                if (task.getRoleInProc() != null){
+                    roleName = task.getRoleInProc().getName();
+                }
+                if (task.getOwner() == null && task.getRoleInProc() == null){
                     errors.add(new Tuple("TaskNoHaveExecutor", new Object[]{task.getId(), task.getName()}));
                 }
                 if (StringUtils.isBlank(task.getName())){
@@ -469,7 +493,7 @@ public class WorkflowImpl implements Workflow {
                 switch (task.getDeadLineType()){
                     case "data":{
                         if (task.getPlanExecDate() == null){
-                            errors.add(new Tuple("TasksNoHaveDeadline", new Object[]{task.getId(), task.getName()}));
+                            errors.add(new Tuple("TasksNoHaveDeadline", new Object[]{process.getNameEndElipse(), roleName, executor, task.getName()}));
                         } else 
                             if (task.getPlanExecDate().before(new Date())){
                                 errors.add(new Tuple("DeadlineTaskInPastTime", new Object[]{task.getId(), task.getName()}));
@@ -481,7 +505,7 @@ public class WorkflowImpl implements Workflow {
                     }
                     case "delta":{
                         if (task.getDeltaDeadLine() == null || task.getDeltaDeadLine() == 0){
-                            errors.add(new Tuple("TasksNoHaveDeadline", new Object[]{task.getId(), task.getName()}));
+                            errors.add(new Tuple("TasksNoHaveDeadline", new Object[]{task.getId(), roleName, executor, task.getName()}));
                         }
                     }        
                 }           
@@ -574,7 +598,7 @@ public class WorkflowImpl implements Workflow {
         startElement.getTask().setResult(result.getName());
         taskFacade.taskDone(task, result, currentUser);
         
-        //занесение в пареметры выполнения процесса опции запуска (если она есть)
+        //занесение в параметры выполнения процесса опции запуска (если она есть)
         if (result.getRunOptions() != null){
             params.put(result.getRunOptions().getName(), true);
         }
@@ -673,7 +697,9 @@ public class WorkflowImpl implements Workflow {
                     TaskElem taskEl = process.getScheme().getElements().getTasks().get(task.getTaskLinkUID());
                     run(process, taskEl, new HashSet<>(), currentUser, params, errors);
                 } else {
-                    task.setBeginDate(new Date());
+                    if (task.getBeginDate() == null){
+                        task.setBeginDate(new Date());
+                    }
                     task.setFactExecDate(null);
                     task.setResult(null);
                     task.setComment(null);
@@ -766,7 +792,9 @@ public class WorkflowImpl implements Workflow {
         Doc doc = process.getDocument();
         if (doc != null){
             doc = docFacade.find(doc.getId());
-            doc.addUserInRole(DictRoles.ROLE_EDITOR, process.getCurator().getEmployee());
+            if (process.getCurator() != null){
+                doc.addUserInRole(DictRoles.ROLE_EDITOR, process.getCurator().getEmployee());
+            }
             docFacade.changeState(doc, DictStates.STATE_VALID);
         }
         
@@ -1040,15 +1068,23 @@ public class WorkflowImpl implements Workflow {
                                 });
                         
                         //обрабатываем сообщения
-                        findMessages(connectors, scheme.getElements().getMessages())
-                            .stream()
+                        findMessages(connectors, scheme.getElements().getMessages())                            
                             .forEach(messageEl->{
                                 messageEl.setEnter(true);
                                 messageEl.setDone(true);
                                 sendMessage(process, messageEl, currentUser);
                                 doRun(messageEl.getAnchors(), process, exeTasks, exeSubProc, currentUser, params, errors);
                             });
-                                
+                           
+                        //обрабатываем 'циклы'
+                        findLoops(connectors, scheme.getElements().getLoops())                            
+                            .forEach(loopElem->{
+                                loopElem.setEnter(true);
+                                loopElem.setDone(true);
+                                makeLoop(process, loopElem);                                
+                                doRun(loopElem.getAnchors(), process, exeTasks, exeSubProc, currentUser, params, errors);
+                            });
+                        
                         //обработка выходов из процесса -> переход в связанный(е) процесс(ы)
                         findTargetExits(connectors, scheme.getElements().getExits())
                             .forEach(exitElem->{
@@ -1122,6 +1158,17 @@ public class WorkflowImpl implements Workflow {
      * @return 
      */    
     private Set<MessageElem> findMessages(List<ConnectorElem> connectors, Map<String, MessageElem> elements){
+        return connectors.stream()
+                .map(connector->elements.get(connector.getTo().getOwnerUID()))
+                .filter(element->Objects.nonNull(element))
+                .collect(Collectors.toSet());
+    }
+    
+    /**
+     * Находит элементы 'Цикл' в модели процесса к которым идут коннекторы
+     * @return 
+     */    
+    private Set<LoopElem> findLoops(List<ConnectorElem> connectors, Map<String, LoopElem> elements){
         return connectors.stream()
                 .map(connector->elements.get(connector.getTo().getOwnerUID()))
                 .filter(element->Objects.nonNull(element))
@@ -1228,6 +1275,17 @@ public class WorkflowImpl implements Workflow {
         return status;
     }
 
+    /* *** ЦИКЛЫ *** */
+    
+    /**
+     * Сброс отметок по всем пройденным элементам
+     * @param process
+     * @param elem 
+     */
+    private void makeLoop(Process process, LoopElem elem){
+        
+    }
+    
     /* *** УВЕДОМЛЕНИЯ  *** */
     
     private void sendMessage(Process process, MessageElem message, User user){        
@@ -1325,10 +1383,14 @@ public class WorkflowImpl implements Workflow {
                 result = lastApproved(scheme, params);
                 break;
             }
+            case "lastRejected":{
+                result = lastRejected(scheme, params);
+                break;
+            }
             case "allFinished":{
                 result = allFinished(scheme, params);
                 break;
-            }
+            }            
             case "allRemarksChecked":{
                 result = allRemarksChecked(scheme, params);
                 break;
@@ -1378,12 +1440,22 @@ public class WorkflowImpl implements Workflow {
         List<Integer> taskIds = (List<Integer>) params.get(EXECUTED_TASKS);                
         taskIds.clear();
         taskIds.add(lastTask.getId());
-        params.put(EXECUTED_TASKS, taskIds); //оставляем только последнюю задачу, так как её результат важнее
-        LOGGER.log(Level.INFO, null, "lastApproved: "+lastTask.getId());
-        LOGGER.log(Level.INFO, null, "lastApproved: "+lastTask.getResult());
-        LOGGER.log(Level.INFO, null, "lastApproved: "+DateUtils.dateToString(lastTask.getFactExecDate(), DateFormat.SHORT, DateFormat.MEDIUM, userFacade.getUserLocale(userFacade.getAdmin())));
-        LOGGER.log(Level.INFO, null, "lastApproved: "+taskIds.size());        
+        params.put(EXECUTED_TASKS, taskIds); //оставляем только последнюю задачу, так как её результат важнее      
         return !Objects.equals(DictResults.RESULT_REFUSED, lastTask.getResult());        
+    }
+    
+    /**
+     * Условие "Последний отклонил?". Проверяет, отклонил ли последний исполнитель 
+     * @param scheme
+     * @return 
+     */
+    private boolean lastRejected(Scheme scheme, Map<String, Object> params){
+        Task lastTask = (Task) params.get(LAST_TASK);
+        List<Integer> taskIds = (List<Integer>) params.get(EXECUTED_TASKS);                
+        taskIds.clear();
+        taskIds.add(lastTask.getId());
+        params.put(EXECUTED_TASKS, taskIds); //оставляем только последнюю задачу, так как её результат важнее      
+        return Objects.equals(DictResults.RESULT_REFUSED, lastTask.getResult());        
     }
     
     /**

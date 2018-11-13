@@ -203,4 +203,7 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
         staff.setName(sb.toString());
     }
     
+    public List<Staff> findActualStaff(){
+        return staffFacade.findActualStaff();
+    }
 }

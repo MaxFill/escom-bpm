@@ -16,10 +16,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * Справочник результатов выполнения задач
+ * Шаблоны результатов выполнения (задач)
  * @author maksim
  */
 @Entity
@@ -40,16 +41,20 @@ public class Result extends BaseDict<Result, Result, Result, ResultLog, ResultSt
     @GeneratedValue(strategy = TABLE, generator = "IdResultGen")
     @Column(name = "Id")
     private Integer id;    
-            
+
+    @Size(max = 1024)
+    @Column(name = "ConditonRun")
+    private String conditonJson;    //условия, которые должны быть выполнены перед запуском задачи
+     
     @JoinColumn(name = "RunOption", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private RunOptions runOptions;
+    private RunOptions runOptions;  //опции, которые нужно передать в процесс при выполнении задачи
     
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private ResultStates state;
-
+    
     /* *** GETS & SETS *** */
         
     @Override
@@ -76,7 +81,14 @@ public class Result extends BaseDict<Result, Result, Result, ResultLog, ResultSt
     public void setState(ResultStates state) {
         this.state = state;
     }
-         
+
+    public String getConditonJson() {
+        return conditonJson;
+    }
+    public void setConditonJson(String conditonJson) {
+        this.conditonJson = conditonJson;
+    }
+            
     /* *** *** */
 
     @Override

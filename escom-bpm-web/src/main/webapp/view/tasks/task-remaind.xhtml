@@ -87,7 +87,7 @@
             <p:calendar value="#{taskCardBean.editedItem.nextReminder}" disabledWeekends="true" 
                         disabled="#{_bean.isReadOnly()}"
                         rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}"
-                        styleClass="without-spaces" 
+                        inputStyle="width: 145px;" 
                         timeZone="#{TimeZone.getDefault()}"
                         showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"                                
                         locale="#{sessionBean.locale}"

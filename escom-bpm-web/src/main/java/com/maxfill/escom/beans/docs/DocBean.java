@@ -89,7 +89,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         copyDocStatuses(pasteItem, sourceItem);
         getLazyFacade().edit(pasteItem);
     }
-
+    
     private void copyMainAttacheFromDoc(Doc pasteItem, Doc sourceItem){
         Attaches sourceAttache = sourceItem.getMainAttache();
         if (sourceAttache != null){
@@ -236,9 +236,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     public Attaches addAttacheFromFile(Doc doc, FileUploadEvent event) throws IOException {
         UploadedFile uploadedFile = EscomFileUtils.handleUploadFile(event);
         Attaches attache = attacheBean.uploadAtache(uploadedFile);
-        //Doc doc = (Doc) event.getComponent().getAttributes().get("item");
         attacheFacade.addAttacheInDoc(doc, attache);
-        MsgUtils.succesMsg("VersionAdded");
+        MsgUtils.succesMsg("Successfully");
         return attache;
     }            
     

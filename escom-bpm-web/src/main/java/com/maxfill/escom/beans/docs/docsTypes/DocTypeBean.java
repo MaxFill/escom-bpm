@@ -85,7 +85,15 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
     public void doGetCountUsesItem(DocType docType,  Map<String, Integer> rezult){
         rezult.put("Documents", docFacade.findDocsByDocTyper(docType).size());
     }
-
+        
+    @Override
+    public boolean addItemToGroup(DocType docType, BaseDict targetGroup){
+        if (docType == null || targetGroup == null) return false;
+        docType.setOwner((DocTypeGroups)targetGroup);
+        getLazyFacade().edit(docType);
+        return true;
+    }     
+    
     @Override
     public Class<DocTypeGroups> getOwnerClass() {
         return DocTypeGroups.class;

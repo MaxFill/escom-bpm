@@ -54,11 +54,21 @@ public class WorkflowElements implements Serializable{
     @XmlElement(name = "subprocesses")
     private Map<String, SubProcessElem> subprocesses = new HashMap <>();
     
+    @XmlElement(name = "loops")
+    private Map<String, LoopElem> loops = new HashMap <>();
+    
     public WorkflowElements() {
     }
     
     /* GETS & SETS */
 
+    public Map<String, LoopElem> getLoops() {
+        return loops;
+    }
+    public void setLoops(Map<String, LoopElem> loops) {
+        this.loops = loops;
+    }
+    
     public Map<String, MessageElem> getMessages() {
         return messages;
     }

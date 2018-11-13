@@ -2,9 +2,9 @@ package com.maxfill.model.basedict.processType.roles;
 
 import com.maxfill.model.Dict;
 import com.maxfill.model.basedict.processType.ProcessType;
+import com.maxfill.model.basedict.userGroups.UserGroups;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.logging.Logger;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,12 +45,16 @@ public class ProcessRole implements Serializable, Dict{
      
     @Basic(optional = false)
     @Column(name = "Type")
-    private String type = "singl"; //вид роли list/single
+    private String type = "single"; //вид роли list/single
+    
+    @JoinColumn(name = "DataSource", referencedColumnName = "ID")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private UserGroups dataSource; //откуда получать значения 
     
     @Basic(optional = false)
-    @Column(name = "Sourse", length = 2048)
-    private String sourceJson; //откуда получать значения для списка или конкретные значения
-            
+    @Column(name = "DefaultValue", length = 1024)
+    private String defaultValueJson; //значение по умолчанию
+    
     @JoinColumn(name = "ProcessType", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ProcessType procType;
@@ -94,13 +98,20 @@ public class ProcessRole implements Serializable, Dict{
         this.procType = procType;
     } 
 
-    public String getSourceJson() {
-        return sourceJson;
+    public UserGroups getDataSource() {
+        return dataSource;
     }
-    public void setSourceJson(String sourceJson) {
-        this.sourceJson = sourceJson;
+    public void setDataSource(UserGroups dataSource) {
+        this.dataSource = dataSource;
     }
-        
+
+    public String getDefaultValueJson() {
+        return defaultValueJson;
+    }
+    public void setDefaultValueJson(String defaultValueJson) {
+        this.defaultValueJson = defaultValueJson;
+    }
+           
     /* *** *** */
 
     @Override

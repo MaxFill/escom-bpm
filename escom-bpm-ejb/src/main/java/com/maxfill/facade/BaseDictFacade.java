@@ -244,8 +244,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         Root<T> c = cq.from(itemClass);        
         Predicate crit1 = builder.equal(c.get("actual"), true);
         Predicate crit2 = builder.equal(c.get("deleted"), false);
-        cq.select(c).where(builder.and(crit1, crit2));
-        cq.orderBy(orderBuilder(builder, c));
+        cq.select(c).where(builder.and(crit1, crit2));        
+        cq.orderBy(builder.asc(c.get("name")));
         TypedQuery<T> query = em.createQuery(cq);       
         return query.getResultStream()     
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))

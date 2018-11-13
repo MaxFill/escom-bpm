@@ -8,6 +8,7 @@ import com.maxfill.model.basedict.user.User;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -57,7 +58,7 @@ public class AttacheFacade extends BaseFacade<Attaches>{
         return results;
     }
     
-    public List<Attaches> findAttachesByDoc(Doc doc){
+    public Stream<Attaches> findAttachesByDoc(Doc doc){
         em.getEntityManagerFactory().getCache().evict(Attaches.class);
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Attaches> cq = builder.createQuery(Attaches.class);
@@ -65,7 +66,7 @@ public class AttacheFacade extends BaseFacade<Attaches>{
         Predicate crit1 = builder.equal(root.get(Attaches_.doc), doc);
         cq.select(root).where(builder.and(crit1));
         Query q = em.createQuery(cq);       
-        return q.getResultList();
+        return q.getResultStream();
     }
     
     public Attaches copyAttache(Attaches sourceAttache){
@@ -79,16 +80,28 @@ public class AttacheFacade extends BaseFacade<Attaches>{
         return newAttache;
     }
     
+    /**
+     * Добавить версию в документ
+     * @param doc
+     * @param attache 
+     */
     public void addAttacheInDoc(Doc doc, Attaches attache){
         Integer version = doc.getNextVersionNumber();
         attache.setNumber(version);
-        attache.setDoc(doc);
-        attache.setCurrent(Boolean.TRUE);
-        List<Attaches> attaches = doc.getAttachesList();
-        attaches.stream()
+        attache.setDoc(doc);        
+        doc.getAttachesList().add(attache);                
+    }
+    
+    /**
+     * Сделать версию основной
+     * @param doc
+     * @param attache 
+     */
+    public void setMainAttache(Doc doc, Attaches attache){
+        doc.getAttachesList().stream()
                 .filter(attacheVersion -> attacheVersion.getCurrent())
                 .forEach(attacheVersion -> attacheVersion.setCurrent(false));
-        doc.getAttachesList().add(attache);                
+        attache.setCurrent(Boolean.TRUE);
     }
     
     /**

@@ -43,8 +43,8 @@
             <h:graphicImage id="iconDone" value="#{doc.state.currentState.icon}" title="#{stateBean.getBundleName(doc.state.currentState)}"/>            
         </p:column>
         
-        <p:column headerText="#{bundle.Commands}" > 
-            <p:splitButton  value="#{bundle.Open}" title="#{bundle.Open}"                                                   
+        <p:column width="20" headerText="#{bundle.Commands}" > 
+            <p:splitButton  icon="ico_look" title="#{bundle.Open}"                                                   
                             actionListener="#{_bean.setSelectedDoc(doc)}"
                             oncomplete="document.getElementById('#{_btnOpenDoc}').click();">
                 <p:menuitem icon="ui-icon-zoomin" value="#{bundle.View}" title="#{bundle.View}"

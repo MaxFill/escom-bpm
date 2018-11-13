@@ -43,7 +43,7 @@
                     <p:spacer/>
                     <h:panelGrid columns="2" styleClass="without-spaces">
                         <p:outputLabel value="#{bundle.With}"/>
-                        <p:calendar value="#{assistantCardBean.editedItem.beginDate}" id="dateStart"
+                        <p:calendar value="#{assistantCardBean.editedItem.beginDate}" id="dateStart" inputStyle="width: 145px;"
                                     showHour="true" showMinute="true"
                                     navigator="true" yearRange="c-120:c+20"
                                     disabled="#{assistantCardBean.readOnly or _bean.editedItem.substitutionType ne 'period'}"
@@ -54,7 +54,7 @@
                             <p:ajax event="dateSelect" onstart="itemChange = 1;" />
                         </p:calendar>
                         <p:outputLabel value="#{bundle.At}"/>
-                        <p:calendar value="#{assistantCardBean.editedItem.endDate}" id="dateEnd"  
+                        <p:calendar value="#{assistantCardBean.editedItem.endDate}" id="dateEnd" inputStyle="width: 145px;"
                                     navigator="true" yearRange="c-120:c+20"
                                     showHour="true" showMinute="true"
                                     disabled="#{assistantCardBean.readOnly or _bean.editedItem.substitutionType ne 'period'}"

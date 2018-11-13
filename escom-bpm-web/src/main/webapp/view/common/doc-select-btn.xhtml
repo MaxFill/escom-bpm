@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    
+    <h:panelGroup styleClass="ui-grid-col-12 col-padding">
+        <p:commandButton id="#{_itemPanel}_btn" 
+                         process="#{_itemPanel}_btn"
+                         onstart="PF('statusDialog').show()"
+                         oncomplete="PF('statusDialog').hide();"
+                         actionListener="#{_selectorBean.onOneSelectItem()}" style="display: none;">
+            <p:ajax event="dialogReturn" listener="#{_bean[_actionSelect]}"
+                    update="#{_update} #{_itemPanel}"/>
+        </p:commandButton>
+        <p:commandButton id="#{_itemPanel}_btnOpenCard" actionListener="#{_selectorBean.prepEditItem(_itemValue)}"
+                         onstart="PF('statusDialog').show()"
+                         oncomplete="PF('statusDialog').hide();"
+                         style="display: none;">
+            <p:ajax event="dialogReturn" update="#{_itemPanel}" listener="#{_bean[_validateAction]}"/>
+        </p:commandButton>
+
+        <h:panelGroup id="#{_itemPanel}" styleClass="ui-grid-col-12 col-padding">
+            <div class="ui-inputgroup">
+                <p:inputText id="#{_itemPanel}_item" value="#{_itemValue[_itemLabel]}" title="#{_titleItem}"
+                             disabled="#{_disabled}" style="color: blue;" styleClass="ui-grid-col-12"
+                             readonly="true" 
+                             validator="#{_bean[_validateAction]}"
+                             required="#{param['isRequired'] == _required}"
+                             requiredMessage="#{bundle.Field} [#{_titleItem}] #{bundle.MustBeFilled}">
+                    <f:ajax event="change" render="#{_itemPanel}"  />
+                    <f:attribute name="#{_itemPanel}_item" value="#{_itemValue}"/>
+                </p:inputText>
+
+                <p:splitButton  icon="ui-icon-extlink" disabled="#{_disabled}" title="#{bundle.Select}"
+                                onclick="document.getElementById('mainFRM:mainTabView:#{_itemPanel}_btn').click();">
+                    <p:menuitem icon="ui-icon-newwin" value="#{bundle.OpenCard}"
+                                onclick="document.getElementById('mainFRM:mainTabView:#{_itemPanel}_btnOpenCard').click();"
+                                disabled="#{_disabled or _itemValue == null}"/>
+                    <p:separator/>
+                    <p:menuitem icon="ui-icon-close" value="#{bundle.ClearField}"
+                                actionListener="#{_bean.editedItem[_actionClear](null)}"
+                                oncomplete="itemChange = 1;"
+                                disabled="#{_disabled or _itemValue == null}"
+                                update="#{_itemPanel}"/>
+                </p:splitButton>
+            </div>
+
+            <h:panelGroup id="viewDocLink">
+                <p:commandLink value="#{bundle.ViewDoc}" rendered="#{_itemValue != null}"
+                               style="float: right;"
+                               actionListener="#{docBean.onViewMainAttache(_itemValue)}">
+                </p:commandLink>
+            </h:panelGroup>
+            
+        </h:panelGroup>
+    </h:panelGroup>
+    
+</ui:composition>

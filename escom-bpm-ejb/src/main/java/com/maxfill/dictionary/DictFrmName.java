@@ -26,6 +26,7 @@ public final class DictFrmName {
     public static final String FRM_DOC_STATUS = "docstate-card";
     public static final String FRM_EXIT = "exit-card";
     public static final String FRM_SUB_PROCESS = "subprocess-card";
+    public static final String FRM_LOOP = "loop-card";
     
     public static final String FRM_STAFF_EXPLORER = "staff-explorer";
 
@@ -46,6 +47,7 @@ public final class DictFrmName {
     public static final String FRM_NUMERATORS_EXPLORER = "num-pattern-explorer";
 
     public static final String FRM_ADD_ATTACHE = "add-attache";
+    public static final String FRM_UPLOAD_FILES = "upload-files";
     public static final String FRM_SCANING = "scanning";
     public static final String FRM_AGREE_LICENSE = "license-view";
     public static final String FRM_HELP = "help-view";

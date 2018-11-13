@@ -23,4 +23,5 @@ public final class DictWorkflowElem {
     public static final String STYLE_PROCEDURE = "ui-diagram-procedure";
     public static final String STYLE_MESSAGE = "ui-diagram-message";
     public static final String STYLE_SUB_PROCESS = "ui-diagram-subprocess";
+    public static final String STYLE_LOOP = "ui-diagram-loop";
 }

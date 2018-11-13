@@ -82,7 +82,7 @@
                 <p:panelGrid columns="2" styleClass="without-spaces">
                     <p:panelGrid columns="2" styleClass="without-spaces">
                         #{bundle.With}
-                        <p:calendar value="#{authLogBean.dateStart}" id="dateStart"
+                        <p:calendar value="#{authLogBean.dateStart}" id="dateStart" inputStyle="width: 145px;"
                                     widgetVar="dateCreateStartSearche"
                                     showHour="true" showMinute="true"
                                     navigator="true" yearRange="c-120:c+20"
@@ -92,7 +92,7 @@
                                     requiredMessage="#{bundle.Field} [#{bundle.DateStart}  #{bundle.MustBeFilled}">
                         </p:calendar>
                         #{bundle.At}
-                        <p:calendar value="#{authLogBean.dateEnd}" id="dateEnd"
+                        <p:calendar value="#{authLogBean.dateEnd}" id="dateEnd" inputStyle="width: 145px;"
                                     widgetVar="dateCreateEndSearche"
                                     navigator="true" yearRange="c-120:c+20"
                                     showHour="true" showMinute="true"

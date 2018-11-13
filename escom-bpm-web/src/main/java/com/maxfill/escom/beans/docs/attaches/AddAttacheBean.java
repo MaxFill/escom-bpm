@@ -4,6 +4,8 @@ import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.docs.DocBean;
+import com.maxfill.model.attaches.AttacheFacade;
+import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.basedict.doc.DocFacade;
 import com.maxfill.model.basedict.doc.Doc;
 import java.io.IOException;
@@ -22,6 +24,8 @@ public class AddAttacheBean extends BaseViewBean<BaseView>{
     
     @EJB
     private DocFacade docFacade;
+    @EJB
+    private AttacheFacade attacheFacade;
     @Inject
     private DocBean docBean;
                      
@@ -38,8 +42,9 @@ public class AddAttacheBean extends BaseViewBean<BaseView>{
     }    
     
     public void addAttache(FileUploadEvent event) throws IOException{
-        docBean.addAttacheFromFile(doc, event);
-        docFacade.edit(doc);        
+        Attaches attache = docBean.addAttacheFromFile(doc, event);
+        attacheFacade.setMainAttache(doc, attache);
+        docFacade.edit(doc);
     }
     
     public void addAttacheFromScan(SelectEvent event){

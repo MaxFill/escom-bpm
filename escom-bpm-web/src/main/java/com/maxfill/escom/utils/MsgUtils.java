@@ -60,6 +60,11 @@ public final class MsgUtils{
         return makeFacesMsg(FacesMessage.SEVERITY_ERROR, key, msgParams);
     }
 
+    /* Формирует и возвращает FacesMessage c текстом */
+    public static FacesMessage prepFormatSuccesMsg(String key, Object[] msgParams){
+        return makeFacesMsg(FacesMessage.SEVERITY_INFO, key, msgParams);
+    }
+    
     /**
      * Вывод нескольких сообщений об успешном выполнении.
      * @param messages - Set(FacesMessage)

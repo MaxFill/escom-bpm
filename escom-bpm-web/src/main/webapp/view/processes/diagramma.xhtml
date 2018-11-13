@@ -10,7 +10,7 @@
     <ui:param name="_bean" value="#{diagramBean}"/>
 
     <ui:define name="customStyleCSS">
-        <h:outputStylesheet library="css" name="processes.css"/>
+        <h:outputStylesheet library="css" name="processes_2.css"/>
         <h:outputStylesheet library="contextMenu" name="contextMenu.css"/> 
     </ui:define>    
     
@@ -169,9 +169,13 @@
         </p:commandButton>
         
         <p:commandButton icon="ico_condition-16" title="#{bundle.AddCondition}"
-                          disabled="#{_bean.isReadOnly()}"
-                          actionListener="#{_bean.onAddConditionElement()}" >
+                         disabled="#{_bean.isReadOnly()}"
+                         actionListener="#{_bean.onAddConditionElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
+        </p:commandButton>
+        <p:commandButton  icon="ico_loop-16" title="#{bundle.AddLoopElement}"
+                          disabled="#{_bean.isReadOnly()}"
+                          actionListener="#{_bean.onAddLoopElement()}" >
         </p:commandButton>
 
         <span class="ui-separator">

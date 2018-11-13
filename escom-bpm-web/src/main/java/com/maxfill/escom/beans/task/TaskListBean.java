@@ -12,7 +12,6 @@ import com.maxfill.model.core.states.State;
 import com.maxfill.model.core.states.StateFacade;
 import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.task.TaskFacade;
-import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.basedict.user.UserFacade;
 import com.maxfill.utils.DateUtils;
 import java.util.ArrayList;
@@ -68,20 +67,20 @@ public class TaskListBean extends LazyLoadBean<Task>{
     public void doBeforeOpenCard(Map<String, String> params) {
         states.add(stateFacade.getRunningState());
         executor = getCurrentStaff();
-        executors = new ArrayList<>(initExecutors());        
+        executors = initExecutors();        
     }
     
     /**
      * Формирование списка доступных для выбора Исполнителей
      * @param task 
      */
-    private Set<Staff> initExecutors(){        
-        Set<Staff> staffs = new HashSet<>();
+    private List<Staff> initExecutors(){                
         //админ может выбрать любого
         if (userFacade.isAdmin(getCurrentUser())){
-            return new HashSet<>(staffFacade.findActualStaff());            
+           return staffFacade.findActualStaff();            
         }        
         
+        Set<Staff> staffs = new HashSet<>();
         if (executor != null){
             staffs.add(executor);
         }
@@ -89,8 +88,11 @@ public class TaskListBean extends LazyLoadBean<Task>{
         List<Staff> chiefs = assistantFacade.findChiefsByUser(getCurrentUser(), getCurrentUser()).stream()
                 .map(user->user.getStaff())
                 .collect(Collectors.toList());
-        staffs.addAll(chiefs);            
-        return staffs;
+        staffs.addAll(chiefs);
+        List<Staff> result = new ArrayList<>(staffs);
+        return result.stream()                
+                .sorted(Comparator.comparing(Staff::getName, nullsFirst(naturalOrder())))
+                .collect(Collectors.toList());                        
     }
     
     /* *** ЗАДАЧИ *** */

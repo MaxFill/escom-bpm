@@ -95,7 +95,7 @@
                                 update="#{_updates}"
                                 actionListener="#{_bean.onMoveTreeItemToTrash()}">
                         <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
-                    </p:menuitem>
+                    </p:menuitem>                    
                     <p:separator/>
                     <p:menuitem icon="ui-icon-copy" value="#{bundle.Copy}"                                     
                                 onstart="PF('statusDialog').show()"
@@ -110,13 +110,9 @@
                     <p:separator/>
                     <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" 
                                 actionListener="#{_bean.onAddContentInFavorites()}"/>
-                    <p:menuitem icon="ui-icon-extlink" value="#{bundle.UploadToFile}" 
-                                rendered="#{_canUploadToFile}"
-                                ajax="false"
-                                oncomplete="initDND();"
-                                action="#{_bean.onUploadToFile()}">
-                        <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.ConfirmCreateZIPFolder}" icon="ui-icon-alert" />
-                    </p:menuitem>
+
+                    <ui:insert name="treeContextMenu" />
+                    
                     <p:separator/>
 
                     <p:menuitem icon="ui-icon-key" value="#{bundle.Administation}"

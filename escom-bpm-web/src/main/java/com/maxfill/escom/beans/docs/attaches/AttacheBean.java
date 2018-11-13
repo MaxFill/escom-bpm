@@ -68,21 +68,24 @@ public class AttacheBean extends BaseViewBean<BaseView>{
     @Override
     public void doBeforeOpenCard(Map<String, String> params){        
         String path = null;
+        if (params.containsKey("path")){
+            path = params.get("path");
+        }
         if (params.containsKey("itemId")){
             Integer docId = Integer.valueOf(params.get("itemId"));
             Doc doc = docFacade.find(docId);
             if (doc == null) return;
             docBean.getLazyFacade().actualizeRightItem(doc, getCurrentUser());
             if (docBean.getLazyFacade().isHaveRightView(doc)) {
-                Attaches attache = doc.getMainAttache();
-                if (attache == null) return;
-                path = conf.getUploadPath() + attache.getFullNamePDF();
+                if (path == null){
+                    Attaches attache = doc.getMainAttache();
+                    if (attache == null) return;
+                    path = conf.getUploadPath() + attache.getFullNamePDF();
+                }
             } else {
                 MsgUtils.warnMsg("RightViewNo");
             }    
-        } else {
-            path = params.get("path");
-        }
+        } 
         
         if (path == null) {
             LOGGER.log(Level.SEVERE, null, "ESCOM_BPM ERROR: file path is null!");

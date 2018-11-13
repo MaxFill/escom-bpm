@@ -105,7 +105,7 @@ public class Attaches implements Serializable, Dict {
     
     @Basic(optional = false)
     @Column(name = "IsCurrent")
-    private Boolean current = true;
+    private Boolean current = false;
             
     @Transient
     @XmlTransient
@@ -152,9 +152,11 @@ public class Attaches implements Serializable, Dict {
         return FilenameUtils.removeExtension(name)+".pdf";
     }
     
+    @Override
     public Integer getId() {
         return id;
     }
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }

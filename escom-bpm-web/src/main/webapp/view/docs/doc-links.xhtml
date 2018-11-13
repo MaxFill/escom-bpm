@@ -12,7 +12,7 @@
             <p:ajax event="dialogReturn" listener="#{_bean.onUpdateLinkedDocs()}" update="mainFRM:mainTabView:tblLinkedDocs"/>
         </p:commandButton>
 
-        <p:panelGrid id="panelLinkedDocs" columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
+        <p:panelGrid id="panelLinkedDocs" columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
             <p:outputLabel value="#{bundle.MainDoc}:" />
             <ui:include src="/view/common/item-select-btn.xhtml" >
                 <ui:param name="_itemValue" value="#{_bean.editedItem.mainDoc}"/>

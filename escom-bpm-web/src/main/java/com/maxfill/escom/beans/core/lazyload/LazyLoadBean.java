@@ -195,9 +195,11 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
     }
     
     public void onPeriodChange(ValueChangeEvent event){
-        period = (String) event.getNewValue();       
-        dateStart = DateUtils.periodStartDate(period, dateStart);
-        dateEnd = DateUtils.periodEndDate(period, dateEnd);
+        period = (String) event.getNewValue();  
+        if (period != null){
+            dateStart = DateUtils.periodStartDate(period, dateStart);
+            dateEnd = DateUtils.periodEndDate(period, dateEnd);
+        }
     }
     
     /* *** GETS & SETS *** */

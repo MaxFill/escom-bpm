@@ -10,7 +10,7 @@
     <ui:define name="page_body">
         <p:tab title="#{bundle.Doc}"> 
             <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                
-                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12 without-spaces">
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3 col-padding, ui-grid-col-9 col-padding" styleClass="ui-grid-col-12 without-spaces">
                     <p:outputLabel value="#{bundle.Type}:" />
                     <p:selectOneMenu value="#{_bean.editedItem.type}" id="type" converter="partnerTypesConvertor"
                                      disabled="#{_bean.isReadOnly()}" 

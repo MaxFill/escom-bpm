@@ -106,7 +106,7 @@
                         <ui:param name="_itemPanel" value="staffPanel"/>
                         <ui:param name="_titleItem" value="#{bundle.Post}"/>
                         <ui:param name="_selectorBean" value="#{staffBean}"/>
-                        <ui:param name="_items" value="#{staffBean.findAll()}"/>
+                        <ui:param name="_items" value="#{staffBean.findActualStaff()}"/>
                         <ui:param name="_actionClear" value="setStaff"/>
                         <ui:param name="_actionSelect" value="onChangeStaff"/>                    
                         <ui:param name="_update" value=""/>

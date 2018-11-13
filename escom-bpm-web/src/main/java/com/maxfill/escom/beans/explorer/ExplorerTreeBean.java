@@ -2,6 +2,7 @@ package com.maxfill.escom.beans.explorer;
 
 import com.maxfill.dictionary.DictDetailSource;
 import com.maxfill.dictionary.DictExplForm;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.EscomFileUtils;
@@ -106,6 +107,14 @@ public class ExplorerTreeBean extends ExplorerBean{
         } else {
             MsgUtils.errorMsg("FailedGenerateZIP");
         }
+    }
+    
+    /**
+     * Открытие формы загрузки файлов
+     */
+    public void onOpenUploadFilesFrm(){
+        if (currentItem == null) return;
+        sessionBean.openDialogFrm(DictFrmName.FRM_UPLOAD_FILES, getParamsMap());
     }
     
     /* Обработка drop помещения объекта в дерево */

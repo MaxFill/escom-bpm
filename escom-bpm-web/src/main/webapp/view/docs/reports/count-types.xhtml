@@ -25,7 +25,7 @@
                     <p:outputLabel value="#{bundle.PeriodSelected}"/>
                     <h:panelGrid columns="2" styleClass="without-spaces">
                         <h:outputLabel value="#{bundle.With}"/> 
-                        <p:calendar value="#{docReportBean.dateStart}" id="dateStart" styleClass="ui-grid-col-12"
+                        <p:calendar value="#{docReportBean.dateStart}" id="dateStart" inputStyle="width: 145px;"
                                     navigator="true" yearRange="c-120:c+20"
                                     locale="#{sessionBean.locale}"
                                     required="#{param['isRequired'] == 'true'}"
@@ -34,7 +34,7 @@
                         </p:calendar>
                     
                         <h:outputLabel value="#{bundle.At}" />
-                        <p:calendar value="#{docReportBean.dateEnd}" id="dateEnd" styleClass="ui-grid-col-12"
+                        <p:calendar value="#{docReportBean.dateEnd}" id="dateEnd" inputStyle="width: 145px;"
                                     navigator="true" yearRange="c-120:c+20"
                                     locale="#{sessionBean.locale}"
                                     required="#{param['isRequired'] == 'true'}"

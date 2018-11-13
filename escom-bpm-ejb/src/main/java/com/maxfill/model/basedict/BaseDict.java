@@ -204,6 +204,11 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         return item;
     }
     
+    /* Формирует строку ограниченной длинны из названия обекта, заканчивающуюся точками */
+    public String getNameEndElipse(){
+        return StringUtils.abbreviate(getName(), SysParams.LENGHT_NAME_ELIPSE);        
+    }   
+    
     /* *** GETS & SETS *** */
     
     public String getFullRegNumber(){
@@ -327,12 +332,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         return null;
     }
     public void setRoleJson(String roleJson) {
-    }
-
-    /* Формирует строку ограниченной длинны из названия обекта, заканчивающуюся точками */
-    public String getNameEndElipse(){
-        return StringUtils.abbreviate(getName(), SysParams.LENGHT_NAME_ELIPSE);        
-    }    
+    } 
      
     /**
      * Возвращает строку для отображения в заголовке карточки

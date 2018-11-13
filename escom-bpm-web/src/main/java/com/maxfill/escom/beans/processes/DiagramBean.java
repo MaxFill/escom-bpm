@@ -31,6 +31,7 @@ import com.maxfill.model.basedict.process.schemes.elements.WFConnectedElem;
 import com.maxfill.model.basedict.process.schemes.elements.WorkflowElements;
 import com.maxfill.model.basedict.procTempl.ProcTempl;
 import com.maxfill.model.basedict.procTempl.ProcessTemplFacade;
+import com.maxfill.model.basedict.process.schemes.elements.LoopElem;
 import com.maxfill.model.basedict.process.schemes.elements.SubProcessElem;
 import com.maxfill.model.basedict.process.timers.ProcTimer;
 import com.maxfill.model.basedict.process.timers.ProcTimerFacade;
@@ -519,6 +520,15 @@ public class DiagramBean extends BaseViewBean<BaseView>{
     }
     
     /**
+     * Обработка события добавления в схему процесса визуального компонента "Цикл" 
+     */
+    public void onAddLoopElement(){
+        beforeAddElement();
+        baseElement = createLoop(new HashSet<>());
+        finalAddElement();
+    }
+    
+    /**
      * Обработка события добавления в схему процесса визуального компонента "Вход" 
      */
     public void onAddStartElement(){       
@@ -730,6 +740,28 @@ public class DiagramBean extends BaseViewBean<BaseView>{
         return null;
     }
 
+    /**
+     * Создание элемента "Цикл"
+     * @param x
+     * @param y
+     * @param errors
+     */
+    private LoopElem createLoop(Set<String> errors){
+        LoopElem elem = new LoopElem(getX(), getY());
+        List<EndPoint> endPoints = new ArrayList<>();
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
+        createSourceEndPoint(endPoints, EndPointAnchor.TOP);
+        createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
+        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
+        elem.setAnchors(makeAnchorElems(elem, endPoints));
+        workflow.addLoop(elem, scheme, errors);
+        if (errors.isEmpty()) {
+            modelAddElement(elem);
+            return elem;
+        }
+        return null;
+    }
+    
     /**
      * Создание элемента "Старт процесса"
      * @param x

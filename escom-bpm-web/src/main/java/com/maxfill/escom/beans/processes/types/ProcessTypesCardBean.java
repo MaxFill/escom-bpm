@@ -1,8 +1,10 @@
 package com.maxfill.escom.beans.processes.types;
 
+import com.maxfill.dictionary.DictRoles;
 import com.maxfill.escom.beans.BaseCardTree;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.basedict.process.options.RunOptions;
 import com.maxfill.model.basedict.process.options.RunOptionsFacade;
 import com.maxfill.model.basedict.processType.ProcessTypesFacade;
@@ -12,11 +14,14 @@ import com.maxfill.model.basedict.processType.roles.ProcessRole;
 import com.maxfill.model.core.states.State;
 import com.maxfill.model.basedict.result.Result;
 import com.maxfill.utils.EscomUtils;
+import java.util.ArrayList;
+import java.util.Collections;
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;
+import javax.faces.model.SelectItem;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.model.DualListModel;
 
@@ -47,8 +52,24 @@ public class ProcessTypesCardBean extends BaseCardTree<ProcessType>{
     
     private int deadLineDeltaDay = 0;
     private int deadLineDeltaHour = 0;    
-    private String accordTab = null;
+    private String accordTab = null;    
     
+    private final List<SelectItem> ROLES = Collections.unmodifiableList(
+        new ArrayList<SelectItem>() {
+            private static final long serialVersionUID = 3109256773218160485L;
+            {
+                add(new SelectItem(DictRoles.ROLE_CHIEF, MsgUtils.getBandleLabel(DictRoles.ROLE_CHIEF)));
+                add(new SelectItem(DictRoles.ROLE_CONCORDER, MsgUtils.getBandleLabel(DictRoles.ROLE_CONCORDER)));
+                add(new SelectItem(DictRoles.ROLE_CONTROLLER, MsgUtils.getBandleLabel(DictRoles.ROLE_CONTROLLER)));
+                add(new SelectItem(DictRoles.ROLE_CURATOR, MsgUtils.getBandleLabel(DictRoles.ROLE_CURATOR)));
+                add(new SelectItem(DictRoles.ROLE_EDITOR, MsgUtils.getBandleLabel(DictRoles.ROLE_EDITOR)));
+                add(new SelectItem(DictRoles.ROLE_EXECUTOR, MsgUtils.getBandleLabel(DictRoles.ROLE_EXECUTOR)));
+                add(new SelectItem(DictRoles.ROLE_INSPECTOR, MsgUtils.getBandleLabel(DictRoles.ROLE_INSPECTOR)));
+                add(new SelectItem(DictRoles.ROLE_OWNER, MsgUtils.getBandleLabel(DictRoles.ROLE_OWNER)));
+                add(new SelectItem(DictRoles.ROLE_REGISTRATOR, MsgUtils.getBandleLabel(DictRoles.ROLE_REGISTRATOR)));                
+            }
+        });
+        
     @Override
     public void doPrepareOpen(ProcessType processType){  
         initDateFields(processType);
@@ -105,6 +126,10 @@ public class ProcessTypesCardBean extends BaseCardTree<ProcessType>{
     }
     
     /* GETS & SETS */
+    
+    public List<SelectItem> getROLES() {
+        return ROLES;
+    }  
     
     @Override
     public List<State> getStateForChild() {

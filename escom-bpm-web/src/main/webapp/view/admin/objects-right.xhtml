@@ -31,11 +31,11 @@
             <p:tab title="#{bundle.Rights}">
                 <p:dataTable id="tblRightDoc" value="#{metadatesBean.rights}" editable="true"
                              tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces"
-                             emptyMessage="#{bundle.EmptyTable}" expandableRowGroups="true"
+                             emptyMessage="#{bundle.EmptyTable}" expandableRowGroups="true" expandedRow="false"
                              var="right" sortBy="#{right.state.name}">
                     <p:ajax event="rowEdit" listener="#{metadatesBean.onRightChange}" update="tblRightDoc" />
 
-                    <p:headerRow>
+                    <p:headerRow >
                         <p:column colspan="11">
                             <h:outputText value="#{bundle.State}: #{stateBean.getBundleName(right.state)}" />
                         </p:column>

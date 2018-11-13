@@ -75,7 +75,7 @@
 
         <ui:define name="page_body">                
             <p:tab title="#{bundle.Process}">
-                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >                    
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="ui-grid-col-12 without-spaces" >
                     <p:outputLabel value="#{bundle.Organization}:" indicateRequired="true"/>                    
                     <p:selectOneMenu value="#{_bean.editedItem.company}" converter="companyConvertor"
                                      title="#{bundle.CompanyDocRegistred}"
@@ -86,46 +86,25 @@
                                      requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
                         <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
                         <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>                        
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="#{bundle.Number}:" />
+                    <p:inputText value="#{processCardBean.editedItem.regNumber}" title="#{bundle.AutomaticallyGenerated}" 
+                                 styleClass="ui-grid-col-12"                                     
+                                 placeholder="#{bundle.AutomaticallyGenerated}"
+                                 readonly="true"/>                                                           
+
+                    <p:outputLabel value="#{bundle.Curator}:" indicateRequired="true" rendered="#{_bean.isShowCurator()}"/>
+                    <p:selectOneMenu value="#{_bean.editedItem.curator}" converter="staffConvertor" 
+                                     title="#{bundle.Curator}" styleClass="ui-grid-col-12"
+                                     disabled="#{_bean.isReadOnly()}" rendered="#{_bean.isShowCurator()}"
+                                     onchange="return itemChange = 1;"
+                                     required="#{param['isRequired'] == 'true'}"
+                                     requiredMessage="#{bundle.Field} [#{bundle.Curator}] #{bundle.MustBeFilled}">
+                        <f:selectItems value="#{_bean.curators}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}" />
+                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
                     </p:selectOneMenu>                    
-                    
-                    <p:outputLabel value="#{bundle.MainDoc}:" indicateRequired="true" />
-                    <ui:include src="/view/common/item-select-btn.xhtml" >
-                        <ui:param name="_itemValue" value="#{_bean.editedItem.document}"/>
-                        <ui:param name="_itemLabel" value="nameEndElipse"/>
-                        <ui:param name="_required" value="true" />
-                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
-                        <ui:param name="_itemPanel" value="documentPanel"/>
-                        <ui:param name="_titleItem" value="#{bundle.MainDoc}"/>
-                        <ui:param name="_selectorBean" value="#{docBean}"/>
-                        <ui:param name="_items" value="#{docBean.findAll()}"/>
-                        <ui:param name="_actionClear" value="setDocument"/>
-                        <ui:param name="_actionSelect" value="onDocSelected"/>
-                        <ui:param name="_validateAction" value="checkDocument"/>
-                        <ui:param name="_update" value="viewDocLink"/>
-                    </ui:include> 
-                    <h:panelGroup id="viewDocLink">
-                        <p:commandLink value="#{bundle.ViewDoc}" rendered="#{_bean.editedItem.document != null}"
-                                       style="float: right;"
-                                       actionListener="#{processCardBean.onViewDocument()}">
-                        </p:commandLink>
-                    </h:panelGroup>
-                     
-                    <p:outputLabel value="#{bundle.Curator}:" indicateRequired="true" />
-                    <ui:include src="/view/common/item-select-list-btn.xhtml" >
-                        <ui:param name="_itemValue" value="#{_bean.editedItem.curator}"/>
-                        <ui:param name="_itemLabel" value="nameEndElipse"/>
-                        <ui:param name="_required" value="#{true}" />
-                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
-                        <ui:param name="_converter" value="staffConvertor" />
-                        <ui:param name="_itemPanel" value="curatorPanel"/>
-                        <ui:param name="_titleItem" value="#{bundle.Curator}"/>
-                        <ui:param name="_selectorBean" value="#{staffBean}"/>
-                        <ui:param name="_items" value="#{staffBean.findAll()}"/>
-                        <ui:param name="_actionClear" value="setCurator"/>
-                        <ui:param name="_actionSelect" value="onChangeCurator"/>
-                        <ui:param name="_update" value=""/>
-                    </ui:include>
-                    
+
                     <p:outputLabel value="#{bundle.Inspector}:" indicateRequired="true" rendered="#{_bean.isShowInspector()}"/>
                     <p:selectOneMenu value="#{_bean.editedItem.inspector}" converter="staffConvertor"
                                      title="#{bundle.Inspector}" styleClass="ui-grid-col-12"
@@ -137,6 +116,22 @@
                         <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
                     </p:selectOneMenu>
                     
+                    <p:outputLabel value="#{bundle.MainDoc}:" indicateRequired="true" />
+                    <ui:include src="/view/common/doc-select-btn.xhtml" >
+                        <ui:param name="_itemValue" value="#{_bean.editedItem.document}"/>
+                        <ui:param name="_itemLabel" value="nameEndElipse"/>
+                        <ui:param name="_required" value="true" />
+                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
+                        <ui:param name="_itemPanel" value="documentPanel"/>
+                        <ui:param name="_titleItem" value="#{bundle.MainDoc}"/>
+                        <ui:param name="_selectorBean" value="#{docBean}"/>
+                        <ui:param name="_items" value="#{docBean.findAll()}"/>
+                        <ui:param name="_actionClear" value="setDocument"/>
+                        <ui:param name="_actionSelect" value="onDocSelected"/>
+                        <ui:param name="_validateAction" value="checkDocument"/>
+                        <ui:param name="_update" value=""/>
+                    </ui:include>                                         
+                                        
                     <p:outputLabel value="#{bundle.ProcessCaption}:" indicateRequired="true" />
                     <p:inputText id="nameItem" value="#{processCardBean.editedItem.name}"
                                  styleClass="ui-grid-col-12" 
@@ -146,15 +141,14 @@
                                  required="#{param['isRequired'] == 'true'}"
                                  requiredMessage="#{bundle.Field} [#{bundle.ProcessCaption}] #{bundle.MustBeFilled}"/>                    
 
-                    <h:panelGrid columns="4" styleClass="without-spaces">
-                        <p:outputLabel value="#{bundle.Term}:" indicateRequired="true"/> 
+                    <p:outputLabel value="#{bundle.TimeConstraints}:" indicateRequired="true" />
+                    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-1 col-padding, ui-grid-col-11 col-padding" styleClass="ui-grid-col-12 without-spaces" >                                                          
                         <p:selectOneRadio id="typeDatePlan" value="#{_bean.editedItem.deadLineType}" disabled="#{_bean.isReadOnly()}" layout="grid" columns="1" >
                             <f:selectItem itemLabel="" itemValue="delta"/>
                             <f:selectItem itemLabel="" itemValue="data" />
                             <p:ajax update="planEndDate deltaDay deltaHour btnCalcPlan" event="valueChange" onstart="itemChange = 1;"/>
-                        </p:selectOneRadio> 
-                        
-                        <h:panelGrid columns="1" cellpadding="3" styleClass="ui-grid-col-12">
+                        </p:selectOneRadio>                        
+                        <h:panelGrid columns="1">
                             <h:panelGroup>
                                 <div class="ui-inputgroup">
                                 <p:spinner id="deltaDay" value="#{_bean.deadLineDeltaDay}" min="0" max="999" 
@@ -175,7 +169,7 @@
                                 </div>
                             </h:panelGroup>
                             <p:calendar id="planEndDate" value="#{_bean.editedItem.planExecDate}"  
-                                        styleClass="without-spaces" pages="2"
+                                        inputStyle="width: 145px;" pages="2"
                                         timeZone="#{TimeZone.getDefault()}" disabledWeekends="true"
                                         showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
                                         disabled="#{_bean.isReadOnly() or _bean.editedItem.deadLineType eq 'delta'}"
@@ -186,29 +180,21 @@
                                 <p:ajax event="dateSelect" onstart="itemChange = 1;" />                    
                             </p:calendar>
                         </h:panelGrid>
-                        
-                        <h:panelGrid columns="2">
-                            <p:outputLabel value="#{bundle.Number}:" />
-                            <p:inputText value="#{processCardBean.editedItem.regNumber}" title="#{bundle.AutomaticallyGenerated}"                                      
-                                         placeholder="#{bundle.AutomaticallyGenerated}"
-                                         readonly="true"/>
-                        </h:panelGrid>
-                    </h:panelGrid>
-                    
-                    <p:accordionPanel id="accordDocs" activeIndex="#{_bean.accordDocsTab}">
-                        <p:ajax event="tabChange" listener="#{_bean.onAccordDocsTabChange}"/>
-                        <p:tab id="tabDocs" title="#{bundle.Documents}" >
-                            <ui:include src="/view/docs/doc-list.xhtml" >
-                                <ui:param name="_docs" value="#{processCardBean.editedItem.docs}" />
-                                <ui:param name="_btnOpenDoc" value="mainFRM:mainTabView:accordDocs:openDocBtn"/>
-                            </ui:include>
-                            <p:commandButton value="#{bundle.AddDocument}" title="#{bundle.AddExistingDocument}"                                         
-                                             rendered="#{!_bean.isReadOnly()}"
-                                             actionListener="#{docBean.onManySelectItem()}"> 
-                                <p:ajax event="dialogReturn" listener="#{_bean.onDocsSelected}" update="tblDocs"/>
-                            </p:commandButton>
-                        </p:tab>
-                    </p:accordionPanel>
+                    </p:panelGrid>
+                </p:panelGrid>
+            </p:tab>
+            
+             <p:tab id="tabDocs" title="#{bundle.Documents}" >
+                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >                    
+                    <ui:include src="/view/docs/doc-list.xhtml" >
+                        <ui:param name="_docs" value="#{processCardBean.editedItem.docs}" />
+                        <ui:param name="_btnOpenDoc" value="mainFRM:mainTabView:openDocBtn"/>
+                    </ui:include>
+                    <p:commandButton value="#{bundle.AddDocument}" title="#{bundle.AddExistingDocument}"                                         
+                                     rendered="#{!_bean.isReadOnly()}"
+                                     actionListener="#{docBean.onManySelectItem()}"> 
+                        <p:ajax event="dialogReturn" listener="#{_bean.onDocsSelected}" update="tblDocs"/>
+                    </p:commandButton>
                 </p:panelGrid>
             </p:tab>
             

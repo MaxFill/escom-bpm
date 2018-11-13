@@ -29,6 +29,7 @@ import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.user.User;
+import com.maxfill.model.basedict.userGroups.UserGroups;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.services.worktime.WorkTimeService;
 import com.maxfill.utils.DateUtils;
@@ -85,11 +86,14 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private String exitParam = SysParams.EXIT_NOTHING_TODO;
     private ProcReport currentReport;  
     private Doc selectedDoc;    
-    private String accordDocsTab = null;
+    private String accordDocsTab = "0";
     private final DefaultMenuModel runMenuModel = new DefaultMenuModel();
     private List<RunOptions> runOptions = new ArrayList<>();    
     private List<BaseDict> forShow;
+    
     private List<Staff> inspectors;
+    private List<Staff> curators;
+    
     private int deadLineDeltaDay = 0;
     private int deadLineDeltaHour = 0;
     
@@ -245,6 +249,9 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     public boolean isShowInspector(){
         return processFacade.isHaveRole(getEditedItem(), DictRoles.ROLE_INSPECTOR);
     }
+    public boolean isShowCurator(){
+        return processFacade.isHaveRole(getEditedItem(), DictRoles.ROLE_CURATOR);
+    }
     
     public void onChangeInspector(SelectEvent event){
         if (event.getObject() instanceof String) return;
@@ -307,6 +314,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             forShow = new ArrayList<>(workflow.start(process, getCurrentUser(), params, errors));
             if (!errors.isEmpty()){
                 MsgUtils.showTupleErrsMsg(errors);
+                return;
             } else {
                 getEditedItem().getState().setCurrentState(process.getState().getCurrentState());
                 getEditedItem().setScheme(process.getScheme());
@@ -430,7 +438,10 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         if (!getEditedItem().isRunning()) return true;
         if (userFacade.isAdmin(getCurrentUser())) return false;
         
-        User curator = getEditedItem().getCurator().getEmployee();
+        User curator = null;
+        if (getEditedItem().getCurator() != null){
+            curator = getEditedItem().getCurator().getEmployee();
+        }
         User owner = getEditedItem().getAuthor();
         
         return !(getCurrentUser().equals(owner) || getCurrentUser().equals(curator));
@@ -680,13 +691,34 @@ public class ProcessCardBean extends BaseCardBean<Process>{
 
     public List<Staff> getInspectors() {
         if (inspectors == null){
-            inspectors = userFacade.findUserByGroupID(101, getCurrentUser()) //TODO id группы нужно задавать в видах процессов!
+            UserGroups userGroup = processFacade.getRoleDataSource(getEditedItem(), DictRoles.ROLE_INSPECTOR);
+            if (userGroup != null){
+                inspectors = userFacade.findUserByGroupID(userGroup.getId(), getCurrentUser()) 
                     .stream()                    
                     .filter(user->user.getStaff() != null)
                     .map(user->user.getStaff())
                     .collect(Collectors.toList());
+            } else {
+                inspectors = new ArrayList<>();
+            }
         }
         return inspectors;
+    }
+    
+    public List<Staff> getCurators() {
+        if (curators == null){
+            UserGroups userGroup = processFacade.getRoleDataSource(getEditedItem(), DictRoles.ROLE_CURATOR);
+            if (userGroup != null){
+                curators = userFacade.findUserByGroupID(userGroup.getId(), getCurrentUser()) //TODO id группы нужно задавать в видах процессов!
+                    .stream()                    
+                    .filter(user->user.getStaff() != null)
+                    .map(user->user.getStaff())
+                    .collect(Collectors.toList());
+            } else {
+                curators = new ArrayList<>();
+            }
+        }
+        return curators;
     }
     
     /**

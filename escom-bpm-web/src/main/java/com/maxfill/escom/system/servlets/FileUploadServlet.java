@@ -145,6 +145,7 @@ public class FileUploadServlet extends HttpServlet {
         params.put("author", author);
         params.put("doc", doc);
         Attaches attache = attacheService.uploadAtache(params, item.getInputStream());
+        attache.setCurrent(Boolean.TRUE);
         attacheFacade.create(attache);
         return HttpServletResponse.SC_OK;
     }

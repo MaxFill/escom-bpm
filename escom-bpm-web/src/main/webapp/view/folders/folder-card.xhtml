@@ -53,7 +53,7 @@
                 
                 <p:outputLabel value="#{bundle.Date}:" />
                 <p:calendar value="#{_bean.editedItem.itemDate}" 
-                            styleClass="ui-grid-col-12"
+                            inputStyle="width: 145px;"
                             onkeypress="checkEsc();"
                             disabled="#{_bean.isReadOnly()}"
                             onselect="return itemChange = 1;"                            

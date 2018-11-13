@@ -5,7 +5,7 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
     
-     <changeSet id="folder-add-datefolder-column" author="filatov" context="initdata" runOnChange="true">
+    <changeSet id="folder-add-datefolder-column" author="filatov" context="initdata" runOnChange="true">
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="folders" columnName="DateFolder" />
@@ -16,6 +16,28 @@
                 <constraints nullable="true"/>
             </column>
         </addColumn>
-     </changeSet>
+    </changeSet>     
 
+    <changeSet id="results_add_conditions" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="results" columnName="ConditonRun" />
+            </not>
+        </preConditions>
+        <addColumn tableName="results">
+            <column name="ConditonRun" type="varchar(1024)" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="statusesDoc_add_DocCheckedAndSentApproval" author="filatov" context="initdata" runOnChange="true">
+        <sql>            
+            INSERT statusesDocStates (Id, CurrentState,  PreviousState) VALUES(9, 7, 5);
+        </sql>
+        <sql>            
+            INSERT statusesDoc (ID, Parent, Owner, Name, BundleName, Number, Access, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) 
+            VALUES (9, NULL, NULL, N'Документ проверен и отправлен на согласование',   N'DocCheckedAndSentApproval',      9, NULL, 5, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+        </sql>    
+    </changeSet>
 </databaseChangeLog> 

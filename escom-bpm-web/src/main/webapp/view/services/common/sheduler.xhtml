@@ -65,7 +65,8 @@
             </p:selectManyCheckbox>            
             
             <p:outputLabel value="#{bundle.StartInDate}:" rendered="#{_bean.scheduler.repeatType != 1}" indicateRequired="true"/>
-            <p:calendar value="#{_bean.scheduler.startDate}" rendered="#{_bean.scheduler.repeatType != 1}"
+            <p:calendar value="#{_bean.scheduler.startDate}" inputStyle="width: 145px;"
+                        rendered="#{_bean.scheduler.repeatType != 1}"
                         disabled="#{_bean.service.started}"
                         showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
                         locale="#{sessionBean.locale}"

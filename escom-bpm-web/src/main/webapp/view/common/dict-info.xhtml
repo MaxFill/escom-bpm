@@ -17,13 +17,13 @@
             <p:outputLabel value="#{bundle.DateCreate}:" />                            
             <p:inputText value="#{_bean.editedItem.dateCreate}" readonly="true"
                          onkeypress="checkEsc();">
-                <f:convertDateTime parent="dd.mm.yy"/>
+                <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </p:inputText>
 
             <p:outputLabel value="#{bundle.DateChange}:" />
             <p:inputText value="#{_bean.editedItem.dateChange}" readonly="true"
                          onkeypress="checkEsc();">
-                <f:convertDateTime parent="dd.mm.yy"/>
+                <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </p:inputText>
 
             <p:outputLabel value="#{bundle.Owner}:" />

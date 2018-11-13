@@ -191,6 +191,10 @@
             <to-view-id>/view/docs/attaches/add-attache.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
+            <from-outcome>upload-files</from-outcome>
+            <to-view-id>/view/docs/files/upload-files.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
             <from-outcome>messages</from-outcome>
             <to-view-id>/view/messages/messages.xhtml</to-view-id>
         </navigation-case>
@@ -246,6 +250,10 @@
         <navigation-case>
             <from-outcome>logic-card</from-outcome>
             <to-view-id>/view/processes/elements/logic-card.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>loop-card</from-outcome>
+            <to-view-id>/view/processes/elements/loop-card.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
             <from-outcome>docstate-card</from-outcome>

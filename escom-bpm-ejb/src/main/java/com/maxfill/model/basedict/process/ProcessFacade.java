@@ -23,6 +23,7 @@ import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.staff.StaffFacade;
 import com.maxfill.model.basedict.task.TaskFacade;
 import com.maxfill.model.basedict.user.User;
+import com.maxfill.model.basedict.userGroups.UserGroups;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.services.worktime.WorkTimeService;
 import com.maxfill.utils.ItemUtils;
@@ -168,10 +169,8 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
                 process.setDeltaDeadLine(deltasec);
                 Date planDate = workTimeService.calcWorkDayByCompany(new Date(), deltasec, process.getCompany());
                 process.setPlanExecDate(planDate);
-            }
-                        
-            processType.getProcessRoles().forEach(role->addRole(process, role.getName()));            
-        }
+            }                                    
+        }                
         
         if (createParams.containsKey("company")){
             process.setCompany((Company) createParams.get("company"));
@@ -188,26 +187,16 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
             makeProcName(process);
         }
         
-        if (createParams.containsKey("author")) {
-            User user = (User)createParams.get("author");
-            if (user.getStaff() != null){
-                Staff curator = user.getStaff();
-                if (curator != null){
-                    setRoleCurator(process, curator);            
-                }
-            }
-        }
         if (createParams.containsKey("inspector")) {
-            setRoleInspector(process, (Staff)createParams.get("inspector"));
+            process.setInspector((Staff)createParams.get("inspector"));
         }
 
         if (createParams.containsKey("curator")) {
-            setRoleCurator(process, (Staff)createParams.get("curator"));
-        } else { 
-            if (process.getAuthor().getStaff() != null){
-                setRoleCurator(process, process.getAuthor().getStaff());
-            }
-        }
+            process.setCurator((Staff)createParams.get("curator"));
+        } 
+        
+        //инициализация и актуализация ролей
+        actualizeProcessRoles(process);
         
         //инициализация схемы процесса
         ProcTempl procTempl = null;
@@ -242,13 +231,15 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     /* *** РОЛИ *** */    
     
     public void setRoleCurator(Process process, Staff staff){
+        if (staff == null) return;
         process.setCurator(staff);
         process.doSetSingleRole(DictRoles.ROLE_CURATOR, staff.getEmployee());
     }
     
     public void setRoleInspector(Process process, Staff staff){
+        if (staff == null) return;
         process.setInspector(staff);
-        process.doSetSingleRole(DictRoles.ROLE_CURATOR, staff.getEmployee());
+        process.doSetSingleRole(DictRoles.ROLE_INSPECTOR, staff.getEmployee());
     }
     
     /**
@@ -257,7 +248,21 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
      */
     public void actualizeProcessRoles(Process process){        
         clearRoles(process);
-        setRoleCurator(process, process.getCurator());
+        ProcessType processType = processTypesFacade.getProcTypeForOpt(process.getOwner());
+        processType.getProcessRoles().forEach(role->{
+                addRole(process, role.getName());
+                switch (role.getName()){
+                    case DictRoles.ROLE_CURATOR :{
+                        setRoleCurator(process, process.getCurator());
+                        break;
+                    }
+                    case DictRoles.ROLE_INSPECTOR :{
+                        setRoleInspector(process, process.getInspector());
+                        break;
+                    }                
+                }                    
+            });
+        
         setRoleOwner(process, process.getAuthor());
         if (process.getScheme() != null){
             process.getScheme().getTasks().stream()
@@ -282,6 +287,21 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     private void makeUsersFromProcessRole(Process parent, Set<User> users, String roleName, User currentUser){
         users.addAll(getUsersFromRole(parent, roleName, currentUser));
         parent.getChildItems().forEach(process->makeUsersFromProcessRole(process, users, roleName, currentUser));
+    }
+    
+    /**
+     * Возвращает источник данных для роли
+     * @param process
+     * @param roleName
+     * @return 
+     */
+    public UserGroups getRoleDataSource(Process process, String roleName){        
+        ProcessType processType = processTypesFacade.getProcTypeForOpt(process.getOwner());
+        return processType.getProcessRoles().stream()
+                .filter(role->Objects.equals(role.getName().toUpperCase(), roleName.toUpperCase()))
+                .map(role->role.getDataSource())
+                .findFirst()
+                .orElse(null);
     }
     
     /* *** ВАЛИДАЦИЯ *** */

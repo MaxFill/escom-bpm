@@ -2,6 +2,7 @@ package com.maxfill.escom.beans.processes;
 
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.dictionary.DictFrmName;
+import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
@@ -50,7 +51,7 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     /* Атрибуты фильтра */
     private Date dateStart;
     private Date dateEnd;
-    private User initiator;
+    private Staff initiator;
     private Staff curator;
     private String number;
     private String name;
@@ -151,7 +152,9 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     }
     
     private void makeTree(Process process, TreeNode processNode){
-        process.getChildItems().forEach(subProc->{
+        process.getChildItems().stream()
+                .filter(subProc->!subProc.isDeleted())
+                .forEach(subProc->{
                     TreeNode subProcNode = new DefaultTreeNode(subProc, processNode);
                     makeTree(subProc, subProcNode);
         });
@@ -179,7 +182,7 @@ public class MonitorBean extends BaseViewBean<BaseView>{
             filters.put("planExecDate", dateFilters);       //поле по которому отбираем
         } 
         if (initiator != null){
-            filters.put("author", initiator);
+            filters.put("author", initiator.getEmployee());
         }
         if (curator != null){
             filters.put("curator", curator);
@@ -219,10 +222,15 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         } else {
             if (item instanceof Process){
                 Process process = (Process) item;
-                sb.append(getLabelFromBundle("Curator")).append(": ");
-                if (process.getCurator() != null && process.getCurator().getEmployee() != null){
-                    sb.append(process.getCurator().getEmployee().getShortFIO());
-                }                
+                if (processFacade.isHaveRole(process, DictRoles.ROLE_CURATOR)){
+                    sb.append(getLabelFromBundle("Curator")).append(": ");
+                    if (process.getCurator() != null && process.getCurator().getEmployee() != null){
+                        sb.append(process.getCurator().getEmployee().getShortFIO());
+                    }
+                } else {
+                    sb.append(getLabelFromBundle("Initiator")).append(": ");
+                    sb.append(process.getAuthor().getShortFIO());
+                }            
             }
         }
         return sb.toString();
@@ -243,12 +251,12 @@ public class MonitorBean extends BaseViewBean<BaseView>{
      */
     public void onChangeInitiator(SelectEvent event){
         if (event.getObject() instanceof String) return;
-        List<User> users = (List<User>) event.getObject();
-        if (users.isEmpty()) return;
-        initiator = users.get(0);
+        List<Staff> staffs = (List<Staff>) event.getObject();
+        if (staffs.isEmpty()) return;
+        initiator = staffs.get(0);
     }
     public void onChangeInitiator(ValueChangeEvent event){
-        initiator = (User) event.getNewValue();
+        initiator = (Staff) event.getNewValue();
     }        
     
     /**
@@ -291,13 +299,13 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     public void setStates(List<State> states) {
         this.states = states;
     }
-    
-    public User getInitiator() {
-        return initiator;
-    }
-    public void setInitiator(User initiator) {
+
+    public void setInitiator(Staff initiator) {
         this.initiator = initiator;
     }
+    public Staff getInitiator() {
+        return initiator;
+    }    
 
     public Staff getCurator() {
         return curator;

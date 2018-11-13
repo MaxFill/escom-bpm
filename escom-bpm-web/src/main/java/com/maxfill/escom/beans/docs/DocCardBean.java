@@ -345,8 +345,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     /* Добавление версии к документу   */
     public void addAttacheFromFile(FileUploadEvent event) throws IOException{
         onItemChange();        
-        Attaches attache = docBean.addAttacheFromFile(getEditedItem(), event);
-        makeCurrentVersion(attache);
+        docBean.addAttacheFromFile(getEditedItem(), event);        
     }
     
     public void addAttacheFromScan(SelectEvent event){
@@ -368,27 +367,15 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
                 }
             }
         }
-        makeCurrentVersion(doc, version);                
+        attacheFacade.setMainAttache(doc, version);                
         onItemChange(); 
     }
     
     /* Установка текущей версии в редактируемом документе  */
     public void makeCurrentVersion(Attaches attache){
-        makeCurrentVersion(getEditedItem(), attache);
+        attacheFacade.setMainAttache(getEditedItem(), attache);        
         onItemChange();
-    }
-    
-    /* Установка текущей версии в документе  */
-    public void makeCurrentVersion(Doc doc, Attaches version){
-        for(Attaches attache : doc.getAttachesList()){
-            if (Boolean.TRUE.equals(attache.getCurrent())){
-                attache.setCurrent(Boolean.FALSE);
-            }
-            if(version.equals(attache)){
-                attache.setCurrent(Boolean.TRUE);
-            }
-        }
-    }
+    }    
     
     /* Удаление версии документа и её файла */
     public void deleteAttache(Attaches attache) {

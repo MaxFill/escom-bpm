@@ -17,6 +17,7 @@ import com.maxfill.model.basedict.process.schemes.elements.EnterElem;
 import com.maxfill.model.basedict.process.schemes.elements.StartElem;
 import com.maxfill.model.basedict.process.schemes.Scheme;
 import com.maxfill.model.basedict.process.Process;
+import com.maxfill.model.basedict.process.schemes.elements.LoopElem;
 import com.maxfill.model.basedict.process.schemes.elements.SubProcessElem;
 import com.maxfill.model.basedict.process.timers.ProcTimer;
 import com.maxfill.model.basedict.task.Task;
@@ -39,6 +40,7 @@ public interface Workflow {
     void addState(StatusElem state, Scheme scheme, Set<String> errors);
     void addStart(StartElem start, Scheme scheme, Set<String> errors);
     void addEnter(EnterElem start, Scheme scheme, Set<String> errors);
+    void addLoop(LoopElem start, Scheme scheme, Set<String> errors);
     void addExit(ExitElem exit, Scheme scheme, Set<String> errors);
     void addMessage(MessageElem exit, Scheme scheme, Set<String> errors);
     void addProcedure(ProcedureElem exit, Scheme scheme, Set<String> errors);

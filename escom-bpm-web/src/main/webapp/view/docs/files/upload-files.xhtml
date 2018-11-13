@@ -1,0 +1,47 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 template="/view/templ/templ-dlg.xhtml"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:param name="_bean" value="#{uploadFilesBean}"/>
+
+    <ui:define name="menuActions" >
+    </ui:define>
+
+    <ui:define name="toolbarComponents" >
+    </ui:define>
+
+    <ui:define name="centerFormContent">                     
+
+        <p:panel rendered="#{!empty(uploadFilesBean.messages)}" style="background-color: azure; ">
+            <p:remoteCommand name="updateMSG" autoRun="true" actionListener="#{uploadFilesBean.onFinishUpload()}" /> 
+            <h:panelGrid columns="2">
+                <p:graphicImage value="/resources/icon/done-32.png"/> 
+                <h:panelGroup>
+                    <h3>#{bundle.Done}!</h3>
+                </h:panelGroup>
+            </h:panelGrid>
+        </p:panel>
+        
+        <p:fileUpload id="file" disabled="#{!uploadFilesBean.canCreateDocs()}"
+                      allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
+                      sizeLimit="#{sessionBean.maxFileSize}"
+                      invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
+                      invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
+                      fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
+                      label="#{bundle.SelectFiles}"
+                      process="@this" auto="false" fileLimit="10" multiple="true"
+                      styleClass="ui-grid-col-12 without-spaces"
+                      mode="advanced" dragDropSupport="true"
+                      cancelLabel="#{bundle.Cancel}"
+                      uploadLabel="#{bundle.DocumentsCreate}"
+                      fileUploadListener="#{uploadFilesBean.uploadFile}"                    
+                      update="mainFRM">
+            <f:attribute name="item" value="#{item}" />
+        </p:fileUpload>                    
+
+        <p:commandButton id="btnUpdate" actionListener="#{uploadFilesBean.onFinishUpload()}" style="display: none;"/>
+    </ui:define>
+</ui:composition>

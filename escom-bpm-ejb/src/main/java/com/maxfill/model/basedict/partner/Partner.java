@@ -90,9 +90,9 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
     @Size(max = 255)
     private String address;
         
-    @JoinTable(name = "partnersInGroup", joinColumns = {
-        @JoinColumn(name = "PartnerId", referencedColumnName = "ID")}, inverseJoinColumns = {
-        @JoinColumn(name = "GroupId", referencedColumnName = "Id")})
+    @JoinTable(name = "partnersInGroup", 
+            joinColumns = {@JoinColumn(name = "PartnerId", referencedColumnName = "ID")}, 
+            inverseJoinColumns = {@JoinColumn(name = "GroupId", referencedColumnName = "Id")})
     @ManyToMany
     private List<PartnerGroups> partnersGroupsList = new ArrayList<>();
     

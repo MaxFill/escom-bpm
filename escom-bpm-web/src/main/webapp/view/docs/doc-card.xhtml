@@ -101,7 +101,7 @@
                     <h:panelGrid id="datePanel" columns="1" styleClass="without-spaces ui-grid-col-12">                        
                         <p:outputLabel value="#{bundle.DateDoc}:" indicateRequired="true"/>
                         <p:calendar id="dateDoc" value="#{_bean.editedItem.itemDate}"  title="#{bundle.DateRegistredDoc}"
-                                    styleClass="ui-grid-col-12"
+                                    inputStyle="width: 145px;"
                                     onkeypress="checkEsc();"
                                     disabled="#{_bean.isReadOnly()}"
                                     onselect="return itemChange = 1;"
@@ -137,6 +137,8 @@
             </p:panelGrid>
         </p:tab>
         
+        <ui:include src="/view/docs/attaches/attaches.xhtml"/>
+        
         <p:tab title="#{bundle.Processes}" rendered="#{applicationBean.isCanUsesProcess()}">
             <p:panelGrid id="processes" columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">                
                 <ui:include src="/view/processes/process-list.xhtml"> 
@@ -151,7 +153,7 @@
                 </p:commandButton>                
             </p:panelGrid>
         </p:tab>
-        <ui:include src="/view/docs/attaches/attaches.xhtml"/>
+        
         <ui:include src="/view/docs/doc-places.xhtml"/>
         <ui:include src="/view/docs/docStatus/docstatus-list.xhtml"/>
         <ui:include src="/view/docs/doc-links.xhtml"/>        

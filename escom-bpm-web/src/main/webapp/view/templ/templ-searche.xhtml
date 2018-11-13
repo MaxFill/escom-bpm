@@ -111,7 +111,7 @@
             <h:panelGroup id="pnDateCreateSearche" styleClass="ui-grid-col-12"> 
                 <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-1, ui-grid-col-11" rendered="#{_bean.model.dateCreateSearche}" styleClass="ui-grid-col-12">
                     <p:outputLabel value="#{bundle.With}:" style="float: right;"/>
-                    <p:calendar value="#{_bean.model.dateCreateStart}" id="dateCreateStart" 
+                    <p:calendar value="#{_bean.model.dateCreateStart}" id="dateCreateStart" inputStyle="width: 145px;"
                                 widgetVar="dateCreateStartSearche"
                                 navigator="true" yearRange="c-120:c+20"
                                 showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
@@ -123,7 +123,7 @@
                 </p:panelGrid>
                 <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-1, ui-grid-col-11" rendered="#{_bean.model.dateCreateSearche}" styleClass="ui-grid-col-12">
                     <p:outputLabel value="#{bundle.At}:" style="float: right;" />
-                    <p:calendar value="#{_bean.model.dateCreateEnd}" id="dateCreateEnd" 
+                    <p:calendar value="#{_bean.model.dateCreateEnd}" id="dateCreateEnd" inputStyle="width: 145px;"
                                 widgetVar="dateCreateEndSearche"
                                 navigator="true" yearRange="c-120:c+20"
                                 showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
@@ -145,7 +145,7 @@
             <h:panelGroup id="pnDateChangeSearche" styleClass="ui-grid-col-12">
                 <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-1, ui-grid-col-11" rendered="#{_bean.model.dateChangeSearche}" styleClass="ui-grid-col-12">
                     <p:outputLabel value="#{bundle.With}:" style="float: right;"/>
-                    <p:calendar value="#{_bean.model.dateChangeStart}" id="dateChangeStart"
+                    <p:calendar value="#{_bean.model.dateChangeStart}" id="dateChangeStart" inputStyle="width: 145px;"
                                 widgetVar="dateChangeStartSearche"
                                 navigator="true" yearRange="c-120:c+20"
                                 showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
@@ -157,7 +157,7 @@
                 </p:panelGrid>
                 <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-1, ui-grid-col-11" rendered="#{_bean.model.dateChangeSearche}" styleClass="ui-grid-col-12">
                     <p:outputLabel value="#{bundle.At}:" style="float: right;"/>
-                    <p:calendar value="#{_bean.model.dateChangeEnd}" id="dateChangeEnd"
+                    <p:calendar value="#{_bean.model.dateChangeEnd}" id="dateChangeEnd" inputStyle="width: 145px;"
                                 widgetVar="dateChangeEndSearche"
                                 navigator="true" yearRange="c-120:c+20"
                                 showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"

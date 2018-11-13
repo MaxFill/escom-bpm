@@ -5,7 +5,6 @@ import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
-import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.doc.DocFacade;
 import com.maxfill.model.basedict.remark.Remark;
@@ -27,8 +26,6 @@ import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
-import org.primefaces.component.tabview.Tab;
-import org.primefaces.event.TabChangeEvent;
 
 /**
  * Контролер карточки "Замечание"
