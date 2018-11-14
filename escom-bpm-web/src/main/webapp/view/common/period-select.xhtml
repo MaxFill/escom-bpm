@@ -16,26 +16,28 @@
             <f:selectItems value="#{sessionBean.PERIODS}"/>
         </p:selectOneMenu>        
                 
-        <h:panelGrid id="#{_itemPanel}_period" columns="2" styleClass="col-padding">        
-            <p:outputLabel value="#{bundle.With}:" style="float: right;"/>
-            <p:calendar value="#{_beginDate}" inputStyle="width: 145px;"                        
-                        navigator="true" yearRange="c-120:c+20"
-                        showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
-                        locale="#{sessionBean.locale}"
-                        required="#{param['isRequired'] == _required}"
-                        requiredMessage="#{bundle.Field} [#{bundle.DateBegin}] #{bundle.MustBeFilled}"
-                        disabled="#{_disabled}">
-            </p:calendar>
-            <p:outputLabel value="#{bundle.At}:" style="float: right;" />
-            <p:calendar value="#{_endDate}" inputStyle="width: 145px;"
-                        navigator="true" yearRange="c-120:c+20"
-                        showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
-                        locale="#{sessionBean.locale}"
-                        required="#{param['isRequired'] == _required}"
-                        requiredMessage="#{bundle.Field} [#{bundle.DateEnd}] #{bundle.MustBeFilled}"
-                        disabled="#{_disabled}">
-            </p:calendar>
-        </h:panelGrid>       
+        <h:panelGroup id="#{_itemPanel}_period">
+            <h:panelGrid columns="2" styleClass="col-padding" rendered="#{_itemValue eq 'period'}">
+                <p:outputLabel value="#{bundle.With}:" style="float: right;"/>
+                <p:calendar value="#{_beginDate}" inputStyle="width: 145px;"                        
+                            navigator="true" yearRange="c-120:c+20"
+                            showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
+                            locale="#{sessionBean.locale}"
+                            required="#{param['isRequired'] == _required}"
+                            requiredMessage="#{bundle.Field} [#{bundle.DateBegin}] #{bundle.MustBeFilled}"
+                            disabled="#{_disabled}">
+                </p:calendar>
+                <p:outputLabel value="#{bundle.At}:" style="float: right;" />
+                <p:calendar value="#{_endDate}" inputStyle="width: 145px;"
+                            navigator="true" yearRange="c-120:c+20"
+                            showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
+                            locale="#{sessionBean.locale}"
+                            required="#{param['isRequired'] == _required}"
+                            requiredMessage="#{bundle.Field} [#{bundle.DateEnd}] #{bundle.MustBeFilled}"
+                            disabled="#{_disabled}">
+                </p:calendar>
+            </h:panelGrid>
+        </h:panelGroup> 
         
     </h:panelGrid>
     

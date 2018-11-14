@@ -119,10 +119,13 @@ public abstract class BaseLazyFacade<T extends Dict> extends BaseFacade<T>{
                     Map <String, Date> dateFilters = (Map) filterValue;                    
                     if (dateFilters.containsKey("startDate")){
                         predicate = builder.greaterThanOrEqualTo(root.get(filterProperty), dateFilters.get("startDate"));
+                        criteries.add(predicate);
                     }
                     if (dateFilters.containsKey("endDate")){
                         predicate = builder.lessThanOrEqualTo(root.get(filterProperty), dateFilters.get("endDate"));
+                        criteries.add(predicate);
                     }
+                    predicate = null;
                 } else {                    
                     if(filterValue != null) {                       
                         switch (filterProperty){

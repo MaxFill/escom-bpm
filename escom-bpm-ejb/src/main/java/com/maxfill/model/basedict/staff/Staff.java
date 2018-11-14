@@ -145,7 +145,7 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
 
     @Override
     public String getNameEndElipse(){
-        return org.apache.commons.lang3.StringUtils.abbreviate(getName(), 40);
+        return StringUtils.abbreviate(getName(), 40);
     } 
     
     @Override

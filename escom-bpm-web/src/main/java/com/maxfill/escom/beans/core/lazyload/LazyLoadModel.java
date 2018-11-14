@@ -1,10 +1,8 @@
 package com.maxfill.escom.beans.core.lazyload;
 
-import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.Dict;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -42,7 +40,6 @@ public class LazyLoadModel<T extends Dict> extends LazyDataModel<T>{
     @Override
     public List<T> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
         datasource = bean.onLoadItems(first, pageSize, sortField, sortOrder, filters);
-
         int dataSize = bean.countItems();
         this.setRowCount(dataSize);
         return datasource;

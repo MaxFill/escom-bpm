@@ -106,6 +106,10 @@
                 <h:outputLabel value="#{item.nameEndElipse}"/>
             </p:column>
 
+            <p:column headerText="#{bundle.Executor}" >
+                <h:outputLabel value="#{item.owner.employeeFIO}"/>
+            </p:column>
+            
             <p:column headerText="#{bundle.Process}" >
                 <p:commandLink value="#{taskListBean.getProcessName(item)}" 
                                onstart="PF('statusDialog').show()"
