@@ -27,7 +27,7 @@
                     </p:inputText>
                     <p:outputLabel value="#{bundle.Content}:" indicateRequired="true"/>
                     <p:inputTextarea value="#{_bean.content}" styleClass="ui-grid-col-12"
-                                     rows="3" autoResize="true"
+                                     rows="3" autoResize="true" maxlength="4090"
                                      required="#{param['isRequired'] == 'true'}" 
                                      requiredMessage="#{bundle.Field} [#{bundle.Remark}] #{bundle.MustBeFilled}">
                     </p:inputTextarea>

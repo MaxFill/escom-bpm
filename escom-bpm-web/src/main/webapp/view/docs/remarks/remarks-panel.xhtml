@@ -46,7 +46,7 @@
                                     rendered="#{!remarkCardBean.isCanCheckRemark() and remark.state.currentState.id == 12}"
                                     disabled="#{!remarkCardBean.isCanModifyRemark(remark)}"
                                     actionListener="#{remarkCardBean.onChangeStateRemark(remark, 13)}" update="dgMyRemarks">
-                            <h:outputText styleClass="ui-icon ui-icon-close" />
+                            <h:outputText styleClass="ui-icon ui-icon-cancel" />
                         </p:commandLink>
                         <p:commandLink type="button" title="#{bundle.RemarkIssued}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default" 
                                     disabled="#{!remarkCardBean.isCanModifyRemark(remark)}"

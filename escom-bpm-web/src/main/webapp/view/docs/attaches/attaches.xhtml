@@ -103,8 +103,7 @@
                                         actionListener="#{_bean.onSetSelectedAttache(attache)}"
                                         oncomplete="document.getElementById('mainFRM:setLockBtn').click();"/>
                             <p:menuitem icon="ui-icon-arrowthickstop-1-s" title="#{bundle.Download}" value="#{bundle.Download}"
-                                        ajax="false"
-                                        disabled="#{_bean.isReadOnly() or _bean.docIsLock}"
+                                        ajax="false"                                        
                                         action="#{_bean.attacheDownLoad(attache)}"/>
                             <p:separator />
                             <p:menuitem icon="ui-icon-check" value="#{bundle.MakeMain}" title="#{bundle.MakeMainVersion}"

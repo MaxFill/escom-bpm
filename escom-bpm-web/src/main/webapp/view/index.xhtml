@@ -214,11 +214,15 @@
                                 <p:link href="#{sessionBean.onGetFormURL('/tasks/'.concat(DictFrmName.FRM_SCHEDULER))}" 
                                         rendered="#{applicationBean.isCanUsesTasks()}"
                                         value="#{bundle.Scheduler}" target="_blank" />
-
+                                
                                 <p:graphicImage value="/resources/icon/tasks-32.png"/>  
-                                <p:commandLink value="#{''.concat(bundle.MyTasks).concat(': ').concat(sessionBean.getTasksInfo())}" 
-                                               actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_MY_TASKS)}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>                             
+                                <h:panelGrid columns="2">
+                                    <p:commandLink id="countTasks" value="#{''.concat(bundle.MyTasks).concat(': ').concat(sessionBean.getTasksInfo())}" 
+                                                   actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_MY_TASKS)}"
+                                                   oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"> 
+                                    </p:commandLink>
+                                    <p:commandButton icon="ico_refresh-16" title="#{bundle.Refresh}" update="countTasks"/>                                    
+                                </h:panelGrid>
                             </p:panelGrid>
                         </p:panelGrid>
                     </p:panel>
@@ -249,14 +253,16 @@
 
                     <p:panel id="messages" header="#{bundle.Messages}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces">                            
-                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >                                
-                                <p:graphicImage value="/resources/icon/new_msg-32.png"/>                                
-                                <p:commandLink value="#{''.concat(bundle.CountNewMessages).concat(': ').concat(sessionBean.getMessagesInfo())}"
-                                               onclick="document.getElementById('mainFRM:btnMsgInfo').click();" />                                
-
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >                                 
+                                <p:graphicImage value="/resources/icon/new_msg-32.png"/>
+                                <h:panelGrid columns="2">
+                                    <p:commandLink id="countMessages" value="#{''.concat(bundle.CountNewMessages).concat(': ').concat(sessionBean.getMessagesInfo())}"
+                                           onclick="document.getElementById('mainFRM:btnMsgInfo').click();" />
+                                    <p:commandButton icon="ico_refresh-16" title="#{bundle.Refresh}" update="countMessages"/>                                      
+                                </h:panelGrid>
+                                    
                                 <p:graphicImage value="/resources/icon/msg-32.png"/>
-                                <p:commandLink value="#{bundle.AllMessages}"
-                                               onclick="document.getElementById('mainFRM:btnMessages').click();" />
+                                <p:commandLink  value="#{bundle.AllMessages}" onclick="document.getElementById('mainFRM:btnMessages').click();" />                                
                             </p:panelGrid>
                         </p:panelGrid>
                     </p:panel>

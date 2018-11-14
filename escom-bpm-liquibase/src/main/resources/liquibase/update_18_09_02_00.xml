@@ -40,4 +40,13 @@
             VALUES (9, NULL, NULL, N'Документ проверен и отправлен на согласование',   N'DocCheckedAndSentApproval',      9, NULL, 5, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
         </sql>    
     </changeSet>
+    
+    <changeSet id="userMessages-change-content" author="filatov" context="initdata" runOnChange="true">  
+        <preConditions onFail="MARK_RAN">
+            <dbms type="mysql" />
+        </preConditions>
+        <sql>
+            ALTER TABLE userMessages CHANGE COLUMN `Content` `Content` VARCHAR(4096) NULL DEFAULT NULL ;            
+        </sql>
+    </changeSet> 
 </databaseChangeLog> 

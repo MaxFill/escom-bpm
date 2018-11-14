@@ -696,10 +696,8 @@ public class WorkflowImpl implements Workflow {
                 if (sendNotAgree && Objects.equals(DictResults.RESULT_AGREED, task.getResult())){
                     TaskElem taskEl = process.getScheme().getElements().getTasks().get(task.getTaskLinkUID());
                     run(process, taskEl, new HashSet<>(), currentUser, params, errors);
-                } else {
-                    if (task.getBeginDate() == null){
-                        task.setBeginDate(new Date());
-                    }
+                } else {                    
+                    task.setBeginDate(new Date());
                     task.setFactExecDate(null);
                     task.setResult(null);
                     task.setComment(null);
