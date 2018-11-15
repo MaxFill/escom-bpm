@@ -116,49 +116,49 @@ public abstract class BaseLazyFacade<T extends Dict> extends BaseFacade<T>{
                 Object filterValue = filters.get(filterProperty);
                 Predicate predicate = null;
                 if (filterValue instanceof Map){
-                    Map <String, Date> dateFilters = (Map) filterValue;                    
-                    if (dateFilters.containsKey("startDate")){
-                        predicate = builder.greaterThanOrEqualTo(root.get(filterProperty), dateFilters.get("startDate"));
-                        criteries.add(predicate);
-                    }
-                    if (dateFilters.containsKey("endDate")){
-                        predicate = builder.lessThanOrEqualTo(root.get(filterProperty), dateFilters.get("endDate"));
-                        criteries.add(predicate);
-                    }
-                    predicate = null;
-                } else {                    
-                    if(filterValue != null) {                       
-                        switch (filterProperty){
-                            case "states":{
-                                List<State> states = (List<State>)filterValue;
-                                if (!states.isEmpty()){
-                                    predicate = root.get("state").get("currentState").in(states);                                    
+                        Map <String, Date> dateFilters = (Map) filterValue;                    
+                        if (dateFilters.containsKey("startDate")){
+                            predicate = builder.greaterThanOrEqualTo(root.get(filterProperty), dateFilters.get("startDate"));
+                            criteries.add(predicate);
+                        }
+                        if (dateFilters.containsKey("endDate")){
+                            predicate = builder.lessThanOrEqualTo(root.get(filterProperty), dateFilters.get("endDate"));
+                            criteries.add(predicate);
+                        }
+                        predicate = null;
+                    } else {                    
+                        if(filterValue != null) {                       
+                            switch (filterProperty){
+                                case "states":{
+                                    List<State> states = (List<State>)filterValue;
+                                    if (!states.isEmpty()){
+                                        predicate = root.get("state").get("currentState").in(states);                                    
+                                    }
+                                    break;
                                 }
-                                break;
-                            }
-                            case "procResults":{
-                                List<String> procResults = (List<String>)filterValue;
-                                if (!procResults.isEmpty()){
-                                    predicate = root.get("result").in(procResults);                                    
+                                case "procResults":{
+                                    List<String> procResults = (List<String>)filterValue;
+                                    if (!procResults.isEmpty()){
+                                        predicate = root.get("result").in(procResults);                                    
+                                    }
+                                    break;
                                 }
-                                break;
-                            }
-                            case "regNumber":{
-                                predicate = builder.like(root.<String>get(filterProperty),"%"+filterValue+"%");                                
-                                break;
-                            }
-                            case "name":{
-                                predicate = builder.like(root.<String>get(filterProperty),"%"+filterValue+"%");                                
-                                break;
-                            }
-                            default:{
-                                predicate = builder.equal(root.get(filterProperty), filterValue);
-                            }
-                        }                 
-                    } else {
-                        predicate = builder.isNull(root.get(filterProperty));
+                                case "regNumber":{
+                                    predicate = builder.like(root.<String>get(filterProperty),"%"+filterValue+"%");                                
+                                    break;
+                                }
+                                case "name":{
+                                    predicate = builder.like(root.<String>get(filterProperty),"%"+filterValue+"%");                                
+                                    break;
+                                }
+                                default:{
+                                    predicate = builder.equal(root.get(filterProperty), filterValue);
+                                }
+                            }                 
+                        } else {
+                            predicate = builder.isNull(root.get(filterProperty));
+                        }
                     }
-                }
                 if (predicate != null){
                     criteries.add(predicate);
                 }

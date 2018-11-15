@@ -27,7 +27,7 @@
     <ui:define name="centerFormContent">
         <p:defaultCommand target="mainFRM:btnSearche" />
                 
-        <p:panel toggleable="true" header="#{bundle.Filter}" toggleSpeed="500" >            
+        <p:panel toggleable="true" header="#{bundle.Filter}" toggleSpeed="500" collapsed="#{monitorBean.filterCollapsed}" >            
             <h:panelGrid columns="5" styleClass="without-spaces">
                 <h:panelGrid columns="1" styleClass="without-spaces">
                     <p:tree id="treeProcTypes" value="#{monitorBean.procTypesTree}" var="procType" selectionMode="single" 

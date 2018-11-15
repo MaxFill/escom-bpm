@@ -13,7 +13,7 @@
     <ui:define name="CardToolButtons" > 
         <p:commandButton icon="ico_process" title="#{bundle.GoToProcess}" 
                         rendered="#{taskCardBean.process != null and _bean.editedItem.id != null}"
-                        actionListener="#{taskCardBean.onOpenProcess()}"/>
+                        actionListener="#{taskCardBean.onOpenProcess()}"/>                
         <p:commandButton icon="ico_doc-16" title="#{bundle.GoToDocument}" 
                         rendered="#{taskCardBean.process != null and _bean.editedItem.id != null}"
                         actionListener="#{taskCardBean.onOpenDocument()}"/>

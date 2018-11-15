@@ -363,6 +363,19 @@ public class TaskCardBean extends BaseCardBean<Task>{
     }
     
     /**
+     * Формирование параметра для открытия процесса в мониторе по url
+     * @return 
+     */
+    public String paramUrlProc(){
+        String result = "";
+        Process process = getProcess();
+        if (process != null){
+            result = "?procId=" + process.getId();
+        }
+        return result;
+    }
+    
+    /**
      * Обработка события открытия карточки процесса 
      */
     public void onOpenProcess(){

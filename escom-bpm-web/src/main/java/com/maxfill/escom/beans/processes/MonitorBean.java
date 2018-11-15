@@ -47,6 +47,7 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     private TreeNode root = new DefaultTreeNode(null, null);
     private TreeNode selectedNode;
     private BaseDict currentItem;
+    private Integer selProcId;
     
     /* Атрибуты фильтра */
     private Date dateStart;
@@ -60,6 +61,7 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     private List<State> states = new ArrayList<>();
     private List<String> results = new ArrayList<>();
     private List<String> allResults;
+    private boolean filterCollapsed = false;
     
     @EJB
     private ProcessFacade processFacade;
@@ -82,6 +84,10 @@ public class MonitorBean extends BaseViewBean<BaseView>{
             onOpenItem();
             taskId = null;
         }
+        if (selProcId != null){
+            filterCollapsed = true;
+            onRefreshData();
+        }
     }
         
     @Override
@@ -102,8 +108,11 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     
     @Override
     public void doBeforeOpenCard(Map<String, String> params) { 
-         if (params.containsKey("itemId")){
+        if (params.containsKey("itemId")){
             taskId = Integer.valueOf(params.get("itemId"));
+        }
+        if (params.containsKey("procId")){
+            selProcId = Integer.valueOf(params.get("procId"));
         }
         states.add(stateFacade.getRunningState());
         procTypesFacade.findRootItems(getCurrentUser())
@@ -168,36 +177,41 @@ public class MonitorBean extends BaseViewBean<BaseView>{
      * @param filters
      * @return 
      */
-    protected Map<String, Object> makeFilters(Map filters) {        
-        filters.put("actual", true);
-        filters.put("deleted", false);
-        //filters.put("parent", null);
-        if (selProcTypeNode != null){
-            filters.put("owner", selProcTypeNode.getData());
-        }
-        if(dateStart != null || dateEnd != null) {
-            Map <String, Date> dateFilters = new HashMap <>();
-            dateFilters.put("startDate", dateStart);        //дата начала периода отбора
-            dateFilters.put("endDate", dateEnd);            //дата конца периода отбора
-            filters.put("planExecDate", dateFilters);       //поле по которому отбираем
-        } 
-        if (initiator != null){
-            filters.put("author", initiator.getEmployee());
-        }
-        if (curator != null){
-            filters.put("curator", curator);
-        }
-        if (!states.isEmpty()){
-            filters.put("states", states);
-        }
-        if (!results.isEmpty()){            
-            filters.put("procResults", results);
-        }
-        if (StringUtils.isNotBlank(number)){
-            filters.put("regNumber", number);
-        }
-        if (StringUtils.isNotBlank(name)){
-            filters.put("name", name);
+    protected Map<String, Object> makeFilters(Map filters) { 
+        if (selProcId != null){
+           filters.put("id", selProcId); 
+           selProcId = null;
+        } else {           
+            filters.put("actual", true);
+            filters.put("deleted", false);        
+            //filters.put("parent", null);
+            if (selProcTypeNode != null){
+                filters.put("owner", selProcTypeNode.getData());
+            }
+            if(dateStart != null || dateEnd != null) {
+                Map <String, Date> dateFilters = new HashMap <>();
+                dateFilters.put("startDate", dateStart);        //дата начала периода отбора
+                dateFilters.put("endDate", dateEnd);            //дата конца периода отбора
+                filters.put("planExecDate", dateFilters);       //поле по которому отбираем
+            } 
+            if (initiator != null){
+                filters.put("author", initiator.getEmployee());
+            }
+            if (curator != null){
+                filters.put("curator", curator);
+            }
+            if (!states.isEmpty()){
+                filters.put("states", states);
+            }
+            if (!results.isEmpty()){            
+                filters.put("procResults", results);
+            }
+            if (StringUtils.isNotBlank(number)){
+                filters.put("regNumber", number);
+            }
+            if (StringUtils.isNotBlank(name)){
+                filters.put("name", name);
+            }
         }
         return filters;
     }         
@@ -338,6 +352,14 @@ public class MonitorBean extends BaseViewBean<BaseView>{
             allResults = processFacade.findProcessResults();
         }
         return allResults;
+    }
+
+    public boolean isFilterCollapsed() {
+        return filterCollapsed;
+    }
+
+    public void setFilterCollapsed(boolean filterCollapsed) {
+        this.filterCollapsed = filterCollapsed;
     }
     
     @Override
