@@ -112,7 +112,7 @@ public class RedirectFilter implements Filter {
             } else {
                 String targetUrl = reqURL.replaceAll(ctxPath, "").replaceAll("/faces", "").replaceAll("/", "%2F");
                 StringBuilder loginURL = new StringBuilder();
-                loginURL.append(serverURL).append(ctxPath).append("/faces/");
+                loginURL.append(serverURL).append(ctxPath).append("/faces");
                 loginURL.append(SysParams.LOGIN_PAGE).append("?from=").append(targetUrl).append(makeParams(request.getParameterMap()));
                 Map<String,String[]> params = request.getParameterMap();
                 if (params.containsKey("docId")){
@@ -129,7 +129,7 @@ public class RedirectFilter implements Filter {
         } 
         catch (ServletException e) {
             if (e.getRootCause() instanceof ViewExpiredException) {
-                String errorURL = serverURL + ctxPath + "/faces/" + SysParams.LOGIN_PAGE;
+                String errorURL = serverURL + ctxPath + "/faces" + SysParams.LOGIN_PAGE;
                 response.sendRedirect(errorURL);
             } else {
                 throw e;

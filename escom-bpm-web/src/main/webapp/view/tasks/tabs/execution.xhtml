@@ -18,14 +18,7 @@
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>
                 </ui:repeat>
-            </h:panelGroup>                
-
-            <h:panelGrid columns="2">
-                <p:graphicImage value="/resources/icon/control-20.png"/>
-                <p:link rendered="#{taskCardBean.process != null and _bean.editedItem.id != null}"
-                        href="#{''.concat(sessionBean.onGetExplorerURL('/processes/monitor')).concat(taskCardBean.paramUrlProc())}" 
-                        value="#{bundle.OpenProcessInProcessMonitor}" target="_blank" />
-            </h:panelGrid>
+            </h:panelGroup>
             
             <p:outputLabel value="#{bundle.ReportExe}:" indicateRequired="true"/>                
             <p:textEditor value="#{taskCardBean.editedItem.comment}" 

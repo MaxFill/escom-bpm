@@ -164,11 +164,6 @@
     </ui:define>    
     
     <ui:define name="addItemMenu">
-        <p:menuitem icon="ui-icon-pencil" value="#{docBean.docIsLock(item) ? bundle.UnLock : bundle.EditVersion}" 
-                    actionListener="#{_bean.onSetCurrentItem(item)}"
-                    disabled="#{item.mainAttache == null}"
-                    rendered="#{item.getClass().getSimpleName() == 'Doc' and applicationBean.useModeshape}"
-                    oncomplete="document.getElementById('mainFRM:editDocument').click();"/>
         <p:menuitem icon="ui-icon-zoomin" value="#{bundle.ViewDoc}" 
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
                     disabled="#{item.mainAttache == null}"

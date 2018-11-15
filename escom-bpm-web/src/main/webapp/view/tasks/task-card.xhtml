@@ -7,19 +7,27 @@
 
     <ui:param name="_bean" value="#{taskCardBean}"/>
     
-    <ui:define name="specActionMenu" >
+    <ui:define name="specActionMenu" >                               
     </ui:define>
     
     <ui:define name="CardToolButtons" > 
-        <p:commandButton icon="ico_process" title="#{bundle.GoToProcess}" 
+        <p:splitButton icon="ico_look" value="#{bundle.ViewDoc}" title="#{bundle.ViewDoc}" 
+                        rendered="#{taskCardBean.process != null and _bean.editedItem.id != null}"
+                        actionListener="#{taskCardBean.onViewDocument()}">
+            <p:menuitem icon="ico_process" value="#{bundle.GoToProcess}" 
                         rendered="#{taskCardBean.process != null and _bean.editedItem.id != null}"
                         actionListener="#{taskCardBean.onOpenProcess()}"/>                
-        <p:commandButton icon="ico_doc-16" title="#{bundle.GoToDocument}" 
-                        rendered="#{taskCardBean.process != null and _bean.editedItem.id != null}"
-                        actionListener="#{taskCardBean.onOpenDocument()}"/>
-        <p:commandButton icon="ico_look" value="#{bundle.ViewDoc}" title="#{bundle.ViewDoc}" 
+            <p:menuitem icon="ico_control-16" value="#{bundle.OpenProcessInProcessMonitor}"
+                    url="#{''.concat(sessionBean.onGetExplorerURL('/processes/monitor')).concat(taskCardBean.paramUrlProc())}"
+                    rendered="#{taskCardBean.process != null and _bean.editedItem.id != null}" target="_blank"/> 
+            <p:separator/>
+            <p:menuitem icon="ico_look" value="#{bundle.ViewDoc}" title="#{bundle.ViewDoc}" 
                         rendered="#{taskCardBean.process != null and _bean.editedItem.id != null}"
                         actionListener="#{taskCardBean.onViewDocument()}"/>
+            <p:menuitem icon="ico_doc-16" value="#{bundle.GoToDocument}" 
+                        rendered="#{taskCardBean.process != null and _bean.editedItem.id != null}"
+                        actionListener="#{taskCardBean.onOpenDocument()}"/>
+        </p:splitButton>
     </ui:define>
     
     <ui:define  name="form_scripts">

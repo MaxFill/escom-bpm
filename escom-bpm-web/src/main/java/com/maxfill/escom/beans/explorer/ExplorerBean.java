@@ -598,7 +598,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
             //формируем корневой элемент для фильтров detail объекта            
             Metadates tableMD = tableBean.getMetadatesObj();            
             filtersFacade.findRootItems(getCurrentUser())            
-                    .filter(treeItem -> !(DictFilters.ON_MY_EDIT == treeItem.getId() && !appBean.isUseModeshape()))
+                    .filter(treeItem -> !(DictFilters.ON_MY_EDIT == treeItem.getId()))
                     .forEach(treeItem -> {
                         treeItem.setIcon(tableMD.getIconObject());
                         addFilterInTree(filterTree, treeItem, typeDetail, tableMD.getBundleJurnalName(), tableMD);
@@ -609,7 +609,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
             if (treeBean != null){            
                 Metadates treeMD = treeBean.getMetadatesObj();                
                 filtersFacade.findRootItems(getCurrentUser())
-                    .filter(treeItem -> !(DictFilters.ON_MY_EDIT == treeItem.getId() && !appBean.isUseModeshape()))
+                    .filter(treeItem -> !(DictFilters.ON_MY_EDIT == treeItem.getId()))
                     .forEach(treeItem -> {
                         treeItem.setIcon(treeMD.getIconObject());
                         addFilterInTree(filterTree, treeItem, typeTree, treeMD.getBundleJurnalName(), treeMD);
@@ -620,7 +620,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
             if (rootBean != null){                
                 Metadates rootMD = rootBean.getMetadatesObj();                
                 filtersFacade.findRootItems(getCurrentUser())
-                    .filter(treeItem -> !(DictFilters.ON_MY_EDIT == treeItem.getId() && !appBean.isUseModeshape()))
+                    .filter(treeItem -> !(DictFilters.ON_MY_EDIT == treeItem.getId() ))
                     .forEach(treeItem -> {
                         treeItem.setIcon(rootMD.getIconObject());
                         addFilterInTree(filterTree, treeItem, typeRoot, rootMD.getBundleJurnalName(), rootMD);

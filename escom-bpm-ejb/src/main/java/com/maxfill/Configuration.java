@@ -73,6 +73,7 @@ public class Configuration {
             properties.load(new FileInputStream(file));
             serverOS = (String) properties.get("SERVER_OS");
             serverURL = (String) properties.get("SERVER_URL");
+            serverAppURL = serverURL + "escom-bpm-web/faces/view";
             serverPath = (String) properties.get("SERVER_PATH");
             uploadPath = (String) properties.get("UPLOAD_PATH");
             encoding = (String) properties.get("ENCODING");

@@ -46,7 +46,6 @@ public class ApplicationBean implements Serializable{
     public static final String WSS_INFO_URL = "wss://escom-demo.ru:9443/EscomServices-1.0/release_info";
 
     private boolean needUpadateSystem;
-    private boolean useModeshape;
     
     private Licence licence = null;
     private String appName;
@@ -72,22 +71,25 @@ public class ApplicationBean implements Serializable{
     public void init() {
         appName = MsgUtils.getBandleLabel(SysParams.APP_NAME);
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-        HttpServletRequest request = (HttpServletRequest) ec.getRequest();        
+        //HttpServletRequest request = (HttpServletRequest) ec.getRequest();        
+        /*
         try {
+            
             String serverURL = new URL(request.getScheme(),
                     request.getServerName(),
                     request.getServerPort(),
                     request.getContextPath()).toString();
             configuration.setServerAppURL(serverURL + "/faces/view");
+           
         } catch (MalformedURLException ex) {
             Logger.getLogger(ItemUtils.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException();
         }
+         */
         Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
         release.setVersionNumber(ec.getInitParameter("VersionNumber"));
         release.setReleaseNumber(ec.getInitParameter("ReleaseNumber"));
         release.setReleaseDate(DateUtils.convertStrToDate(ec.getInitParameter("ReleaseDate"), "yyyy-MM-dd", locale));
-        useModeshape = Boolean.valueOf(ec.getInitParameter("UseModeshape"));
         initLicense();
     }
 
@@ -114,7 +116,7 @@ public class ApplicationBean implements Serializable{
     }
     
     /* Удаление объекта из буфера открытых объектов  */
-    public void deleteOpenedItem(String itemOpenKey){
+    synchronized public void deleteOpenedItem(String itemOpenKey){
         openedItems.remove(itemOpenKey);        
     }
     
@@ -272,10 +274,6 @@ public class ApplicationBean implements Serializable{
     }
     
     /* GETS & SETS */
-
-    public boolean isUseModeshape() {
-        return useModeshape;
-    }
         
     public boolean getNeedUpadateSystem() {
         return needUpadateSystem;
