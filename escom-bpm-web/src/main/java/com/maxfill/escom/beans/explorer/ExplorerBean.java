@@ -202,8 +202,15 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     }
     
     /* КАРТОЧКИ: открытие карточки объекта для редактирование */
+    public void onEditDetailItem(){
+        onEditDetailItem(currentItem);
+    }
     public void onEditDetailItem(BaseDict item){
         currentItem = item;
+        if (item == null) {
+            MsgUtils.errorFormatMsg("ObjectWithIDNotFound", new Object[]{"NULL", "NULL"});
+            return;
+        }
         setTypeEdit(DictEditMode.EDIT_MODE);
         if (isItemTreeType(item)){
             editItem = treeBean.prepEditItem(item, treeBean.getParamsMap());

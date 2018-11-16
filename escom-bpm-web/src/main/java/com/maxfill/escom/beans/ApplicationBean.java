@@ -14,7 +14,6 @@ import com.maxfill.model.core.sessions.UsersSessions;
 import com.maxfill.services.licenses.ActivateApp;
 import com.maxfill.services.update.UpdateInfo;
 import com.maxfill.utils.DateUtils;
-import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.collections4.MapUtils;
 import javax.annotation.PostConstruct;
@@ -25,15 +24,12 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.http.HttpServletRequest;
 
 @Named
 @ApplicationScoped
@@ -105,7 +101,7 @@ public class ApplicationBean implements Serializable{
      * @param item  Открываемый объект
      * @param user Кто открыл объект
      * @return  Возвращает ключ открытого объекта  */
-    public String addLockedItem(String itemKey, Integer editMode, BaseDict item, User user){
+    synchronized public String addLockedItem(String itemKey, Integer editMode, BaseDict item, User user){
         Tuple<Integer, BaseDict> tuple = new Tuple(editMode, item);
         String itemOpenKey = EscomBeanUtils.makeOpenItemKey(itemKey, editMode, user);
         openedItems.put(itemOpenKey, tuple); //запись в буфер открытых объектов для передачи во view
@@ -121,7 +117,7 @@ public class ApplicationBean implements Serializable{
     }
     
     /* Удаление блокировки объекта  */
-    public void deleteLockItem(String itemKey){
+    synchronized public void deleteLockItem(String itemKey){
         itemsLock.remove(itemKey);
     }
     
@@ -136,12 +132,12 @@ public class ApplicationBean implements Serializable{
     }
     
     /* Удаляет все блокировки пользователя  */
-    public void clearUserLock(User user){
+    synchronized public void clearUserLock(User user){
         itemsLock.values().removeIf(value -> value.equals(user));        
     }
 
     /* Добавление занятой лицензии  */
-    public void addBusyLicence(User user, HttpSession httpSession){
+    synchronized public void addBusyLicence(User user, HttpSession httpSession){
         UsersSessions userSession =  new UsersSessions();
         userSession.setUser(user);
         userSession.setDateConnect(new Date());
@@ -151,7 +147,7 @@ public class ApplicationBean implements Serializable{
     }
     
     /* Освобождение занятой пользователем лицензии  */
-    public void clearBasyLicence(String login){        
+    synchronized public void clearBasyLicence(String login){        
         userSessions.remove(login);
     }
     
@@ -228,7 +224,6 @@ public class ApplicationBean implements Serializable{
     public Date getLicenseExpireDate(){
         return licence.getDateTerm();
     }
-
 
     /**
      * Возвращает имя лицензиата

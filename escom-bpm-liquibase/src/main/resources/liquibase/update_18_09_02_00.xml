@@ -49,4 +49,38 @@
             ALTER TABLE userMessages CHANGE COLUMN `Content` `Content` VARCHAR(4096) NULL DEFAULT NULL ;            
         </sql>
     </changeSet> 
+    
+    <changeSet id="partnersTypes_add_fiz_type" author="filatov" context="initdata" runOnChange="true">  
+        <sql>            
+            INSERT partnersTypesStates (Id, CurrentState,  PreviousState) VALUES(7, 7, 5);
+        </sql>
+        
+        <sql>            
+            INSERT partnerTypes (Id, Name, FullName, Number, Parent, Owner, Access, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) 
+            VALUES (7, N'Физ.лицо',  N'Физ.лицо',           NULL, NULL, NULL, NULL, 7, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+        </sql>
+    </changeSet>
+    
+    <changeSet id="partners_add_OKPO_OKATO" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="partners" columnName="Okpo" />
+            </not>
+        </preConditions>
+        <addColumn tableName="partners">
+            <column name="Okpo" type="varchar(32)" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="Okato" type="varchar(32)" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="states_change_done_icon" author="filatov" context="initdata" runOnChange="true">
+        <sql>
+            UPDATE states SET `Icon` = '/resources/icon/done-16.png' WHERE (`ID` = '10');
+        </sql>
+    </changeSet>
+        
 </databaseChangeLog> 

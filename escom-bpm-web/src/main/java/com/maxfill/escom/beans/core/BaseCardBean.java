@@ -613,7 +613,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
      * @return
      */
     public Integer getRightColSpan(){
-        return 6;
+        return 7;
     }
 
     /**

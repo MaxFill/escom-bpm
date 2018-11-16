@@ -1,13 +1,9 @@
 package com.maxfill.escom.beans.processes.remarks;
 
 import com.maxfill.dictionary.DictPrintTempl;
-import com.maxfill.dictionary.DictStates;
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
-import com.maxfill.escom.beans.processes.ProcessCardBean;
-import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.remark.Remark;
 import com.maxfill.model.basedict.remark.RemarkFacade;
@@ -15,7 +11,6 @@ import com.maxfill.utils.DateUtils;
 import java.text.DateFormat;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;

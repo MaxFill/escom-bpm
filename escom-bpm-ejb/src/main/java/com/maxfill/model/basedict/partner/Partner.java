@@ -86,6 +86,14 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
     @Size(max = 32)
     private String ogrn;
     
+    @Column(name = "Okpo")
+    @Size(max = 32)
+    private String okpo; //для ИП 10 симв, для ЮЛ 8
+   
+    @Column(name = "Okato")
+    @Size(max = 32)
+    private String okato;
+     
     @Column(name = "Address")
     @Size(max = 255)
     private String address;
@@ -227,7 +235,21 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
     public void setKpp(String kpp) {
         this.kpp = kpp;
     }
-        
+
+    public String getOkpo() {
+        return okpo;
+    }
+    public void setOkpo(String okpo) {
+        this.okpo = okpo;
+    }
+
+    public String getOkato() {
+        return okato;
+    }
+    public void setOkato(String okato) {
+        this.okato = okato;
+    }
+         
     @Override
     public String getEmail() {
         return email;

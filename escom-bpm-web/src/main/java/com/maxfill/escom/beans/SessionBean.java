@@ -532,12 +532,7 @@ public class SessionBean implements Serializable{
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
         PrimeFaces.current().dialog().openDynamic(frmName, options, paramsMap);        
-    }     
-    
-    /* Открытие окна сканирования */
-    public void openScaningForm(){
-        openDialogFrm(DictFrmName.FRM_SCANING, getParamsMap());
-    }
+    }         
 
     /* Открытие окна просмотра лицензии */
     public void openLicenseForm(){        
@@ -940,6 +935,7 @@ public class SessionBean implements Serializable{
      * @return 
      */
     public Folder getUserFolder(){
+        if (getCurrentUser() == null) return null;
         return getCurrentUser().getInbox();
     }
     

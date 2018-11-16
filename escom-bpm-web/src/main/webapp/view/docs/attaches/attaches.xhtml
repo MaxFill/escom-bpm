@@ -6,12 +6,7 @@
 
     <p:tab title="#{bundle.Versions}" >                 
         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
-            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
-                <p:commandButton icon="ui-icon-clipboard" value="#{bundle.AddVersionFromScan}" id="btnScan" rendered="false"         
-                                 actionListener="#{sessionBean.openScaningForm()}">
-                    <p:ajax event="dialogReturn" listener="#{docCardBean.addAttacheFromScan}" update="versionsTBL"/>
-                </p:commandButton>
-                
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                
                 <p:commandButton id="btnUpdate" update="versionsTBL" style="display: none;"/>
 
                 <p:fileUpload id="file" 

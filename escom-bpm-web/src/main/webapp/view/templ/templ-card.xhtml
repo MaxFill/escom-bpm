@@ -107,12 +107,8 @@
 
                     <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" activeIndex="#{_bean.tabActiveIndex}"  style="height: 100%;">
                         <p:ajax event="tabChange" listener="#{_bean.onTabChange}" />
-                        <ui:insert name="page_body"/>
-
-                        <ui:include src="/view/common/dict-rights.xhtml" />
-                        <ui:insert name="childs_rights"/> 
+                        <ui:insert name="page_body"/>                        
                         <ui:include src="/view/common/dict-info.xhtml"/>
-                        <ui:include src="/view/common/dict-log.xhtml"/> 
                     </p:tabView>
 
                 </p:panelGrid>

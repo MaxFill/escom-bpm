@@ -210,16 +210,11 @@
                     </p:commandButton>                                                 
 
                     <p:commandButton id="editCardBtn" style="display: none;"
-                                    actionListener="#{_bean.onEditDetailItem(item)}" 
+                                    actionListener="#{_bean.onEditDetailItem()}" 
                                     onstart="PF('statusDialog').show()"
                                     oncomplete="PF('statusDialog').hide();">
                         <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseForm}" update="mainFRM" oncomplete="initDND();"/>
-                    </p:commandButton>  
-                    
-                    <p:commandButton id="btnScan" icon="ui-icon-clipboard" style="display: none;"
-                                     actionListener="#{sessionBean.openScaningForm()}"> 
-                        <p:ajax event="dialogReturn" listener="#{_bean.addAttacheFromScan}" oncomplete="initDND()"/>
-                    </p:commandButton>
+                    </p:commandButton>                      
                     
                     <ui:include src="/view/common/exeption-handler.xhtml"/> 
                     <p:remoteCommand name="afterFormLoad" onstart="getOS();" actionListener="#{_bean.onAfterFormLoad()}" autoRun="true"/>

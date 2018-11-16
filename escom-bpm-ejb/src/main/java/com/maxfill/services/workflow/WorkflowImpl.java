@@ -583,7 +583,7 @@ public class WorkflowImpl implements Workflow {
      * @return  
      */
     @Override
-    public Set<BaseDict> executeTask(Process process, Task task, Result result, User currentUser, Map<String, Object> params, Set<Tuple> errors){        
+    synchronized public Set<BaseDict> executeTask(Process process, Task task, Result result, User currentUser, Map<String, Object> params, Set<Tuple> errors){        
         Set<BaseDict> forShow = new HashSet<>(); 
         if (DictStates.STATE_RUNNING != process.getState().getCurrentState().getId()){
             errors.add(new Tuple("TaskCannotCompletedBecauseProcessStopped", new Object[]{}));
@@ -772,7 +772,7 @@ public class WorkflowImpl implements Workflow {
      * @return  
      */
     @Override
-    public Set<BaseDict> start(Process process, User currentUser, Map<String, Object> params, Set<Tuple> errors) {  
+    synchronized public Set<BaseDict> start(Process process, User currentUser, Map<String, Object> params, Set<Tuple> errors) {  
         Scheme scheme = process.getScheme();
         if (scheme == null){            
             scheme = initScheme(process, null, currentUser, errors);            
@@ -812,7 +812,7 @@ public class WorkflowImpl implements Workflow {
      * @param currentUser
      */
     @Override
-    public void stop(Process process, User currentUser) {
+    synchronized public void stop(Process process, User currentUser) {
         State stateCancel = stateFacade.getCanceledState();
         
         Doc doc = process.getDocument();
@@ -924,7 +924,7 @@ public class WorkflowImpl implements Workflow {
      * @return - возвращает список объектов, которые должны быть показаны пользователю
      */
     @Override
-    public Set<BaseDict> run(Process process, WFConnectedElem startElement, Set<SubProcessElem> exeSubProc, User currentUser, Map<String, Object> params, Set<Tuple> errors) {   
+    synchronized public Set<BaseDict> run(Process process, WFConnectedElem startElement, Set<SubProcessElem> exeSubProc, User currentUser, Map<String, Object> params, Set<Tuple> errors) {   
         Set<BaseDict> forShow = new HashSet<>();
         Set<Task> exeTasks = new HashSet<>();        
         doRun(startElement.getAnchors(), process, exeTasks, exeSubProc, currentUser, params, errors);

@@ -15,6 +15,7 @@ import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.basedict.user.UserFacade;
 import com.maxfill.services.Services;
 import com.maxfill.services.workflow.Workflow;
+import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
@@ -66,12 +67,18 @@ public class NotificationServiceImp implements NotificationService{
                     taskFacade.findTaskByStaffStates(staff, states)
                         .forEach(task->{                                                        
                             if (task.getNextReminder() != null && task.getNextReminder().before(curDate)){
-                                notifReminder(task);
-                                countTask.incrementAndGet();
-                            }
-                            if (task.getPlanExecDate() != null && task.getPlanExecDate().before(curDate)){
-                                makeNotification(task, "ThisTaskOverdue");
-                            }
+                                if (task.getPlanExecDate() != null && task.getPlanExecDate().before(curDate)){
+                                    taskOverdueReminder(task);
+                                    countTask.incrementAndGet();
+                                } else {
+                                    notifReminder(task);
+                                    countTask.incrementAndGet();
+                                }
+                            } else 
+                                if (task.getPlanExecDate() != null && task.getPlanExecDate().before(curDate)){
+                                    taskOverdueReminder(task);
+                                    countTask.incrementAndGet();
+                                }                            
                         });
                 }
         );
@@ -90,9 +97,15 @@ public class NotificationServiceImp implements NotificationService{
      * Напоминание о задаче
      * @param task 
      */
-    private void notifReminder(Task task){        
+    private void notifReminder(Task task){
         makeNotification(task, "Reminder");
         taskFacade.makeNextReminder(task);
+        taskFacade.edit(task);
+    }
+    
+    private void taskOverdueReminder(Task task){
+        makeNotification(task, "ThisTaskOverdue");
+        task.setNextReminder(DateUtils.addHour(new Date(), 12));
         taskFacade.edit(task);
     }
     

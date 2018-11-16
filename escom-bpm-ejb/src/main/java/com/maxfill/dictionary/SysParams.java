@@ -33,11 +33,9 @@ public final class SysParams {
     public static final String PARAM_BEAN_ID = "beanId";
     public static final String PARAM_BEAN_NAME = "beanName";
     
-    public static final int DEFAULT_DOC_TYPE_ID = 1;
+    public static final int DEFAULT_DOC_TYPE_ID = 1;   
     
-    public static final int MODE_UNLOCK_CREATE_VERSION = 0;
-    public static final int MODE_UNLOCK_DONT_CREATE_VERSION = 1;
-    public static final int MODE_UNLOCK_DONT_SAVE_CHANGE = 2;
+    public static final int PARTNER_FIZ_TYPE_ID = 7;
     
     public static final String DEADLINE_DELTA = "delta";
     public static final String DEADLINE_DATE = "date";

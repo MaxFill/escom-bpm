@@ -38,7 +38,7 @@
 
         <p:column id="colCheck" width="16" selectionMode="multiple" style="text-align:center"/>
 
-        <p:column id="colIcon" width="20" sortBy="#{item.iconName}" headerText="" visible="#{_detailBean.isVisibleColumn('colIcon')}">
+        <p:column id="colIcon" width="20" sortBy="#{item.id}" headerText="" visible="#{_detailBean.isVisibleColumn('colIcon')}">
             <p:graphicImage id="itemIcon" value="/resources/icon/#{item.iconName}.png" styleClass="#{item.deleted ? '' : 'dropoint'}"/>
             <h:outputLabel value="[#{item.id}]"/>
         </p:column>

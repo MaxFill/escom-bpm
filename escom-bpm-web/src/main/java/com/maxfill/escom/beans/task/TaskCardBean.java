@@ -477,7 +477,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
         if (task.getScheme() != null){
             Staff curator = task.getScheme().getProcess().getCurator();
             if (curator != null){
-                isCurator = curator.getEmployee().equals(getCurrentUser());
+                isCurator = Objects.equals(curator.getEmployee(), getCurrentUser());
             }
         }
         //админ или куратор процесса может выбрать любого
@@ -657,11 +657,6 @@ public class TaskCardBean extends BaseCardBean<Task>{
         
     /* GETS & SETS */
     
-    @Override
-    public Integer getRightColSpan(){
-        return 7;
-    }
-        
     public int getReminderDeltaDay() {
         return reminderDeltaDay;
     }

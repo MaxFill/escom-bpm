@@ -12,59 +12,70 @@
     <ui:define name="page_body">       
         <p:tab title="#{bundle.Document}" id="tabDocCard" >
             <p:panelGrid id="panelDocCard" layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
-                
-                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
-                    <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
-                        <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
-                        <p:inputTextarea id="nameItem" value="#{_bean.editedItem.name}"
-                                         title="#{bundle.BriefDescriptionDocument}"
-                                         styleClass="ui-grid-col-12"
-                                         rows="1" autoResize="true" 
-                                         onkeypress="checkEsc();"
-                                         disabled="#{_bean.isReadOnly()}"
-                                         onchange="return itemChange = 1;"
-                                         required="#{param['isRequired'] == 'true'}" 
-                                         requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
-                            <f:validateLength maximum="250"  />                        
-                        </p:inputTextarea>
-                    </h:panelGrid>
-                    
-                    <h:panelGrid columns="1" id="сompanyPanel" rendered="#{applicationBean.isCanUsesStaffs()}" styleClass="ui-grid-col-12 without-spaces">
-                        <p:outputLabel value="#{bundle.Organization}:" for="company" indicateRequired="true"/>
-                        <p:selectOneMenu value="#{_bean.editedItem.company}" id="company" converter="companyConvertor"
-                                         title="#{bundle.CompanyDocRegistred}"
-                                         disabled="#{_bean.isReadOnly()}"
-                                         styleClass="ui-grid-col-12"
-                                         required="#{param['isRequired'] == 'true'}"
-                                         requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
-                            <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
-                            <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
-                            <p:ajax event="change" update="regNumberPanel" oncomplete="return itemChange = 1;"/>
-                        </p:selectOneMenu>
-                    </h:panelGrid>
+                                
+                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">                    
+                    <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
+                    <p:inputTextarea id="nameItem" value="#{_bean.editedItem.name}"
+                                     title="#{bundle.BriefDescriptionDocument}"
+                                     styleClass="ui-grid-col-12"
+                                     rows="1" autoResize="true" 
+                                     onkeypress="checkEsc();"
+                                     disabled="#{_bean.isReadOnly()}"
+                                     onchange="return itemChange = 1;"
+                                     required="#{param['isRequired'] == 'true'}" 
+                                     requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
+                        <f:validateLength maximum="250"  />                        
+                    </p:inputTextarea>                                    
 
-                    <h:panelGrid columns="1" styleClass="ui-grid-col-12 without-spaces">
-                        <p:outputLabel value="#{bundle.DocTypes}:" indicateRequired="true"/>
-                        <ui:include src="/view/common/item-select-list-btn.xhtml" >
-                            <ui:param name="_itemValue" value="#{_bean.editedItem.docType}"/>
-                            <ui:param name="_itemLabel" value="nameEndElipse"/>
-                            <ui:param name="_required" value="#{true}" />
-                            <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
-                            <ui:param name="_converter" value="docsTypesConvertor" />
-                            <ui:param name="_itemPanel" value="docTypePanel"/>
-                            <ui:param name="_titleItem" value="#{bundle.DocTypes}"/>
-                            <ui:param name="_selectorBean" value="#{docTypeBean}"/>
-                            <ui:param name="_items" value="#{docTypeBean.findAll()}"/>
-                            <ui:param name="_actionClear" value="setDocType"/>
-                            <ui:param name="_actionSelect" value="onDocTypeSelected"/>
-                            <ui:param name="_update" value="mainFRM:mainTabView:regNumberPanel mainFRM:mainTabView:docStatusTbl mainFRM:mainTabView:explToolBar"/>
-                        </ui:include>
-                    </h:panelGrid>
-                   
-                </p:panelGrid>
+                    <p:outputLabel value="#{bundle.Organization}:" for="company" indicateRequired="true"/>
+                    <p:selectOneMenu value="#{_bean.editedItem.company}" id="company" converter="companyConvertor"
+                                     title="#{bundle.CompanyDocRegistred}"
+                                     disabled="#{_bean.isReadOnly()}"
+                                     styleClass="ui-grid-col-12"
+                                     required="#{param['isRequired'] == 'true'}"
+                                     requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
+                        <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
+                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
+                        <p:ajax event="change" update="regNumberPanel" oncomplete="return itemChange = 1;"/>
+                    </p:selectOneMenu>                
                 
-                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-5 col-padding, ui-grid-col-7 col-padding" styleClass="without-spaces ui-grid-col-12">
-                    <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
+                    <p:outputLabel value="#{bundle.DocTypes}:" indicateRequired="true"/>
+                    <ui:include src="/view/common/item-select-list-btn.xhtml" >
+                        <ui:param name="_itemValue" value="#{_bean.editedItem.docType}"/>
+                        <ui:param name="_itemLabel" value="nameEndElipse"/>
+                        <ui:param name="_required" value="#{true}" />
+                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
+                        <ui:param name="_converter" value="docsTypesConvertor" />
+                        <ui:param name="_itemPanel" value="docTypePanel"/>
+                        <ui:param name="_titleItem" value="#{bundle.DocTypes}"/>
+                        <ui:param name="_selectorBean" value="#{docTypeBean}"/>
+                        <ui:param name="_items" value="#{docTypeBean.findAll()}"/>
+                        <ui:param name="_actionClear" value="setDocType"/>
+                        <ui:param name="_actionSelect" value="onDocTypeSelected"/>
+                        <ui:param name="_update" value="mainFRM:mainTabView:regNumberPanel mainFRM:mainTabView:docStatusTbl mainFRM:mainTabView:explToolBar"/>
+                    </ui:include>
+                                        
+                    <p:outputLabel value="#{bundle.Partner}:" rendered="#{applicationBean.isCanUsesPartners()}"/>
+                    <ui:include src="/view/common/item-select-list-btn.xhtml" >
+                        <ui:param name="_rendered" value="#{applicationBean.isCanUsesPartners()}"/>
+                        <ui:param name="_itemValue" value="#{_bean.editedItem.partner}"/>
+                        <ui:param name="_itemLabel" value="nameEndElipse"/>
+                        <ui:param name="_required" value="#{false}" />
+                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
+                        <ui:param name="_converter" value="partnersConvertor" />
+                        <ui:param name="_itemPanel" value="partnerPanel"/>
+                        <ui:param name="_titleItem" value="#{bundle.Partner}"/>
+                        <ui:param name="_selectorBean" value="#{partnersBean}"/>
+                        <ui:param name="_items" value="#{partnersBean.findAll()}"/>
+                        <ui:param name="_actionClear" value="setPartner"/>
+                        <ui:param name="_actionSelect" value="onPartnerSelected"/>
+                        <ui:param name="_update" value=""/>
+                    </ui:include>
+                    
+                </p:panelGrid>
+                                                   
+                <h:panelGrid columns="2" styleClass="without-spaces">
+                    <h:panelGrid columns="1" styleClass="without-spaces ">
                         <p:outputLabel value="#{bundle.Number}:" indicateRequired="true"/>  
                         <h:panelGroup id="regNumberPanel" styleClass="ui-grid-col-12 without-spaces">
                             <div class="ui-inputgroup">
@@ -88,17 +99,17 @@
                                 <p:commandButton icon="ui-icon-gear" title="#{bundle.Generate}"
                                                  disabled="#{_bean.isReadOnly() or !docCardBean.canRegistred}"
                                                  actionListener="#{_bean.onGenerateRegNumber(_item)}"
-                                                 update="docTypePanel datePanel сompanyPanel regNumberPanel"/>
+                                                 update="docTypePanel datePanel regNumberPanel"/>
                                 <p:commandButton id="clearNumberBtn"
                                                  icon="ui-icon-close" title="#{bundle.UnRegistred}"
-                                                 update="docTypePanel datePanel сompanyPanel regNumberPanel"
+                                                 update="docTypePanel datePanel regNumberPanel"
                                                  actionListener="#{_bean.onClearRegNumber()}"
                                                  disabled="#{_bean.isReadOnly() or _bean.canRegistred}"/>
                             </div>
                         </h:panelGroup>
                     </h:panelGrid>
 
-                    <h:panelGrid id="datePanel" columns="1" styleClass="without-spaces ui-grid-col-12">                        
+                    <h:panelGrid id="datePanel" columns="1" styleClass="without-spaces">                        
                         <p:outputLabel value="#{bundle.DateDoc}:" indicateRequired="true"/>
                         <p:calendar id="dateDoc" value="#{_bean.editedItem.itemDate}"  title="#{bundle.DateRegistredDoc}"
                                     inputStyle="width: 145px;"
@@ -110,30 +121,9 @@
                                     navigator="true" yearRange="c-120:c+20"                                
                                     requiredMessage="#{bundle.Field} [#{bundle.DateDoc}] #{bundle.MustBeFilled}">
                             <p:ajax event="dateSelect" onstart="itemChange = 1;" />
-                        </p:calendar>                        
-                    </h:panelGrid>                    
-                </p:panelGrid>    
-
-                <p:panelGrid columns="1" layout="grid" rendered="#{applicationBean.isCanUsesPartners()}" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
-                    <h:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
-                        <p:outputLabel value="#{bundle.Partner}:" />
-                        <ui:include src="/view/common/item-select-list-btn.xhtml" >
-                            <ui:param name="_itemValue" value="#{_bean.editedItem.partner}"/>
-                            <ui:param name="_itemLabel" value="nameEndElipse"/>
-                            <ui:param name="_required" value="#{false}" />
-                            <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
-                            <ui:param name="_converter" value="partnersConvertor" />
-                            <ui:param name="_itemPanel" value="partnerPanel"/>
-                            <ui:param name="_titleItem" value="#{bundle.Partner}"/>
-                            <ui:param name="_selectorBean" value="#{partnersBean}"/>
-                            <ui:param name="_items" value="#{partnersBean.findAll()}"/>
-                            <ui:param name="_actionClear" value="setPartner"/>
-                            <ui:param name="_actionSelect" value="onPartnerSelected"/>
-                            <ui:param name="_update" value=""/>
-                        </ui:include>
+                        </p:calendar>
                     </h:panelGrid>
-                </p:panelGrid>
-                
+                </h:panelGrid>
             </p:panelGrid>
         </p:tab>
         
@@ -154,9 +144,21 @@
             </p:panelGrid>
         </p:tab>
         
-        <ui:include src="/view/docs/doc-places.xhtml"/>
+        <p:tab title="#{bundle.Remarks}">
+            <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
+                <ui:include src="/view/docs/remarks/remarks-list.xhtml" />
+            </p:panelGrid>
+        </p:tab>
+        
         <ui:include src="/view/docs/docStatus/docstatus-list.xhtml"/>
-        <ui:include src="/view/docs/doc-links.xhtml"/>        
+        
+        <p:tab title="#{bundle.Other}">
+            <p:accordionPanel>
+                <ui:include src="/view/docs/doc-places.xhtml"/>    
+                <ui:include src="/view/docs/doc-links.xhtml"/>        
+            </p:accordionPanel>            
+        </p:tab>
+                
     </ui:define>
 
     <ui:define name="specActionMenu">              

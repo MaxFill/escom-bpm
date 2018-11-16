@@ -8,7 +8,7 @@
     <ui:param name="_bean" value="#{partnersCardBean}"/>
 
     <ui:define name="page_body">
-        <p:tab title="#{bundle.Doc}"> 
+        <p:tab title="#{bundle.Partner}"> 
             <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                
                 <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3 col-padding, ui-grid-col-9 col-padding" styleClass="ui-grid-col-12 without-spaces">
                     <p:outputLabel value="#{bundle.Type}:" />
@@ -19,7 +19,8 @@
                                      onchange="return itemChange = 1;"                                 
                                      requiredMessage="#{bundle.Field} [#{bundle.Type}] #{bundle.MustBeFilled}">
                         <f:selectItems value="#{partnerTypesBean.findAll()}" var="types" itemLabel="#{types.name}" itemValue="#{types}" />
-                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}"/>                         
+                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}"/> 
+                        <p:ajax event="change" update="pnUrType" oncomplete="itemChange = 1;"/>
                     </p:selectOneMenu>
 
                     <p:outputLabel value="#{bundle.Code}:" indicateRequired="true"/>            
@@ -70,43 +71,55 @@
                     </p:inputTextarea>                    
                 </p:panelGrid>
 
-                <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces">  
-                    <h:panelGrid columns="1" styleClass="without-spaces">
-                        <p:outputLabel value="#{bundle.Inn}:" indicateRequired="true"/>            
-                        <p:inputMask id="inn" value="#{_bean.editedItem.inn}" 
-                                     mask="9999999999"
-                                     disabled="#{_bean.isReadOnly()}"
-                                     required="#{param['isRequired'] == 'true'}"                                      
-                                     onkeypress="checkEsc();"
-                                     requiredMessage="#{bundle.Field} [#{bundle.Inn}] #{bundle.MustBeFilled}"                                 
-                                     onchange="return itemChange = 1;">                            
-                        </p:inputMask>
+                <h:panelGroup id="pnUrType" >
+                    <h:panelGrid columns="2" rendered="#{_bean.editedItem.type.id != 7}" styleClass="ui-grid-col-12 without-spaces">  
+                        <h:panelGrid columns="1" styleClass="without-spaces">
+                            <p:outputLabel value="#{bundle.Inn}:" indicateRequired="true"/>            
+                            <p:inputMask id="inn" value="#{_bean.editedItem.inn}" 
+                                         mask="9999999999"
+                                         disabled="#{_bean.isReadOnly()}"
+                                         required="#{param['isRequired'] == 'true'}"                                      
+                                         onkeypress="checkEsc();"
+                                         requiredMessage="#{bundle.Field} [#{bundle.Inn}] #{bundle.MustBeFilled}"                                 
+                                         onchange="return itemChange = 1;">                            
+                            </p:inputMask>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" styleClass="without-spaces">
+                            <p:outputLabel value="#{bundle.Kpp}:" indicateRequired="true"/>            
+                            <p:inputMask id="kpp" value="#{_bean.editedItem.kpp}"
+                                         mask="999999999"
+                                         disabled="#{_bean.isReadOnly()}"
+                                         required="#{param['isRequired'] == 'true'}"                                      
+                                         onkeypress="checkEsc();"
+                                         requiredMessage="#{bundle.Field} [#{bundle.Kpp}] #{bundle.MustBeFilled}"                                 
+                                         onchange="return itemChange = 1;">
+                            </p:inputMask>
+                        </h:panelGrid>
                     </h:panelGrid>
-                    <h:panelGrid columns="1" styleClass="without-spaces">
-                        <p:outputLabel value="#{bundle.Kpp}:" indicateRequired="true"/>            
-                        <p:inputMask id="kpp" value="#{_bean.editedItem.kpp}"
-                                     mask="999999999"
-                                     disabled="#{_bean.isReadOnly()}"
-                                     required="#{param['isRequired'] == 'true'}"                                      
-                                     onkeypress="checkEsc();"
-                                     requiredMessage="#{bundle.Field} [#{bundle.Kpp}] #{bundle.MustBeFilled}"                                 
-                                     onchange="return itemChange = 1;">
-                        </p:inputMask>
+
+                    <h:panelGrid columns="2" rendered="#{_bean.editedItem.type.id != 7}" styleClass="ui-grid-col-12 without-spaces">  
+                        <h:panelGrid columns="1" styleClass="without-spaces">
+                            <p:outputLabel value="#{bundle.Ogrn}:" />            
+                            <p:inputMask value="#{_bean.editedItem.ogrn}" 
+                                         mask="9999999999999"
+                                         disabled="#{_bean.isReadOnly()}"                                                                       
+                                         onkeypress="checkEsc();"
+                                         requiredMessage="#{bundle.Field} [#{bundle.Ogrn}] #{bundle.MustBeFilled}"                                 
+                                         onchange="return itemChange = 1;">                            
+                            </p:inputMask>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" styleClass="without-spaces">
+                            <p:outputLabel value="#{bundle.Okato}:" />            
+                            <p:inputMask value="#{_bean.editedItem.okato}" 
+                                         mask="99999999999"
+                                         disabled="#{_bean.isReadOnly()}"                                                                       
+                                         onkeypress="checkEsc();"
+                                         requiredMessage="#{bundle.Field} [#{bundle.Okato}] #{bundle.MustBeFilled}"                                 
+                                         onchange="return itemChange = 1;">                            
+                            </p:inputMask>
+                        </h:panelGrid>
                     </h:panelGrid>
-                </h:panelGrid>
-                
-                <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces">  
-                    <h:panelGrid columns="1" styleClass="without-spaces">
-                        <p:outputLabel value="#{bundle.Ogrn}:" />            
-                        <p:inputMask value="#{_bean.editedItem.ogrn}" 
-                                     mask="9999999999999"
-                                     disabled="#{_bean.isReadOnly()}"                                                                       
-                                     onkeypress="checkEsc();"
-                                     requiredMessage="#{bundle.Field} [#{bundle.Ogrn}] #{bundle.MustBeFilled}"                                 
-                                     onchange="return itemChange = 1;">                            
-                        </p:inputMask>
-                    </h:panelGrid>
-                </h:panelGrid>
+                </h:panelGroup>
                 
                 <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces"> 
                     <h:panelGrid columns="1" styleClass="without-spaces" >

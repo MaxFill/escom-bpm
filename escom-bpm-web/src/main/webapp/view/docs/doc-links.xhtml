@@ -9,7 +9,7 @@
                          onstart="PF('statusDialog').show()"
                          oncomplete="PF('statusDialog').hide();"
                          style="display: none;"> 
-            <p:ajax event="dialogReturn" listener="#{_bean.onUpdateLinkedDocs()}" update="mainFRM:mainTabView:tblLinkedDocs"/>
+            <p:ajax event="dialogReturn" listener="#{_bean.onUpdateLinkedDocs()}" update="tblLinkedDocs"/>
         </p:commandButton>
 
         <p:panelGrid id="panelLinkedDocs" columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">

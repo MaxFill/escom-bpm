@@ -56,7 +56,7 @@
                 <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" styleClass="without-spaces"
                                  disabled="#{_bean.editedItem.inheritsAccessChilds or _bean.isReadOnly()}"
                                  actionListener="#{_bean.onDeleteRightChild(right)}"
-                                 update="mainFRM:mainTabView:tblChildRight">
+                                 update="tblChildRight">
                 </p:commandButton>
             </p:column>
 
@@ -97,7 +97,7 @@
                     <p:spacer/>
                     <p:commandButton value="#{bundle.Add}" title="#{bundle.AddRight}"
                                      actionListener="#{_bean.onAddRightChild()}"
-                                     update="mainFRM:mainTabView:tblChildRight">
+                                     update="tblChildRight">
                     </p:commandButton>
                 </h:panelGroup>
             </f:facet>
