@@ -15,35 +15,38 @@
                 sortBy="#{remark.dateCreate}" sortOrder="descending">                        
         
         <p:column headerText="#{bundle.Author}" sortBy="#{remark.author.shortFIO}">
-            <h:outputLabel value="#{remark.author.shortFIO}" />
-        </p:column>
-        
-        <p:column headerText="#{bundle.DateChange}" sortBy="#{remark.dateChange}" style="text-align: center;">
-            <h:outputLabel value="#{remark.dateChange}">
-                <f:convertDateTime pattern="dd.MM.yy HH:mm" />
-            </h:outputLabel>
-        </p:column>
-        
-        <p:column headerText="#{bundle.Remark}" >
-            <h:outputLabel escape="false" value="#{remark.name}" />
+            #{remark.author.shortFIO}
         </p:column>
         
         <p:column headerText="#{bundle.Status}" sortBy="#{remark.state}" >
-            <h:outputLabel value="#{_bean.getLabelFromBundle(remark.state.currentState.name)}" />
+            <div class="ui-inputgroup">
+                <h:graphicImage value="#{remark.state.currentState.icon}"/>
+                #{_bean.getLabelFromBundle(remark.state.currentState.name)}
+            </div>
         </p:column>
         
-        <p:column headerText="#{bundle.Checked}" width="20">
+        <p:column headerText="#{bundle.Remark}" >
+            <h:outputLabel escape="false" value="#{remark.nameEndElipse}" />
+        </p:column>
+        
+        <p:column headerText="#{bundle.Date}" sortBy="#{remark.dateChange}" style="text-align: center;">
+            <h:outputLabel value="#{remark.dateChange}">
+                <f:convertDateTime pattern="dd.MM.yy HH:mm" />
+            </h:outputLabel>
+        </p:column>                        
+        
+        <p:column headerText="#{bundle.Checked}" width="20" rendered="false">
             <p:selectBooleanCheckbox value="#{remark.checked}"/>
         </p:column> 
         
-        <p:column headerText="#{bundle.Commands}" >
+        <p:column rendered="false">
             <div class="ui-inputgroup">
                 <p:commandButton icon="ico_look" title="#{bundle.Open}" 
                                  immediate="true"
                                  actionListener="#{_bean.onOpenDetail(remark)}">
                     <p:ajax event="dialogReturn" listener="#{_bean.afterCloseDetailItem}" update="mainFRM:mainTabView:tblRemarks"/>
                 </p:commandButton>
-                <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}"
+                <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" rendered="false"
                                  immediate="true"
                                  disabled="#{_bean.isReadOnly() or remark.author != _bean.currentUser}"
                                  update="mainFRM:mainTabView:tblRemarks"
@@ -54,11 +57,9 @@
         </p:column>
         
         <f:facet name="footer">
-            <p:outputLabel value="#{msg.ForAddRemarkSaveProcess}"
-                           rendered="#{_bean.editedItem.id == null}"/>
             <p:commandButton icon="ui-icon-circle-plus" value="#{bundle.Add}" title="#{bundle.AddRemark}" 
                              immediate="true"
-                             rendered="#{_bean.editedItem.id != null}"
+                             rendered="false"
                              disabled="#{_bean.isReadOnly()}"
                              actionListener="#{_bean.onCreateDetail()}">
                 <p:ajax event="dialogReturn" listener="#{_bean.afterCloseDetailItem}" update="mainFRM:mainTabView:tblRemarks"/>

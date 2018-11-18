@@ -83,4 +83,29 @@
         </sql>
     </changeSet>
         
+    <changeSet id="tasks_add_ResultIcon" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="tasks" columnName="ResultIcon" />
+            </not>
+        </preConditions>
+        <addColumn tableName="tasks">
+            <column name="ResultIcon" type="varchar(32)" >
+                <constraints nullable="true"/>
+            </column>            
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="process_add_ResultIcon" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="processes" columnName="ResultIcon" />
+            </not>
+        </preConditions>
+        <addColumn tableName="processes">
+            <column name="ResultIcon" type="varchar(32)" >
+                <constraints nullable="true"/>
+            </column>            
+        </addColumn>
+    </changeSet>        
 </databaseChangeLog> 

@@ -1046,9 +1046,13 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     }    
     
     public void setRoleOwner(T item, User user){
-        item.doSetSingleRole(DictRoles.ROLE_OWNER, user.getId());
+        item.doSetSingleRole(DictRoles.ROLE_OWNER, user);
     }
-            
+          
+    public void setRoleExecutor(T item, User user){
+        item.doSetSingleRole(DictRoles.ROLE_EXECUTOR, user);
+    }
+    
     /* *** ПРОЧИЕ *** */
     
     protected abstract Integer getMetadatesObjId(); 

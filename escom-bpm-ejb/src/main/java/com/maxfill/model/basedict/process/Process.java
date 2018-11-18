@@ -99,6 +99,9 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @Column(name = "Result")
     private String result; 
       
+    @Column(name = "ResultIcon")
+    private String resultIcon = "";
+        
     /* Ссылка на визуальный элемент схемы процесса */
     @Column(name = "LinkUID")
     private String linkUID;
@@ -153,6 +156,15 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     
     /* GETS & SETS */
 
+    @Override
+    public String getResultIcon() {
+        return resultIcon;
+    }
+    @Override
+    public void setResultIcon(String resultIcon) {
+        this.resultIcon = resultIcon;
+    }
+    
     public Staff getInspector() {
         return inspector;
     }

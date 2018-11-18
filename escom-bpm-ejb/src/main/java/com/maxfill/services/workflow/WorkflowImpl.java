@@ -551,6 +551,7 @@ public class WorkflowImpl implements Workflow {
                     task.setFactExecDate(null);
                     task.setBeginDate(null);
                     task.setResult(null);
+                    task.setResultIcon("");
                     task.getState().setCurrentState(draftState);
             });
         
@@ -712,7 +713,7 @@ public class WorkflowImpl implements Workflow {
                             taskFacade.makeDatePlan(task);                    
                         }                
 
-                        notificationService.makeNotification(task, "YouReceivedNewTask"); //уведомление о назначении задачи
+                        notificationService.makeNotification(task, "YouReceivedNewTask", new Object[]{task.getId()}); 
 
                         taskFacade.makeReminder(task); 
                         taskFacade.inicializeExecutor(task, task.getOwner().getEmployee());
@@ -783,7 +784,7 @@ public class WorkflowImpl implements Workflow {
         validateScheme(scheme, true, errors);
         if (!errors.isEmpty()) return new HashSet<>();
                 
-        processFacade.actualizeProcessRoles(process);
+        processFacade.actualizeRoles(process);
         processFacade.edit(process);    //сохраняем изменения
         
         /* Перевод документа в статус Действующий */
@@ -853,7 +854,7 @@ public class WorkflowImpl implements Workflow {
                 .filter(task->DictStates.STATE_RUNNING == task.getState().getCurrentState().getId()) //отмена всех запущенных задач
                 .forEach(task->{
                         task.getState().setCurrentState(stateCancel);
-                        notificationService.makeNotification(task, "TaskCancelled"); //уведомление об аннулировании задачи
+                        notificationService.makeNotification(task, "TaskCancelled", new Object[]{task.getId()}); 
                         taskFacade.addLogEvent(task, DictLogEvents.TASK_CANCELLED, currentUser);
                     });
     }
@@ -869,7 +870,7 @@ public class WorkflowImpl implements Workflow {
                 .filter(task->Objects.equals(task.getState().getCurrentState().getId(), DictStates.STATE_RUNNING))
                 .forEach(task->{
                         task.getState().setCurrentState(stateFinish);
-                        notificationService.makeNotification(task, "TaskIsFinishedBecauseProcessComplete"); //уведомление об аннулировании задачи
+                        notificationService.makeNotification(task, "TaskIsFinishedBecauseProcessComplete", new Object[]{task.getId()}); 
                         taskFacade.addLogEvent(task, DictLogEvents.TASK_FINISHED, currentUser);
                     });
     }

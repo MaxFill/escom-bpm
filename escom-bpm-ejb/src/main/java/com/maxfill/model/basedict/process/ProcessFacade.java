@@ -196,7 +196,7 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         } 
         
         //инициализация и актуализация ролей
-        actualizeProcessRoles(process);
+        actualizeRoles(process);
         
         //инициализация схемы процесса
         ProcTempl procTempl = null;
@@ -246,8 +246,9 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
      * Актуализирует роли процесса
      * @param process 
      */
-    public void actualizeProcessRoles(Process process){        
-        clearRoles(process);
+    @Override
+    public void actualizeRoles(Process process){        
+        super.actualizeRoles(process);
         ProcessType processType = processTypesFacade.getProcTypeForOpt(process.getOwner());
         processType.getProcessRoles().forEach(role->{
                 addRole(process, role.getName());
@@ -261,9 +262,7 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
                         break;
                     }                
                 }                    
-            });
-        
-        setRoleOwner(process, process.getAuthor());
+            });                
         if (process.getScheme() != null){
             process.getScheme().getTasks().stream()
                     .filter(task->task.getOwner() != null)

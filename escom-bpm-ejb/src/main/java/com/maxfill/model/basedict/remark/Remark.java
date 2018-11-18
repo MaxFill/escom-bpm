@@ -1,5 +1,6 @@
 package com.maxfill.model.basedict.remark;
 
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.process.Process;
@@ -20,6 +21,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Сущность "Замечание"
@@ -74,6 +76,12 @@ public class Remark extends BaseDict<Doc, Remark, Remark, RemarkLog, RemarkState
     public Remark() {
         tempId = COUNT.incrementAndGet();
     }
+
+    @Override
+    public String getNameEndElipse() {
+        return StringUtils.abbreviate(getContent(), SysParams.LENGHT_NAME_ELIPSE);   
+    }
+    
     
     /* GETS & SETS */        
 

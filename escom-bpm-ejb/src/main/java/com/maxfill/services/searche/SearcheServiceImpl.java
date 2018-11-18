@@ -77,6 +77,14 @@ public class SearcheServiceImpl implements SearcheService {
     @Asynchronous
     @Override
     public void updateFullTextIndex(Doc doc){
+        if (doc == null){
+            LOGGER.log(Level.SEVERE, "SPHINX: doc is NULL!", "");
+            return;
+        }   
+        if (doc.getName() == null){
+            LOGGER.log(Level.SEVERE, "SPHINX: docName is NULL!", "");
+            return;
+        }
         try (Connection connection = getFullTextSearcheConnection()) {
             if(connection != null) {
                 String sql;

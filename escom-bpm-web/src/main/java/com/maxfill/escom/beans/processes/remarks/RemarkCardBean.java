@@ -64,6 +64,7 @@ public class RemarkCardBean extends BaseCardBean<Remark>{
                 process = task.getScheme().getProcess();
             }
         }
+
         if (params.containsKey("itemId")){
             Integer docId = Integer.valueOf(params.get("itemId"));
             doc = docFacade.find(docId);

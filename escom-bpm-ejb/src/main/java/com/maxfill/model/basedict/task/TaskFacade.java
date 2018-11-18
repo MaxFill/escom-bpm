@@ -226,7 +226,7 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
      */
     public void taskDone(Task task, Result result, User user){
         task.setResult(result.getName());
-        //task.setIconName("");
+        task.setResultIcon(result.getIconName());
         task.setFactExecDate(new Date());        
         task.getState().setCurrentState(stateFacade.getCompletedState());
         messagesFacade.makeAsReadByTask(task, new Date());
@@ -253,6 +253,14 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         cq.select(builder.count(root)).where(builder.and(predicates));
         Query query = em.createQuery(cq);  
         return (Long) query.getSingleResult();
+    }
+    
+    @Override
+    public void actualizeRoles(Task task){
+        super.actualizeRoles(task);               
+        if (task.getOwner() != null){
+            setRoleExecutor(task, task.getOwner().getEmployee());
+        }
     }
     
     /* *** ПРОЧЕЕ *** */  

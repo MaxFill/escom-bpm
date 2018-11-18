@@ -1,0 +1,21 @@
+.issued_hover-handle {
+    padding: 8px;
+    font-size: 14px;
+    color: white !important;
+    background-color: red;
+}
+.issued_hover-panel {
+    border-color: red;
+    border-width: 5px;
+}
+
+.complete_hover-handle {
+    padding: 8px;
+    font-size: 14px;
+    color: white !important;
+    background-color: green;
+}
+.complete_hover-panel {
+    border-color: green;
+    border-width: 5px;
+}

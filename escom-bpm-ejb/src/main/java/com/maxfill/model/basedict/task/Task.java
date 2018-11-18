@@ -107,7 +107,10 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     
     @Column(name = "Result")
     private String result;    
-                
+      
+    @Column(name = "ResultIcon")
+    private String resultIcon = "";
+    
     @Column(name = "Comment")
     private String comment;
     
@@ -247,6 +250,15 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
         return roles;
     }    
 
+    @Override
+    public String getResultIcon() {
+        return resultIcon;
+    }
+    @Override
+    public void setResultIcon(String resultIcon) {
+        this.resultIcon = resultIcon;
+    }
+    
     @Override
     public Integer getId() {
         return id;

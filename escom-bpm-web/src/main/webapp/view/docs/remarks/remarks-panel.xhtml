@@ -5,7 +5,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">                
 
     <p:accordionPanel id="accord" widgetVar="accordion" activeIndex="#{remarkCardBean.currentTab}" var="author" value="#{remarkCardBean.authors}" >       
-        <p:tab title="#{author.getShortFIO()}">
+        <p:tab title="#{author.getShortFIO()}">            
             <p:dataGrid id="dgMyRemarks" var="remark" value="#{remarkCardBean.getAuthorRemarks(author)}" columns="1" layout="grid"
                         paginator="true" emptyMessage="#{bundle.EmptyTable}"
                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -34,7 +34,6 @@
                         <p:commandLink type="button" title="#{bundle.Delete}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
                                         disabled="#{!remarkCardBean.isCanModifyRemark(remark)}" 
                                         actionListener="#{remarkCardBean.onDeleteRemark(remark)}" update="dgMyRemarks">
-                                <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
                                 <h:outputText styleClass="ui-icon ui-icon-trash" />
                         </p:commandLink> 
                         <p:commandLink type="button" title="#{bundle.Notify}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
@@ -62,7 +61,7 @@
                                          rows="3" autoResize="true" styleClass="ui-grid-col-12" maxlength="1000"/>
                     </p:panelGrid>
                 </p:panel>
-            </p:dataGrid>
+            </p:dataGrid>            
             <p:contextMenu for="dgMyRemarks">
                 <p:menuitem value="#{bundle.CreateRemark}" icon="ui-icon-plus" 
                             disabled="#{!remarkCardBean.isCanCreateRemark()}"

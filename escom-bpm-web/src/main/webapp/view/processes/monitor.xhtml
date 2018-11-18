@@ -145,7 +145,7 @@
                      emptyMessage="#{bundle.EmptyTable}" 
                      paginator="true" paginatorPosition="bottom"
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                     rowsPerPageTemplate="10,25,50" rows="10" 
+                     rowsPerPageTemplate="10,20,30,50" rows="10" 
                      currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord}"                     
                      sortBy="#{item.regNumber}"
                      rowStyleClass="#{sessionBean.getItemStyle(item)}"
@@ -186,7 +186,8 @@
                 #{sessionBean.getItemStatus(item)}
             </p:column>
 
-            <p:column headerText="#{bundle.Result}" width="100">
+            <p:column headerText="#{bundle.Result}" >                
+                <p:graphicImage value="/resources/icon/#{item.resultIcon}.png"  /> 
                 #{monitorBean.onGetItemResult(item)}
             </p:column>
 

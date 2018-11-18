@@ -10,8 +10,12 @@ import java.util.List;
 public interface Results {
     String getAvaibleResultsJSON();
     void setAvaibleResultsJSON(String avaibleResultsJSON);
+    
     void setResults(List<Result> taskResults);
+    
     String getResult();
     void setResult(String result);
     
+    String getResultIcon();
+    void setResultIcon(String resultIcon);
 }

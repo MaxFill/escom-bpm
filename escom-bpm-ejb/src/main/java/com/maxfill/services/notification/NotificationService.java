@@ -9,5 +9,5 @@ import com.maxfill.services.Services;
 public interface NotificationService {
     NotificationSettings createSettings(Services service);
     void makeNotifications(StringBuilder sb);
-    void makeNotification(Task task, String msg);
+    void makeNotification(Task task, String msg, Object[] msgParams);
 }

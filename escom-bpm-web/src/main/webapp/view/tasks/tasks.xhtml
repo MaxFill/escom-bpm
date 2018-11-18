@@ -86,6 +86,7 @@
                      paginator="true" paginatorPosition="bottom"
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                      rowsPerPageTemplate="5, 10, 25, 50" rows="10" 
+                     rowStyleClass="#{sessionBean.getItemStyle(item)}"
                      currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                      tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
                      sortBy="#{item.planExecDate}" var="item" selectionMode="single"                    
@@ -99,22 +100,19 @@
             </p:column>
             
             <p:column headerText="#{bundle.Number}" sortBy="#{item.fullRegNumber}">
-                <h:outputLabel value="#{item.fullRegNumber}"/>
+                #{item.fullRegNumber}
             </p:column>
 
             <p:column headerText="#{bundle.Task}" >
-                <h:outputLabel value="#{item.nameEndElipse}"/>
+                #{item.nameEndElipse}
             </p:column>
 
             <p:column headerText="#{bundle.Executor}" >
-                <h:outputLabel value="#{item.owner.employeeFIO}"/>
+                #{item.owner.employeeFIO}
             </p:column>
             
             <p:column headerText="#{bundle.Process}" >
-                <p:commandLink value="#{taskListBean.getProcessName(item)}" 
-                               onstart="PF('statusDialog').show()"
-                               oncomplete="PF('statusDialog').hide();"
-                               actionListener="#{taskListBean.onOpenProcess(item)}"/>
+                #{taskListBean.getProcessName(item)}
             </p:column>
             
             <p:column headerText="#{bundle.Term}" sortBy="#{item.planExecDate}">
@@ -128,15 +126,16 @@
             </p:column>
             
             <p:column headerText="#{bundle.Status}">        
-                <h:outputLabel value="#{sessionBean.getItemStatus(item)}"/>
+                #{sessionBean.getItemStatus(item)}
             </p:column>
 
             <p:column headerText="#{bundle.Result}">
-                <h:outputLabel value="#{taskListBean.getLabelFromBundle(item.getResult())}"/>
+                <p:graphicImage value="/resources/icon/#{item.resultIcon}.png"  /> 
+                #{taskListBean.getLabelFromBundle(item.getResult())}
             </p:column>
 
             <p:column width="20">
-                <p:commandButton id="btnOpenTask" icon="ico_look" title="#{bundle.OpenTask}" 
+                <p:commandButton icon="ico_look" title="#{bundle.OpenTask}" 
                                  onstart="PF('statusDialog').show();"
                                  oncomplete="PF('statusDialog').hide();"
                                  actionListener="#{taskListBean.onOpenTask(item)}">
@@ -145,6 +144,12 @@
             </p:column>
         </p:dataTable>
 
+        <p:commandButton id="btnOpenTask"  
+                                 onstart="PF('statusDialog').show();"
+                                 oncomplete="PF('statusDialog').hide();"
+                                 actionListener="#{taskListBean.onOpenTask()}">
+                    <p:ajax event="dialogReturn" listener="#{taskListBean.onTaskDlgClose}"/>
+        </p:commandButton>
     </ui:define>
     
 </ui:composition>

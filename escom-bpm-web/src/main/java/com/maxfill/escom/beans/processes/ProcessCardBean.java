@@ -126,7 +126,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         int seconds = deadLineDeltaDay * 86400;
         seconds = seconds + deadLineDeltaHour * 3600;
         process.setDeltaDeadLine(seconds);
-        processFacade.actualizeProcessRoles(process);
+        processFacade.actualizeRoles(process);
         super.onBeforeSaveItem(process);
     }
 

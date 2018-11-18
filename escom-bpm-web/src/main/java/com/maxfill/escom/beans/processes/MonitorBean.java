@@ -250,13 +250,9 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         return sb.toString();
     }        
         
-    public String onGetItemResult(Results item){
-        if (StringUtils.isBlank(item.getResult())) return "";
-        StringBuilder sb = new StringBuilder();
-        sb.append(getLabelFromBundle("Done"));
-        sb.append(": ");
-        sb.append(getLabelFromBundle(item.getResult()));
-        return sb.toString();
+    public String onGetItemResult(Results item){        
+        if (StringUtils.isBlank(item.getResult())) return "";                
+        return getLabelFromBundle(item.getResult());
     }
     
     /**

@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.ejb.EJB;
@@ -58,13 +57,13 @@ public class NotificationServiceImp implements NotificationService{
     }
 
     @Override
-    public void makeNotifications(StringBuilder detailInfo) {        
-        List<State> states = Collections.singletonList(stateFacade.getRunningState());        
+    public void makeNotifications(StringBuilder detailInfo) {                
         AtomicInteger countTask = new AtomicInteger(0);
         final Date curDate = new Date();
+        List<State> states = Collections.singletonList(stateFacade.getRunningState());
         staffFacade.findActualStaff().stream()
                 .forEach(staff->{
-                    taskFacade.findTaskByStaffStates(staff, states)
+                    taskFacade.findTaskByStaffStates(staff, states) //отбор задач находящихся в работе!
                         .forEach(task->{                                                        
                             if (task.getNextReminder() != null && task.getNextReminder().before(curDate)){
                                 if (task.getPlanExecDate() != null && task.getPlanExecDate().before(curDate)){
@@ -98,13 +97,14 @@ public class NotificationServiceImp implements NotificationService{
      * @param task 
      */
     private void notifReminder(Task task){
-        makeNotification(task, "Reminder");
+        String differenceTime = DateUtils.differenceTime(new Date(), task.getPlanExecDate());
+        makeNotification(task, "Reminder", new Object[]{task.getId(), differenceTime});
         taskFacade.makeNextReminder(task);
         taskFacade.edit(task);
     }
     
     private void taskOverdueReminder(Task task){
-        makeNotification(task, "ThisTaskOverdue");
+        makeNotification(task, "ThisTaskOverdue", new Object[]{task.getId()});
         task.setNextReminder(DateUtils.addHour(new Date(), 12));
         taskFacade.edit(task);
     }
@@ -114,15 +114,16 @@ public class NotificationServiceImp implements NotificationService{
      * Вызывается так же из маршрута процесса
      * @param task 
      * @param msgKeySubject - ключ ресурса для сообщения 
+     * @param msgParams 
      */
     @Override
-    public void makeNotification(Task task, String msgKeySubject){        
+    public void makeNotification(Task task, String msgKeySubject, Object[] msgParams){        
         User resipient = task.getOwner().getEmployee();
         if (resipient == null) return;
         Locale locale = userFacade.getUserLocale(resipient);
         
         StringBuilder sb = new StringBuilder();
-        sb.append(ItemUtils.getMessageLabel(msgKeySubject, locale));
+        sb.append(ItemUtils.getFormatMessage(msgKeySubject, locale, msgParams));
         sb.append(" <").append(task.getName()).append(">");        
         List<BaseDict> links = new ArrayList<>();
         links.add(task);

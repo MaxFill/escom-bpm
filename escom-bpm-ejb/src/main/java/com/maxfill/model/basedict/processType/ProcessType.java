@@ -224,6 +224,14 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     }    
     
     @Override
+    public String getResultIcon() {
+        return "";
+    }
+    @Override
+    public void setResultIcon(String resultIcon) {   
+    }
+    
+    @Override
     public Integer getId() {
         return id;
     }

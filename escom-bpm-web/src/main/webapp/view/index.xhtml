@@ -22,7 +22,7 @@
         <p:importConstants type="com.maxfill.dictionary.DictFilters" var="DictFilters" />
         <p:importConstants type="com.maxfill.dictionary.DictFrmName" var="DictFrmName" />        
         <h:form id="mainFRM">
-            <p:poll interval="90" update="mainFRM:countMessages mainFRM:countTasks" autoStart="true" />
+            <p:poll interval="90" update="mainFRM:countMessages mainFRM:countTasks" autoStart="true" widgetVar="autoCheckInfo" />
             
             <p:notificationBar id="notifBar" position="top" effect="slide" styleClass="notifBar" widgetVar="notifBar" >
                 <p:commandButton title="#{bundle.Close}" style="position: absolute; right: 30px; top: 5px; border: 0px; width: 30px;"
@@ -80,6 +80,7 @@
                     </span>
 
                     <p:commandButton icon="ico_exit" value="#{bundle.CloseSession}" title="#{bundle.ExitProgramm}"
+                                     onclick="PF('autoCheckInfo').stop();"
                                      onstart="PF('dlgExit').show(); return isClose = 1;"                                     
                                      actionListener="#{sessionBean.onSessionExit()}"/>
                 </f:facet>

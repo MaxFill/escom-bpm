@@ -597,7 +597,9 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     @Override
     public void onOpenDetail(Remark item) {
         setSourceItem(item);
-        remarkBean.prepEditChildItem((Remark)item, getParamsMap());
+        Map<String, List<String>> paramsMap = getParamsMap();
+        paramsMap.put("remarkId", Collections.singletonList(item.getId().toString()));
+        remarkBean.prepEditChildItem((Remark)item, paramsMap);
     }
     
     @Override

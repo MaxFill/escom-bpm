@@ -105,7 +105,10 @@ public class TaskListBean extends LazyLoadBean<Task>{
         onOpenTask(task);
     }
     
-    public void onOpenTask(Task task) {               
+    public void onOpenTask() {
+        onOpenTask(selected);
+    }
+    public void onOpenTask(Task task) {
         selected = task;
         taskBean.prepEditItem(selected, getParamsMap());
     }

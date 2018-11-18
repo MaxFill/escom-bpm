@@ -274,6 +274,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
             replaceReportExecutor(task, getCurrentUser());
         }
         */
+        taskFacade.actualizeRoles(task);
         super.onBeforeSaveItem(task);
     }
     
@@ -332,7 +333,9 @@ public class TaskCardBean extends BaseCardBean<Task>{
             return "";
         }        
         
-        if (!forShow.isEmpty()){ //если есть что нужно инициализировать, то показываем диалоговое окно
+        if (!forShow.isEmpty()){ //если есть что нужно инициализировать, то показываем диалоговое окно            
+            setEditedItem(taskFacade.find(getEditedItem().getId()));
+            PrimeFaces.current().ajax().update("mainFRM");
             PrimeFaces.current().ajax().update("initObjFRM");
             PrimeFaces.current().executeScript("PF('InitObjectsWV').show();");            
             return "";
@@ -368,7 +371,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
      */
     public String paramUrlProc(){
         String result = "";
-        Process process = getProcess();
+        Process process = (Process)getProcess().getRoot();
         if (process != null){
             result = "?procId=" + process.getId();
         }
@@ -656,6 +659,11 @@ public class TaskCardBean extends BaseCardBean<Task>{
     }
         
     /* GETS & SETS */
+    
+    @Override
+    public Task getEditedItem() {
+        return super.getEditedItem();
+    }    
     
     public int getReminderDeltaDay() {
         return reminderDeltaDay;

@@ -234,4 +234,9 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
         item.setRoles(null);
         item.setRoleJson(null);
     }
+    
+    public void actualizeRoles(T item){
+        clearRoles(item);
+        setRoleOwner(item, item.getAuthor());
+    }
 }
