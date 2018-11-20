@@ -42,7 +42,8 @@ public abstract class BaseFacade<T extends Dict> {
         return em.find(itemClass, id);
     }
     
-    public void create(T entity) {
+    synchronized public void create(T entity) {
+        /*
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
         Set<ConstraintViolation<T>> constraintViolations = validator.validate(entity);
@@ -55,15 +56,15 @@ public abstract class BaseFacade<T extends Dict> {
         } else {
             em.persist(entity);
         }
-
-        //em.persist(entity);
+        */
+        em.persist(entity);
     }
 
-    public void edit(T entity) {
+    synchronized public void edit(T entity) {
         em.merge(entity);
     }
 
-    public void remove(T entity) {
+    synchronized public void remove(T entity) {
         entity = em.getReference(itemClass, entity.getId());
         em.remove(entity);
     }

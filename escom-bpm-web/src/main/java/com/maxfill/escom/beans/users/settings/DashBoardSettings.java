@@ -21,6 +21,9 @@ public class DashBoardSettings {
     @XmlElement(name = "Widget")
     private String widget;
     
+    @XmlElement(name = "Name")
+    private String name;
+    
     @XmlElement(name = "ItemIndex")
     private Integer itemIndex;
 
@@ -30,12 +33,25 @@ public class DashBoardSettings {
     public DashBoardSettings() {
     }
     
+    /**
+     * Конструктор 
+     * @param widget
+     * @param itemIndex
+     * @param colIndex 
+     */
     public DashBoardSettings(String widget, Integer itemIndex, Integer colIndex) {
         this.widget = widget;
         this.itemIndex = itemIndex;
         this.colIndex = colIndex;
     }
 
+    public DashBoardSettings(String widget, String name, Integer itemIndex, Integer colIndex) {
+        this.widget = widget;
+        this.itemIndex = itemIndex;
+        this.colIndex = colIndex;
+        this.name = name;
+    }
+     
     public String getWidget() {
         return widget;
     }
@@ -56,17 +72,25 @@ public class DashBoardSettings {
     public void setColIndex(Integer colIndex) {
         this.colIndex = colIndex;
     }
+
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }    
+    
+    /* *** *** */
     
     @Override
     public String toString() {
         return "DashBoardSettings{" + "widget=" + widget + ", itemIndex=" + itemIndex + '}';
     }
-    
+
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 43 * hash + Objects.hashCode(this.widget);
-        hash = 43 * hash + Objects.hashCode(this.itemIndex);
+        int hash = 5;
+        hash = 17 * hash + Objects.hashCode(this.widget);
         return hash;
     }
 
@@ -85,11 +109,8 @@ public class DashBoardSettings {
         if (!Objects.equals(this.widget, other.widget)) {
             return false;
         }
-        if (!Objects.equals(this.itemIndex, other.itemIndex)) {
-            return false;
-        }
         return true;
-    }
+    }    
     
     
 }

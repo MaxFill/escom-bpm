@@ -82,7 +82,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     }        
     
     @Override
-    public void remove(T entity){
+    synchronized public void remove(T entity){
         removeItemLogs(entity);
         super.remove(entity);
     }        

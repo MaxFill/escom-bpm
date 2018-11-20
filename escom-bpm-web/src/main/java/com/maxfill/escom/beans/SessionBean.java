@@ -39,11 +39,11 @@ import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.services.favorites.FavoriteService;
 import com.maxfill.services.files.FileService;
 import com.maxfill.services.print.PrintService;
+import com.maxfill.services.worktime.DayType;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.themeswitcher.ThemeSwitcher;
@@ -79,8 +79,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
-import org.apache.commons.collections4.MapUtils;
-import org.primefaces.event.DashboardReorderEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import org.primefaces.model.chart.MeterGaugeChartModel;
@@ -122,10 +120,28 @@ public class SessionBean implements Serializable{
             }
         });
     
+    private final List<DayType> dayTypes = Collections.unmodifiableList(
+        new ArrayList<DayType>() {
+            private static final long serialVersionUID = 3109256773218160485L;
+            {
+                add(new DayType(null, MsgUtils.getBandleLabel("EmptySelData"), ""));
+                add(new DayType(DateUtils.WORKDAY, MsgUtils.getBandleLabel("Workday"), "portfolio"));
+                add(new DayType(DateUtils.WEEKEND, MsgUtils.getBandleLabel("Weekend"), "weekend"));
+                add(new DayType(DateUtils.HOLLYDAY, MsgUtils.getBandleLabel("Hollyday"), "holyday"));
+                add(new DayType(DateUtils.HOSPITALDAY, MsgUtils.getBandleLabel("HospitalDay"), "hospital"));
+                add(new DayType(DateUtils.MISSIONDAY, MsgUtils.getBandleLabel("MissionDay"), "mission"));                
+            }
+        });
+    
+    private final List<DashBoardSettings> dbsList = new ArrayList<>(); //список доступных пользователю виджетов
+    
+    private DashBoardSettings[] dbsChecked; //отображаемые виджеты
+    
     //буфер бинов 
     private final ConcurrentHashMap<String, BaseView > openedBeans = new ConcurrentHashMap<>();
     
     private String openFormName;
+    private boolean isChangeDashboard = true;
     
     @EJB
     protected Configuration configuration;    
@@ -172,49 +188,108 @@ public class SessionBean implements Serializable{
         temeInit(); 
     }   
     
-    public void initDashBoard(){
-        dashboardModel = new DefaultDashboardModel();
-        DashboardColumn column1 = new DefaultDashboardColumn();
-        DashboardColumn column2 = new DefaultDashboardColumn();
-        DashboardColumn column3 = new DefaultDashboardColumn();
-        DashboardColumn column4 = new DefaultDashboardColumn();
-        DashboardColumn column5 = new DefaultDashboardColumn();
-        DashboardColumn column6 = new DefaultDashboardColumn();
+    public void initDashBoard(){         
+        dbsList.add(new DashBoardSettings("userParams", MsgUtils.getBandleLabel("User"), 1 , 1));
+        dbsList.add(new DashBoardSettings("tasks", MsgUtils.getBandleLabel("Tasks"), 2 , 1));
+        dbsList.add(new DashBoardSettings("messages", MsgUtils.getBandleLabel("Messages"), 3 , 1));
         
-        dashboardModel.addColumn(column1);
-        dashboardModel.addColumn(column2);
-        dashboardModel.addColumn(column3); 
-        dashboardModel.addColumn(column4);
-        dashboardModel.addColumn(column5);
-        dashboardModel.addColumn(column6);
+        dbsList.add(new DashBoardSettings("docsExplorer", MsgUtils.getBandleLabel("Documents"), 1 , 2));
+        dbsList.add(new DashBoardSettings("processes", MsgUtils.getBandleLabel("Processes"), 2 , 2));        
+        
+        dbsList.add(new DashBoardSettings("orgStructure", MsgUtils.getBandleLabel("OrgStructure"), 1 , 3));
+        dbsList.add(new DashBoardSettings("dictsExplorer", MsgUtils.getBandleLabel("Partners"), 2 , 3));        
+        
+        if (isUserAdmin()){
+            dbsList.add(new DashBoardSettings("admObjects", MsgUtils.getBandleLabel("Administation"), 1 , 4));
+            dbsList.add(new DashBoardSettings("services", MsgUtils.getBandleLabel("Services"), 2 , 4));
+            dbsList.add(new DashBoardSettings("loggers", MsgUtils.getBandleLabel("Logging"), 3 , 4));            
+        }
+                
+        dbsList.add(new DashBoardSettings("eventFeed", MsgUtils.getBandleLabel("EventFeed"), 1 , 5));   
+        if (isUserAdmin()){
+            dbsList.add(new DashBoardSettings("diskInfo", MsgUtils.getBandleLabel("DiskInfo"), 2, 5));
+        }                               
+
+        onLoadDashboard();
+        
+        dbsChecked = new DashBoardSettings[getUserSettings().getDashBoard().size()];
+        dbsChecked = getUserSettings().getDashBoard().toArray(dbsChecked);
+    }    
+    
+    public void onLoadDashboard(){
+        dashboardModel = new DefaultDashboardModel();        
+        dashboardModel.addColumn(new DefaultDashboardColumn());
+        dashboardModel.addColumn(new DefaultDashboardColumn());
+        dashboardModel.addColumn(new DefaultDashboardColumn()); 
+        dashboardModel.addColumn(new DefaultDashboardColumn());
+        dashboardModel.addColumn(new DefaultDashboardColumn());
+        dashboardModel.addColumn(new DefaultDashboardColumn());
         
         if (getUserSettings().getDashBoard().isEmpty()){
-            column5.addWidget("charts");
-
-            column4.addWidget("admObjects"); 
-            column4.addWidget("services");
-            column4.addWidget("loggers");
-
-            column3.addWidget("orgStructure");
-            column3.addWidget("dictsExplorer"); 
-
-            column2.addWidget("docsExplorer");        
-            column2.addWidget("processes");
-
-            column1.addWidget("userParams");
-            column1.addWidget("tasks");
-            column1.addWidget("messages");
+            dbsList.forEach(dbSettings->{                        
+                    DashboardColumn col = dashboardModel.getColumn(dbSettings.getColIndex());
+                    col.addWidget(dbSettings.getItemIndex(), dbSettings.getWidget());
+                });
+            getUserSettings().setDashBoard(dbsList);
         } else {
             getUserSettings().getDashBoard().stream()
                     .sorted(Comparator.comparing(DashBoardSettings::getItemIndex, nullsFirst(naturalOrder())))
-                    .forEach(dbSettings->{
+                    .forEach(dbSettings->{ 
+                        String widget = dbSettings.getWidget();                        
                         DashboardColumn col = dashboardModel.getColumn(dbSettings.getColIndex());
-                        col.addWidget(dbSettings.getItemIndex(), dbSettings.getWidget());
+                        col.addWidget(dbSettings.getItemIndex(), widget);
                     });
         }
     }
     
+    public void onChangeDashboard(){
+        isChangeDashboard = true;        
+    }
+    
+    public void onUpdateDashboard(){
+        if (isChangeDashboard == false) return; 
+        
+        List<DashBoardSettings> checked = new ArrayList<>(Arrays.asList(dbsChecked));
+        List<String> checkedWidget = checked.stream().map(dbs->dbs.getWidget()).collect(Collectors.toList());
+        
+        dashboardModel.getColumns().forEach(col -> {
+            List<String> forRemove = new ArrayList<>();
+            col.getWidgets().forEach((widget) -> {                
+                if (checkedWidget.contains(widget)){
+                    checkedWidget.remove(widget);                    
+                } else {
+                    forRemove.add(widget);
+                }
+            });
+            col.getWidgets().removeAll(forRemove);
+        });
+        
+        checkedWidget.forEach(widget->dashboardModel.getColumn(0).addWidget(widget));
+        isChangeDashboard = false;
+    }
+    
+    public void onAutoUpdate(){
+        dashboardModel.getColumns().forEach(col -> col.getWidgets()
+            .forEach(widget->{
+                switch (widget){
+                    case "messages":{
+                        PrimeFaces.current().executeScript("document.getElementById('mainFRM:refreshMsg').click();");
+                        break;
+                    }
+                    case "tasks":{
+                        PrimeFaces.current().executeScript("document.getElementById('mainFRM:refreshTasks').click();");
+                        break;
+                    }
+                    case "eventFeed":{
+                        PrimeFaces.current().executeScript("document.getElementById('mainFRM:refreshEventFeed').click();");
+                        break;
+                    }
+                }
+            }));
+    }
+    
     /* *** *** * /
+        
     /* Добавление права объекта источника в буфер  */
     public void addSourceRight(String key, Right right){
         sourceRightMap.put(key, right);
@@ -930,6 +1005,10 @@ public class SessionBean implements Serializable{
         return notifMessages;
     }
 
+    public List<DayType> getDayTypes() {
+        return dayTypes;
+    }   
+        
     /**
      * Возвращает папку текущего пользователя
      * @return 
@@ -990,5 +1069,17 @@ public class SessionBean implements Serializable{
         }
 
     }
-     
+
+    public List<DashBoardSettings> getDbsList() {
+        return dbsList;
+    }
+
+    public DashBoardSettings[] getDbsChecked() {
+        return dbsChecked;
+    }
+    public void setDbsChecked(DashBoardSettings[] dbsChecked) {
+        this.dbsChecked = dbsChecked;
+    }
+        
+         
 }

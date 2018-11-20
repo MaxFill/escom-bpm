@@ -6,6 +6,7 @@ import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.doc.DocFacade;
 import com.maxfill.model.basedict.folder.Folder;
+import com.maxfill.model.basedict.process.reports.ProcReportFacade;
 import com.maxfill.model.basedict.user.User;
 import com.maxfill.services.files.FileService;
 import com.maxfill.utils.EscomUtils;
@@ -44,6 +45,8 @@ public class AttacheServiceImpl implements AttacheService{
     private FileService fileService;
     @EJB
     private DocFacade docsFacade;
+    @EJB
+    private ProcReportFacade procReportFacade;
     
     /**
      * Загрузка файла на сервер с созданием Attaches
@@ -53,7 +56,7 @@ public class AttacheServiceImpl implements AttacheService{
      * @throws java.io.IOException
      */
     @Override
-    public Attaches uploadAtache(Map<String, Object> params, InputStream inputStream) throws IOException{
+    synchronized public Attaches uploadAtache(Map<String, Object> params, InputStream inputStream) throws IOException{
         if (params.isEmpty()) return null;        
 
         String fileName = (String) params.get("fileName");
@@ -91,7 +94,7 @@ public class AttacheServiceImpl implements AttacheService{
     }
     
     @Override
-    public void deleteAttache(Attaches attache){
+    synchronized public void deleteAttache(Attaches attache){
         try{            
             String fileName = configuration.getUploadPath() + attache.getFullName();
             File file = new File(fileName);

@@ -11,7 +11,6 @@ import com.maxfill.services.worktime.WorkTimeService;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 import java.util.TimeZone;
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;
@@ -51,7 +50,10 @@ public class CalendarBean extends BaseViewBean {
     
     @Override
     protected void initBean(){        
-        company = companyFacade.findAll(getCurrentUser()).get(0);  
+        company = companyFacade.findAll(getCurrentUser()).get(0);
+        if (!sessionBean.isUserAdmin()){
+            selectedStaff = getCurrentStaff();
+        }
         makeStartEndDates();
     }
   

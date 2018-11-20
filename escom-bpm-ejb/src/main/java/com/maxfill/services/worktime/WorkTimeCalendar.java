@@ -27,7 +27,7 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "workTimeCalendar",
-        indexes = {@Index(name="WorkTimeCalendar_INDEX", columnList = "DateCalendar", unique = true)})
+        indexes = {@Index(name="WorkTimeCalendar_INDEX", columnList = "DateCalendar, Staff", unique = true)})
 public class WorkTimeCalendar implements Serializable, Dict{
     private static final long serialVersionUID = -102040552117502275L;
 
@@ -51,7 +51,7 @@ public class WorkTimeCalendar implements Serializable, Dict{
     
     @Basic(optional = false)
     @Column(name = "DayType")
-    private String dayType;
+    private Integer dayType; 
     
     @JoinColumn(name = "Staff", referencedColumnName = "Id")
     @ManyToOne(optional = false)
@@ -59,6 +59,7 @@ public class WorkTimeCalendar implements Serializable, Dict{
         
     @Transient    
     private Boolean standart = false;
+    
     @Transient
     private final String uid;
     
@@ -66,45 +67,75 @@ public class WorkTimeCalendar implements Serializable, Dict{
         this.uid = EscomUtils.generateGUID();
     }
 
-    public WorkTimeCalendar(String date, Integer workTime, String dayType) {
+    public WorkTimeCalendar(String date, Integer workTime, Integer dayType) {
         this.dateCalendar = date;
         this.workTime = workTime;
         this.dayType = dayType;
         this.uid = EscomUtils.generateGUID();
     }     
     
-    public WorkTimeCalendar(String date, Integer beginTime, Integer workTime, String dayType) {
+    public WorkTimeCalendar(String date, Integer beginTime, Integer workTime, Integer dayType) {
         this.dateCalendar = date;
         this.workTime = workTime;
         this.dayType = dayType;
         this.beginTime = beginTime;
         this.uid = EscomUtils.generateGUID();
     }     
-     
+    
     public boolean isWorkDay(){
-        return "Workday".equals(dayType);
+        return DateUtils.WORKDAY == dayType;
     }    
     public boolean isHolliDay(){
-        return "Hollyday".equals(dayType);
+        return DateUtils.HOLLYDAY == dayType;
     }
     public boolean isWeekEnd(){
-        return "Weekend".equals(dayType);
+        return DateUtils.WEEKEND == dayType;
     }
-    
+    public boolean isHospital(){
+        return DateUtils.HOSPITALDAY == dayType;
+    }
+    public boolean isMission(){
+        return DateUtils.MISSIONDAY == dayType;
+    }    
     public void setHolliDay(){
-        dayType = "Hollyday";
+        dayType = DateUtils.HOLLYDAY;
     }
     public void setWeekEnd(){
-        dayType = "Weekend";
+        dayType = DateUtils.WEEKEND;
     }
     public void setWorkDay(){
-        dayType = "Workday";
+        dayType = DateUtils.WORKDAY;
     }
     
     public String getStyle(){
-        return dayType;
+        String style = "";
+        switch (dayType){
+            case DateUtils.WORKDAY:{
+                style = "Workday";
+                break;
+            }
+            case DateUtils.HOLLYDAY:{
+                style = "Hollyday";
+                break;
+            }
+            case DateUtils.HOSPITALDAY:{
+                style = "HospitalDay";
+                break;
+            }
+            case DateUtils.WEEKEND:{
+                style = "Weekend";
+                break;
+            }
+            case DateUtils.MISSIONDAY:{
+                style = "MissionDay";
+                break;
+            }
+        }
+        return style;
     }    
      
+    /* GETS & SETS */
+    
     @Transient
     public Date getStart(){
         Date dt = getDate();
@@ -173,10 +204,10 @@ public class WorkTimeCalendar implements Serializable, Dict{
         this.beginTime = beginTime;
     }
 
-    public String getDayType() {
+    public Integer getDayType() {
         return dayType;
     }
-    public void setDayType(String dayType) {
+    public void setDayType(Integer dayType) {
         this.dayType = dayType;
     }
           

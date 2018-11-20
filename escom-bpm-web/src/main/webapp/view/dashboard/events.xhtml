@@ -1,0 +1,28 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">    
+
+    <p:panel id="eventFeed" header="#{bundle.EventFeed}" toggleable="true" styleClass="dash-panel">
+        <f:facet name="actions">
+            <p:commandLink id="refreshEventFeed" type="button" title="#{bundle.Refresh}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+                           actionListener="#{eventFeedBean.onRefresh()}" update="dsEventFeed">   
+                <h:outputText styleClass="ui-icon ui-icon-arrowrefresh-1-s" />
+            </p:commandLink>
+        </f:facet>
+
+        <p:dataScroller id ="dsEventFeed" value="#{eventFeedBean.events}" var="event" chunkSize="10" mode="inline" scrollHeight="500" styleClass="ui-panelgrid-blank">
+            <h:panelGrid columns="3" styleClass="without-spaces ">
+                <p:graphicImage value="/resources/icon/#{event.iconName}-32.png"/> 
+                <h:outputText value="#{event.name}" />
+                <p:commandLink type="button" title="#{bundle.Delete}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+                               rendered="#{event.author eq eventFeedBean.currentUser}"
+                               actionListener="#{eventFeedBean.onDeleteEvent(event)}" update="dsEventFeed">   
+                    <h:outputText styleClass="ui-icon ui-icon-trash" />
+                </p:commandLink>
+            </h:panelGrid>
+        </p:dataScroller>
+
+    </p:panel>
+</ui:composition>

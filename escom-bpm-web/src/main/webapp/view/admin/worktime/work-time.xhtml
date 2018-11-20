@@ -2,7 +2,8 @@
                  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                  xmlns:p="http://primefaces.org/ui"
                  template="/view/templ/templ-dlg.xhtml"
-                 xmlns:f="http://xmlns.jcp.org/jsf/core">          
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">          
 
     <ui:param name="_bean" value="#{workTimeCardBean}"/>
 
@@ -18,34 +19,51 @@
     
     <ui:define name="centerFormContent">
         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12"> 
-            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="ui-grid-col-12 without-spaces">            
-                <p:outputLabel value="#{bundle.Date}:"/>
+            <h:panelGrid columns="2" styleClass="without-spaces">            
+                <h:outputLabel value="#{bundle.Date}:"/>
                 <p:outputLabel value="#{workTimeCardBean.editedItem.date}">                    
                     <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
                 </p:outputLabel>
-            </p:panelGrid>
+            </h:panelGrid>
+            
             <p:separator styleClass="ui-grid-col-12"/>
+            
             <p:selectBooleanCheckbox value="#{workTimeCardBean.editedItem.standart}"
                                          itemLabel="#{bundle.StandardWorkingTime}"
                                          disabled="#{_bean.readOnly}">
                     <p:ajax update="gridWorkTime" process="@this" oncomplete="itemChange = 1;"/>
             </p:selectBooleanCheckbox>
         
-            <p:panelGrid id="gridWorkTime" columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12 without-spaces">            
+            <h:panelGrid id="gridWorkTime" columns="2" styleClass="without-spaces">            
                 <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">            
                     <p:outputLabel value="#{bundle.Type}:" indicateRequired="true"/>
-                    <p:selectOneRadio id="typeDay" value="#{_bean.editedItem.dayType}" 
-                                      disabled="#{_bean.readOnly or _bean.editedItem.standart}" layout="grid" columns="1" >
-                        <f:selectItem itemLabel="hollyday" itemValue="Hollyday"/>
-                        <f:selectItem itemLabel="workday"  itemValue="Workday" />
+                    <p:selectOneMenu id="typeDay" value="#{workTimeCardBean.selectedDayType}" var="td" converter="DayTypesConverter"
+                                     required="#{param['isRequired'] == 'true'}"
+                                     requiredMessage="#{bundle.Field} [#{bundle.Type}] #{bundle.MustBeFilled}"
+                                     disabled="#{_bean.readOnly or _bean.editedItem.standart}" >
+                        <f:selectItems value="#{_bean.dayTypes}" var="dayType" itemLabel="#{dayType.name}" itemValue="#{dayType}" />                        
                         <p:ajax update="gridWorkTime" event="valueChange" onstart="itemChange = 1;"/>
-                    </p:selectOneRadio>
+                        <p:column style="width:10%">
+                            <p:graphicImage value="/resources/icon/#{td.iconName}-16.png" /> 
+                        </p:column>
+ 
+                        <p:column>
+                            <h:outputText value="#{td.name}" />
+                        </p:column>
+                    </p:selectOneMenu>
                 </p:panelGrid>
 
                 <ui:include src="/view/common/work-time.xhtml">
                     <ui:param name="_readOnly" value="#{_bean.readOnly or _bean.editedItem.standart or _bean.editedItem.dayType ne 'Workday' }"/>
                 </ui:include>            
-            </p:panelGrid>
+            </h:panelGrid>
+        
+            <p:separator/>
+            <h:panelGrid columns="3" styleClass="without-spaces">
+                <p:graphicImage value="/resources/icon/importance-32.png" />
+                <p:outputLabel value="#{bundle.PublishEventFeed}"/>
+                <p:selectBooleanCheckbox value="#{_bean.publicEventFeed}" disabled="#{_bean.readOnly}"/>                
+            </h:panelGrid>
         </p:panelGrid>
     </ui:define>
 </ui:composition>

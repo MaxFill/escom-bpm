@@ -98,6 +98,7 @@
     <class>com.maxfill.model.basedict.userGroups.UserGroupsStates</class>
     <class>com.maxfill.model.basedict.process.options.RunOptions</class>
     <class>com.maxfill.model.basedict.processType.roles.ProcessRole</class>
+    <class>com.maxfill.model.core.eventfeed.EventFeed</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

@@ -1,0 +1,24 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">    
+    
+    <p:panel id="diskInfo" header="#{bundle.Info}" rendered="#{sessionBean.userAdmin}" toggleable="true" styleClass="dash-panel">
+        <f:facet name="actions">
+            <p:commandLink type="button" title="#{bundle.Refresh}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+                           onstart="PF('statusDialog').show()"
+                           oncomplete="PF('statusDialog').hide();"
+                           actionListener="#{sessionBean.setMeterFileSize(null)}" update="diskInfo">   
+                <h:outputText styleClass="ui-icon ui-icon-arrowrefresh-1-s" />
+            </p:commandLink>
+        </f:facet>
+        
+        <p:chart type="metergauge" model="#{sessionBean.meterFileSize}" style="width:250px;height:200px" />
+        <h:panelGrid columns="3" >
+            <h:outputLabel value="#{bundle.CurrentSize}:"/> 
+            <h:outputLabel value="#{sessionBean.totalfilesSize}"/>
+            <h:outputLabel value="Gb."/>
+        </h:panelGrid>
+    </p:panel>
+</ui:composition>

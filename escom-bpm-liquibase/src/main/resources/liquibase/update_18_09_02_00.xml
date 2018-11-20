@@ -107,5 +107,25 @@
                 <constraints nullable="true"/>
             </column>            
         </addColumn>
-    </changeSet>        
+    </changeSet>   
+    
+    <changeSet id="workTimeCalendar-change-DayType" author="filatov" context="initdata" runOnChange="true">  
+        <preConditions onFail="MARK_RAN">
+            <dbms type="mysql" />
+        </preConditions>
+        <sql>
+            ALTER TABLE workTimeCalendar CHANGE COLUMN `DayType` `DayType` INT NULL DEFAULT NULL ;            
+        </sql>
+    </changeSet> 
+    
+    <changeSet id="workTimeCalendar-change-WorkTimeCalendar_INDEX" author="filatov" context="initdata" runOnChange="true">  
+        <preConditions onFail="MARK_RAN">
+            <dbms type="mysql" />
+        </preConditions>
+        <sql>
+            ALTER TABLE `escomdb`.`workTimeCalendar` DROP INDEX `WorkTimeCalendar_INDEX` ,
+                ADD UNIQUE INDEX `WorkTimeCalendar_INDEX` (`DateCalendar` ASC, `Staff` ASC);
+        </sql>
+    </changeSet>
+
 </databaseChangeLog> 

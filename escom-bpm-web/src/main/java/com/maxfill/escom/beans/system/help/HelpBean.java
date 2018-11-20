@@ -6,8 +6,6 @@ import com.maxfill.escom.beans.core.BaseViewBean;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Map;
 import java.util.logging.Level;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;

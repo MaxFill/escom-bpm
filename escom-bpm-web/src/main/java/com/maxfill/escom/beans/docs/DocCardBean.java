@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import com.maxfill.model.basedict.doc.numerator.DocNumerator;
+import com.maxfill.model.basedict.process.reports.ProcReportFacade;
 import com.maxfill.services.numerators.NumeratorService;
 
 /**
@@ -81,7 +82,9 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     private RemarkFacade remarkFacade;
     @EJB
     private ProcessFacade processFacade;
-
+    @EJB
+    private ProcReportFacade procReportFacade;
+        
     private final List<DocStatuses> forDelDocStatus = new ArrayList<>();
     private final List<Attaches> forDelAttaches = new ArrayList<>();
     
@@ -378,19 +381,18 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     }    
     
     /* Удаление версии документа и её файла */
-    public void deleteAttache(Attaches attache) {
-        try {
-            Doc doc = getEditedItem();
-            forDelAttaches.add(attache);
-            doc.getAttachesList().remove(attache);
-            if (attache.equals(doc.getMainAttache())){
-                removeCurrentVersion();
-            }
-            onItemChange();
-        } catch (Exception exception) {
-            LOGGER.log(Level.SEVERE, null, exception);
-            MsgUtils.errorMessage(exception.getMessage());
+    public void deleteAttache(Attaches attache) {   
+        if (procReportFacade.findReportByAttache(attache).isEmpty()){
+            MsgUtils.errorMsg("CannotDelVersionBecauseConcorder");
+            return;
         }
+        Doc doc = getEditedItem();
+        forDelAttaches.add(attache);
+        doc.getAttachesList().remove(attache);
+        if (attache.equals(doc.getMainAttache())){
+            removeCurrentVersion();
+        }
+        onItemChange();        
     }
     
     /* Скачивание текущей версии документа */
@@ -540,7 +542,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
  
     public boolean isCanCreateProcess(){
         return isHaveRightExec();
-    }
+    }  
     
     /* ЗАМЕЧАНИЯ */
     

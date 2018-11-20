@@ -24,6 +24,12 @@ public final class DateUtils {
     public final static Integer WEEKLY_REPEAT = 1;
     public final static Integer MONTHLY_REPEAT = 2;
     
+    public final static int WORKDAY = 1;
+    public final static int WEEKEND = 2;
+    public final static int HOLLYDAY = 3;
+    public final static int HOSPITALDAY = 4;
+    public final static int MISSIONDAY = 5;  //командировка
+            
     public static final int MINUTES_PER_HOUR = 60;
     public static final int HOURS_PER_DAY = 24;
     public static final int SECONDS_PER_MINUTE = 60;

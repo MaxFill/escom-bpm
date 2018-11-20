@@ -106,7 +106,7 @@
                             <p:separator />
                             <p:menuitem icon="ui-icon-trash" value="#{bundle.Delete}"
                                         process="versionsTBL"
-                                        disabled="#{_bean.isReadOnly() or _bean.docIsLock}"
+                                        disabled="#{_bean.isReadOnly()}"
                                         update="versionsTBL"
                                         actionListener="#{_bean.deleteAttache(attache)}">
                                 <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="fa-exclamation-circle" />

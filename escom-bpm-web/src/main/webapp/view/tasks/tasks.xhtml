@@ -144,10 +144,10 @@
             </p:column>
         </p:dataTable>
 
-        <p:commandButton id="btnOpenTask"  
-                                 onstart="PF('statusDialog').show();"
-                                 oncomplete="PF('statusDialog').hide();"
-                                 actionListener="#{taskListBean.onOpenTask()}">
+        <p:commandButton id="btnOpenTask" style="display: none;" 
+                        onstart="PF('statusDialog').show();"
+                        oncomplete="PF('statusDialog').hide();"
+                        actionListener="#{taskListBean.onOpenTask()}">
                     <p:ajax event="dialogReturn" listener="#{taskListBean.onTaskDlgClose}"/>
         </p:commandButton>
     </ui:define>

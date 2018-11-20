@@ -60,7 +60,7 @@ public class SearcheServiceImpl implements SearcheService {
     
     @Asynchronous
     @Override
-    public void deleteFullTextIndex(Doc doc){
+    synchronized public void deleteFullTextIndex(Doc doc){
         try (Connection connection = getFullTextSearcheConnection()) {
             if(connection != null) {
                 String sql = "DELETE FROM escom_docs_index WHERE Id= ?";
@@ -76,7 +76,7 @@ public class SearcheServiceImpl implements SearcheService {
             
     @Asynchronous
     @Override
-    public void updateFullTextIndex(Doc doc){
+    synchronized public void updateFullTextIndex(Doc doc){
         if (doc == null){
             LOGGER.log(Level.SEVERE, "SPHINX: doc is NULL!", "");
             return;

@@ -22,7 +22,7 @@
         <p:importConstants type="com.maxfill.dictionary.DictFilters" var="DictFilters" />
         <p:importConstants type="com.maxfill.dictionary.DictFrmName" var="DictFrmName" />        
         <h:form id="mainFRM">
-            <p:poll interval="90" update="mainFRM:countMessages mainFRM:countTasks" autoStart="true" widgetVar="autoCheckInfo" />
+            <p:poll interval="90" listener="#{sessionBean.onAutoUpdate()}" autoStart="true" widgetVar="autoCheckInfo" />
             
             <p:notificationBar id="notifBar" position="top" effect="slide" styleClass="notifBar" widgetVar="notifBar" >
                 <p:commandButton title="#{bundle.Close}" style="position: absolute; right: 30px; top: 5px; border: 0px; width: 30px;"
@@ -37,9 +37,7 @@
                     </h:panelGrid>
                 </ui:repeat>
             </p:notificationBar>           
-
-            <p:commandButton style="display: none;" value="testSample" onclick="OpenFolder('https://192.168.0.10:8443/modeshape-webdav/sample/default/');" />
-            <p:commandButton style="display: none;" value="testArtifacts" onclick="OpenFolder('https://192.168.0.10:8443/modeshape-webdav/artifacts/other/');" />
+            
             <p:commandButton style="display: none;" id="createProcBtn" actionListener="#{sessionBean.onCreateProc()}"/>
             <p:commandButton style="display: none;" id="createDocBtn"  actionListener="#{sessionBean.onCreateDoc()}"/>
             <p:commandButton id="btnMsgInfo" style="display: none;" actionListener="#{sessionBean.openUserMessagesForm('newMsg')}">
@@ -62,6 +60,19 @@
                     </p:panelGrid>
                 </f:facet>
                 <f:facet name="right">
+                    <p:selectCheckboxMenu value="#{sessionBean.dbsChecked}" label="#{bundle.Widgets}" panelStyle="width:250px" 
+                                          converter="DashBoardSettingConverter"
+                                          onHide="executeOnOnhide();">
+                        <f:selectItems value="#{sessionBean.dbsList}" var="dbs" itemLabel="#{dbs.name}" itemValue="#{dbs}" /> 
+                        <p:ajax event="change" listener="#{sessionBean.onChangeDashboard()}" />
+                    </p:selectCheckboxMenu>
+                    
+                    <p:remoteCommand  name="executeOnOnhide" update="mainFRM:board" process="@this"
+                                    actionListener="#{sessionBean.onUpdateDashboard()}"/> 
+                    <span class="ui-separator">
+                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                    </span>
+                        
                     <p:menuButton value="#{bundle.Help}">
                         <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help"
                                     actionListener="#{sessionBean.onViewHelp()}"/>
@@ -92,20 +103,7 @@
 
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12"> 
                 <p:dashboard id="board" model="#{sessionBean.dashboardModel}"  >
-                    <p:ajax event="reorder"  />
-                    <p:panel id="charts" header="#{bundle.Info}" rendered="#{sessionBean.userAdmin}" toggleable="true" styleClass="dash-panel">
-                        <p:chart type="metergauge" model="#{sessionBean.meterFileSize}" style="width:250px;height:200px" />
-                        <h:panelGrid columns="4" >
-                            <h:outputLabel value="#{bundle.CurrentSize}:"/> 
-                            <h:outputLabel value="#{sessionBean.totalfilesSize}"/>
-                            <h:outputLabel value="Gb."/>
-                            <p:commandButton icon="ico_refresh-16" title="#{bundle.Refresh}" 
-                                            onstart="PF('statusDialog').show()"
-                                            oncomplete="PF('statusDialog').hide();"
-                                            actionListener="#{sessionBean.setMeterFileSize(null)}" update="charts">
-                            </p:commandButton>
-                        </h:panelGrid>
-                    </p:panel>
+                    <p:ajax event="reorder"  />                    
                     
                     <p:panel id="admObjects" header="#{bundle.Administation}" rendered="#{sessionBean.userAdmin}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces " >
@@ -157,6 +155,11 @@
                         </p:panelGrid>                        
                     </p:panel>
 
+                    <ui:include src="/view/dashboard/events.xhtml"/>
+                    <ui:include src="/view/dashboard/disk-info.xhtml"/>
+                    <ui:include src="/view/dashboard/messages.xhtml"/>
+                    <ui:include src="/view/dashboard/tasks.xhtml"/>
+                    
                     <p:panel id="services" header="#{bundle.Services}" rendered="#{sessionBean.userAdmin}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
@@ -208,24 +211,7 @@
 
                         </p:panelGrid>
                     </p:panel>
-
-                    <p:panel id="tasks" header="#{bundle.Tasks}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
-                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                <p:graphicImage value="/resources/icon/timer-32.png" rendered="#{applicationBean.isCanUsesTasks()}"/>                                 
-                                <p:link href="#{sessionBean.onGetFormURL('/tasks/'.concat(DictFrmName.FRM_SCHEDULER))}" 
-                                        rendered="#{applicationBean.isCanUsesTasks()}"
-                                        value="#{bundle.Scheduler}" target="_blank" />
-                                
-                                <p:graphicImage value="/resources/icon/tasks-32.png"/>  
-                                <p:commandLink id="countTasks" value="#{''.concat(bundle.MyTasks).concat(': ').concat(sessionBean.getTasksInfo())}" 
-                                               actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_MY_TASKS)}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"> 
-                                </p:commandLink>
-                            </p:panelGrid>
-                        </p:panelGrid>
-                    </p:panel>
-                    
+                            
                     <p:panel id="userParams" header="#{bundle.User}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >                                
@@ -235,6 +221,11 @@
 
                                 <p:graphicImage value="/resources/icon/theme_change-32.png"/>  
                                 <h:outputLabel value="#{bundle.ChooseTheme}"/>
+                                
+                                <p:graphicImage value="/resources/icon/timer-32.png" rendered="#{applicationBean.isCanUsesTasks()}"/>                                 
+                                <p:link href="#{sessionBean.onGetFormURL('/admin/worktime/'.concat(DictFrmName.FRM_CALENDAR))}" 
+                                        rendered="#{applicationBean.isCanUsesTasks()}"
+                                        value="#{bundle.PersonalCalendar}" target="_blank" />
                             </p:panelGrid>
 
                             <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >                                                                
@@ -248,20 +239,7 @@
                                 </p:themeSwitcher>
                             </p:panelGrid>
                         </p:panelGrid>
-                    </p:panel>
-
-                    <p:panel id="messages" header="#{bundle.Messages}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces">                            
-                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >                                 
-                                <p:graphicImage value="/resources/icon/new_msg-32.png"/>
-                                <p:commandLink id="countMessages" value="#{''.concat(bundle.CountNewMessages).concat(': ').concat(sessionBean.getMessagesInfo())}"
-                                       onclick="document.getElementById('mainFRM:btnMsgInfo').click();" />
-                                    
-                                <p:graphicImage value="/resources/icon/msg-32.png"/>
-                                <p:commandLink  value="#{bundle.AllMessages}" onclick="document.getElementById('mainFRM:btnMessages').click();" />                                
-                            </p:panelGrid>
-                        </p:panelGrid>
-                    </p:panel>
+                    </p:panel>                   
 
                     <p:panel id="docsExplorer" header="#{bundle.Documents}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >

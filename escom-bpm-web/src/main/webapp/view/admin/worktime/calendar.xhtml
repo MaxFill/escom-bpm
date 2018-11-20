@@ -16,21 +16,25 @@
     <ui:define name="centerFormContent">
         <p:panelGrid columns="2" columnClasses="ui-grid-col-6, ui-grid-col-6" styleClass="ui-grid-col-12 without-spaces">
             <h:panelGrid columns="2" styleClass="without-spaces">
+                
                 <h:panelGrid columns="2" styleClass="without-spaces">
                     <p:outputLabel value="#{bundle.Organization}:" for="company" indicateRequired="true"/>
-                    <p:selectOneMenu value="#{_bean.company}" id="company" converter="companyConvertor">
+                    <p:selectOneMenu value="#{_bean.company}" id="company" converter="companyConvertor"
+                                     disabled="#{!sessionBean.userAdmin}">
                         <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />            
                         <p:ajax event="change" update="calendar staffsGrig" listener="#{calendarBean.onRefresh()}" oncomplete="return itemChange = 1;"/>
                     </p:selectOneMenu>
                 </h:panelGrid>
+                
                 <h:panelGrid id="staffsGrig" columns="2" styleClass="without-spaces">
                     <p:outputLabel value="#{bundle.ForSomeone}:" />
-                    <p:selectOneMenu value="#{_bean.selectedStaff}" id="staff" converter="staffConvertor">
+                    <p:selectOneMenu value="#{_bean.selectedStaff}" id="staff" converter="staffConvertor" disabled="#{!sessionBean.userAdmin}">
                         <f:selectItems value="#{staffBean.findStaffsByCompany(_bean.company)}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}" />
                         <f:selectItem itemValue="#{null}" itemLabel="#{bundle.ForAll}" />
                         <p:ajax event="change" update="calendar" listener="#{calendarBean.onRefresh()}" oncomplete="return itemChange = 1;"/>
                     </p:selectOneMenu>
                 </h:panelGrid>
+                
             </h:panelGrid>
             
             <h:panelGrid columns="4" styleClass="without-spaces">
@@ -71,9 +75,13 @@
                 background-color: lightgray !important; 
                 color: red !important;
             }
-            .Hospital {
+            .HospitalDay {
                 background-color: beige !important; 
                 color: red !important;
+            }
+            .MissionDay {
+                background-color: lightcyan !important; 
+                color: chocolate !important;
             }
             .fc-toolbar {
                 display: none !important;

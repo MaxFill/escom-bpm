@@ -1,0 +1,25 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">    
+        
+   <p:panel id="messages" header="#{bundle.Messages}" toggleable="true" styleClass="dash-panel">
+       <f:facet name="actions">
+            <p:commandLink id="refreshMsg" type="button" title="#{bundle.Refresh}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+                           update="countMessages">   
+                <h:outputText styleClass="ui-icon ui-icon-arrowrefresh-1-s" />
+            </p:commandLink>
+        </f:facet>
+        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces">                            
+            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >                                 
+                <p:graphicImage value="/resources/icon/new_msg-32.png"/>
+                <p:commandLink id="countMessages" value="#{''.concat(bundle.CountNewMessages).concat(': ').concat(sessionBean.getMessagesInfo())}"
+                       onclick="document.getElementById('mainFRM:btnMsgInfo').click();" />
+
+                <p:graphicImage value="/resources/icon/msg-32.png"/>
+                <p:commandLink  value="#{bundle.AllMessages}" onclick="document.getElementById('mainFRM:btnMessages').click();" />                                
+            </p:panelGrid>
+        </p:panelGrid>
+    </p:panel>
+</ui:composition>

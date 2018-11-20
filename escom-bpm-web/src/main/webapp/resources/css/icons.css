@@ -47,6 +47,7 @@
 .ico_subproc{background-image: url('../resources/icon/subproc-16.png') !important;}
 .ico_look{background-image: url('../resources/icon/look.png') !important;}
 
+.ico-portfolio-16{background-image: url('../resources/icon/portfolio-16.png') !important;}
 .ico_done-16{background-image: url('../resources/icon/done-16.png') !important;}
 .ico_refresh-16{background-image: url('../resources/icon/refresh-16.png') !important;}
 .ico_loop-16{background-image: url('../resources/icon/refresh-16.png') !important;}
@@ -56,12 +57,14 @@
 .ico_importance-16{background-image: url('../resources/icon/importance-16.png')!important;}
 .ico_doc16 {background-image: url('../resources/icon/doc16.png') !important;}
 .ico_exit16 {background-image: url('../resources/icon/exit-16.png') !important;}
+.ico_exit-16 {background-image: url('../resources/icon/exit-16.png') !important;}
 .ico_enter16 {background-image: url('../resources/icon/enter-16.png') !important;}
 .ico_message-16{background-image: url('../resources/icon/msg-16.png') !important;}
 .ico_printer-16{background-image: url('../resources/icon/printer-16.png') !important;}
 .ico_service-16{background-image: url('../resources/icon/service-16.png') !important;}
 .ico_save-16{background-image: url('../resources/icon/save-16.png') !important;}
 .ico-play-16{background-image: url('../resources/icon/play-16.png') !important;}
+.ico_play-16{background-image: url('../resources/icon/play-16.png') !important;}
 .ico-stop-16{background-image: url('../resources/icon/stop-16.png') !important;}
 .ico-task-16{background-image: url('../resources/icon/task-16.png') !important;}
 .ico_timer16{background-image: url('../resources/icon/timer-16.png') !important;}

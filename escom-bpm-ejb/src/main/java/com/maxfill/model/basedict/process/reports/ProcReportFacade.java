@@ -1,6 +1,7 @@
 package com.maxfill.model.basedict.process.reports;
 
 import com.maxfill.facade.BaseFacade;
+import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.basedict.doc.Doc;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -11,7 +12,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 /**
- *
+ * Фасад для работы с сущностью "Отчёты процесса"
  * @author maksim
  */
 @Stateless
@@ -24,6 +25,7 @@ public class ProcReportFacade extends BaseFacade<ProcReport>{
     /**
      * Отбор записей отчётов, относящихся к документу и роли
      * @param doc
+     * @param roleName
      * @return 
      */
     public List<ProcReport> findReportByDoc(Doc doc, String roleName){
@@ -37,4 +39,21 @@ public class ProcReportFacade extends BaseFacade<ProcReport>{
         Query q = em.createQuery(cq);
         return q.getResultList();
     }
+            
+    /**
+     * Отбор записей отчётов, относящихся к вложению
+     * @param attache
+     * @return 
+     */
+    public List<ProcReport> findReportByAttache(Attaches attache){
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(itemClass);
+        Root root = cq.from(itemClass);
+        Predicate crit1 = builder.equal(root.get(ProcReport_.version), attache);        
+        cq.select(root).where(builder.and(crit1)); 
+        Query q = em.createQuery(cq);
+        return q.getResultList();
+    }
+    
 }
