@@ -189,25 +189,25 @@ public class SessionBean implements Serializable{
     }   
     
     public void initDashBoard(){         
-        dbsList.add(new DashBoardSettings("userParams", MsgUtils.getBandleLabel("User"), 1 , 1));
-        dbsList.add(new DashBoardSettings("tasks", MsgUtils.getBandleLabel("Tasks"), 2 , 1));
-        dbsList.add(new DashBoardSettings("messages", MsgUtils.getBandleLabel("Messages"), 3 , 1));
+        dbsList.add(new DashBoardSettings("userParams", MsgUtils.getBandleLabel("User"), 1 , 0));
+        dbsList.add(new DashBoardSettings("tasks", MsgUtils.getBandleLabel("Tasks"), 2 , 0));
+        dbsList.add(new DashBoardSettings("messages", MsgUtils.getBandleLabel("Messages"), 3 , 0));
         
-        dbsList.add(new DashBoardSettings("docsExplorer", MsgUtils.getBandleLabel("Documents"), 1 , 2));
-        dbsList.add(new DashBoardSettings("processes", MsgUtils.getBandleLabel("Processes"), 2 , 2));        
+        dbsList.add(new DashBoardSettings("docsExplorer", MsgUtils.getBandleLabel("Documents"), 1 , 1));
+        dbsList.add(new DashBoardSettings("processes", MsgUtils.getBandleLabel("Processes"), 2 , 1));        
         
-        dbsList.add(new DashBoardSettings("orgStructure", MsgUtils.getBandleLabel("OrgStructure"), 1 , 3));
-        dbsList.add(new DashBoardSettings("dictsExplorer", MsgUtils.getBandleLabel("Partners"), 2 , 3));        
+        dbsList.add(new DashBoardSettings("orgStructure", MsgUtils.getBandleLabel("OrgStructure"), 1 , 2));
+        dbsList.add(new DashBoardSettings("dictsExplorer", MsgUtils.getBandleLabel("Partners"), 2 , 2));        
         
         if (isUserAdmin()){
-            dbsList.add(new DashBoardSettings("admObjects", MsgUtils.getBandleLabel("Administation"), 1 , 4));
-            dbsList.add(new DashBoardSettings("services", MsgUtils.getBandleLabel("Services"), 2 , 4));
-            dbsList.add(new DashBoardSettings("loggers", MsgUtils.getBandleLabel("Logging"), 3 , 4));            
+            dbsList.add(new DashBoardSettings("admObjects", MsgUtils.getBandleLabel("Administation"), 1 , 3));
+            dbsList.add(new DashBoardSettings("services", MsgUtils.getBandleLabel("Services"), 2 , 3));
+            dbsList.add(new DashBoardSettings("loggers", MsgUtils.getBandleLabel("Logging"), 3 , 3));            
         }
                 
-        dbsList.add(new DashBoardSettings("eventFeed", MsgUtils.getBandleLabel("EventFeed"), 1 , 5));   
+        dbsList.add(new DashBoardSettings("eventFeed", MsgUtils.getBandleLabel("EventFeed"), 1 , 4));   
         if (isUserAdmin()){
-            dbsList.add(new DashBoardSettings("diskInfo", MsgUtils.getBandleLabel("DiskInfo"), 2, 5));
+            dbsList.add(new DashBoardSettings("diskInfo", MsgUtils.getBandleLabel("DiskInfo"), 2, 4));
         }                               
 
         onLoadDashboard();
@@ -226,18 +226,21 @@ public class SessionBean implements Serializable{
         dashboardModel.addColumn(new DefaultDashboardColumn());
         
         if (getUserSettings().getDashBoard().isEmpty()){
-            dbsList.forEach(dbSettings->{                        
-                    DashboardColumn col = dashboardModel.getColumn(dbSettings.getColIndex());
-                    col.addWidget(dbSettings.getItemIndex(), dbSettings.getWidget());
-                });
+            dbsList.stream()
+                    .sorted(Comparator.comparing(DashBoardSettings::getItemIndex, nullsFirst(naturalOrder())))
+                    .forEach(dbSettings->{
+                        String widget = dbSettings.getWidget(); 
+                        DashboardColumn col = dashboardModel.getColumn(dbSettings.getColIndex());
+                        col.addWidget(dbSettings.getWidget());
+                    });
             getUserSettings().setDashBoard(dbsList);
         } else {
             getUserSettings().getDashBoard().stream()
                     .sorted(Comparator.comparing(DashBoardSettings::getItemIndex, nullsFirst(naturalOrder())))
                     .forEach(dbSettings->{ 
-                        String widget = dbSettings.getWidget();                        
+                        String widget = dbSettings.getWidget();                       
                         DashboardColumn col = dashboardModel.getColumn(dbSettings.getColIndex());
-                        col.addWidget(dbSettings.getItemIndex(), widget);
+                        col.addWidget(widget);
                     });
         }
     }
