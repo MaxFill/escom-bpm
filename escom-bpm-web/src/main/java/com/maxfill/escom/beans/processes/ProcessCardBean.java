@@ -31,6 +31,7 @@ import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.basedict.userGroups.UserGroups;
 import com.maxfill.services.workflow.Workflow;
+import com.maxfill.services.worktime.WorkTimeCalendar;
 import com.maxfill.services.worktime.WorkTimeService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
@@ -348,8 +349,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     
     /**
      * Проверка срока исполнения
-     * @param process
-     * @param planDate 
+     * @param process 
      * @param errors 
      */
     public void validatePlanDate(Process process, Set<Tuple> errors){                
@@ -380,6 +380,53 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     }    
     
     /* *** ПРОЧИЕ МЕТОДЫ *** */
+    
+    public void onChangeCurator(){        
+        checkAvailableStaff(getEditedItem().getCurator(), "mainFRM:mainTabView:smCurator");
+    }
+    
+    public void onChangeInspector(){                
+        checkAvailableStaff(getEditedItem().getInspector(), "mainFRM:mainTabView:smInspector");
+    }
+    
+    private void checkAvailableStaff(Staff staff, String component){  
+        if (staff == null) return;
+        Set<Tuple> errors = new HashSet<>();        
+        Date endDate = calculateDeadline(errors);
+         if (!errors.isEmpty()){
+            errors.add(new Tuple("AvailabilyEmployeeWorkCalendarNotCheck", new Object[]{}));
+            MsgUtils.showTupleErrsMsg(errors);
+            return;
+        }
+        Date beginDate = DateUtils.clearDate(new Date());
+        if (workTimeService.checkStaffAvailable(staff, getEditedItem().getCompany(), beginDate, endDate)){
+            MsgUtils.succesFormatMsg("EmployeAvailableOnSpecifiedDates", new Object[]{staff.getEmployeeFIO()});
+        } else {
+            FacesContext context = FacesContext.getCurrentInstance();
+            UIInput input = (UIInput) context.getViewRoot().findComponent(component);
+            input.setValid(false);
+            MsgUtils.warnFormatMsg("SpecifiedPeriodIsNonWorking", 
+                    new Object[]{
+                        staff.getEmployeeFIO(), 
+                        DateUtils.dateToString(beginDate, DateFormat.SHORT, null, sessionBean.getLocale()), 
+                        DateUtils.dateToString(endDate, DateFormat.SHORT, null, sessionBean.getLocale())
+                    }); 
+            context.validationFailed();
+            PrimeFaces.current().ajax().update(component);
+        }
+    }
+    
+    private void checkAvailableRoles(){
+        FacesContext context = FacesContext.getCurrentInstance();
+        UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:smCurator");
+        if (input != null){
+            checkAvailableStaff(getEditedItem().getCurator(), "mainFRM:mainTabView:smCurator");
+        }
+        input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:smInspector");
+        if (input != null){
+            checkAvailableStaff(getEditedItem().getInspector(), "mainFRM:mainTabView:smInspector");
+        }
+    }
     
     /**
      * Обновление списка подпроцессов на форме предварительного запуска после открытия карточки процесса
@@ -472,25 +519,39 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             MsgUtils.showTupleErrsMsg(errors);
             return;
         }
+                
+        getEditedItem().setPlanExecDate(planDate); 
         
         String strDate = DateUtils.dateToString(planDate,  DateFormat.SHORT, DateFormat.MEDIUM, getLocale());
         MsgUtils.succesFormatMsg("DeadlineCalcWorkingCalendar", new Object[]{strDate});
-    }
-      
+        checkAvailableRoles();
+    }    
+    
     public Date calculateDeadline(Set<Tuple> errors ){
         Process process = getEditedItem();
+        if (process.getDeadLineType().equals("data")) return process.getPlanExecDate();
+        
         if (deadLineDeltaDay == 0 && deadLineDeltaHour == 0){
-            errors.add(new Tuple("DeadlineIncorrect", new Object[]{}));            
+            errors.add(new Tuple("DeadlineIncorrect", new Object[]{})); 
+            FacesContext context = FacesContext.getCurrentInstance();
+            UIInput deltaDay = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:deltaDay");
+            deltaDay.setValid(false);
+            UIInput deltaHour = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:deltaHour");
+            deltaHour.setValid(false);
+            context.validationFailed();
+            PrimeFaces.current().ajax().update("mainFRM:mainTabView:dtPlansGrid");
         }
         if (process.getCompany() == null){
             errors.add(new Tuple("CompanyNotSet", new Object[]{}));
-        }
+            FacesContext context = FacesContext.getCurrentInstance();
+            UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:smCompany");
+            input.setValid(false);
+            context.validationFailed();
+            PrimeFaces.current().ajax().update("mainFRM:mainTabView:smCompany");
+        }        
         int deltasec = deadLineDeltaDay * 86400;
-        deltasec = deltasec + deadLineDeltaHour * 3600;
-        process.setDeltaDeadLine(deltasec);
-        Date planDate = workTimeService.calcWorkDayByCompany(new Date(), deltasec, process.getCompany());
-        process.setPlanExecDate(planDate);
-        return planDate;
+        deltasec = deltasec + deadLineDeltaHour * 3600;         
+        return workTimeService.calcWorkDayByCompany(new Date(), deltasec, process.getCompany());
     }
     
     /* *** СООБЩЕНИЯ *** */

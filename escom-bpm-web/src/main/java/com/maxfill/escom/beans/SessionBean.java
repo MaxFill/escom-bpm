@@ -885,8 +885,14 @@ public class SessionBean implements Serializable{
     
     public MeterGaugeChartModel getMeterFileSize() {
         if (meterFileSize == null){
-            totalfilesSize = new BigDecimal(attacheFacade.sumFilesSize());
-            totalfilesSize = totalfilesSize.divide(new BigDecimal(1048576000), 4, BigDecimal.ROUND_HALF_UP);
+            Long filesSize = attacheFacade.sumFilesSize();
+            if (filesSize == null){
+                filesSize = 0l;
+            }
+            totalfilesSize = new BigDecimal(filesSize);            
+            if (totalfilesSize.intValue() > 0){
+                totalfilesSize = totalfilesSize.divide(new BigDecimal(1048576000), 4, BigDecimal.ROUND_HALF_UP);
+            }
             Integer filesQuote = configuration.getDiskQuote();        
             List<Number> intervals = new ArrayList<>();
             intervals.add(filesQuote * 30 / 100);

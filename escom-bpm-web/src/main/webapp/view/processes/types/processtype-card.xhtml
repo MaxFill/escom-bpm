@@ -57,6 +57,17 @@
                     <p:accordionPanel id="accord" activeIndex="#{_bean.accordTab}" rendered="#{!_bean.editedItem.inheritRunOptions}">
                         <p:tab title="#{bundle.Registration}" >
                             <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                                <p:outputLabel value="#{bundle.Company}:"/>
+                                <p:selectOneMenu value="#{_bean.editedItem.company}" converter="companyConvertor"
+                                                 filter="true" filterMatchMode="startsWith"                                                 
+                                                 disabled="#{_bean.isReadOnly()}"
+                                                 styleClass="ui-grid-col-12"
+                                                 onchange="return itemChange = 1;"                                                 
+                                                 requiredMessage="#{bundle.Field} [#{bundle.Company}] #{bundle.MustBeFilled}">
+                                    <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
+                                    <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}"/>
+                                </p:selectOneMenu>
+                                
                                 <p:outputLabel value="#{bundle.Numerator}:" indicateRequired="true"/>
                                 <p:selectOneMenu id="numeratorMenu" value="#{_bean.editedItem.numerator}" converter="numPatternConvertor" 
                                                  disabled="#{_bean.isReadOnly()}"

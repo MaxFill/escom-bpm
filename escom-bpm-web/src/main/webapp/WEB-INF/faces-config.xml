@@ -175,6 +175,10 @@
             <to-view-id>/view/admin/worktime/work-time.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
+            <from-outcome>add-wtevent</from-outcome>
+            <to-view-id>/view/admin/worktime/add-wtevent.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
             <from-outcome>calendar</from-outcome>
             <to-view-id>/view/admin/worktime/calendar.xhtml</to-view-id>
         </navigation-case>

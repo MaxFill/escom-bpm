@@ -169,13 +169,17 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
                 process.setDeltaDeadLine(deltasec);
                 Date planDate = workTimeService.calcWorkDayByCompany(new Date(), deltasec, process.getCompany());
                 process.setPlanExecDate(planDate);
-            }                                    
+            }            
         }                
         
         if (createParams.containsKey("company")){
             process.setCompany((Company) createParams.get("company"));
         } else {
-            process.setCompany(staffFacade.findCompanyForStaff(process.getAuthor().getStaff())); 
+            if (processType != null && processType.getCompany() != null){
+                process.setCompany(processType.getCompany());
+            } else {
+                process.setCompany(staffFacade.findCompanyForStaff(process.getAuthor().getStaff())); 
+            }
         }
         
         if (createParams.containsKey("documents")){

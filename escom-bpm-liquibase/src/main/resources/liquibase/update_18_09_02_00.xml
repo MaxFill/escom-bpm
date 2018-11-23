@@ -128,4 +128,16 @@
         </sql>
     </changeSet>
 
+    <changeSet id="processesTypes_add_Company" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="processesTypes" columnName="Company" />
+            </not>
+        </preConditions>
+        <addColumn tableName="processesTypes">
+            <column name="Company" type="INT" >
+                <constraints nullable="true"/>
+            </column>            
+        </addColumn>
+    </changeSet> 
 </databaseChangeLog> 

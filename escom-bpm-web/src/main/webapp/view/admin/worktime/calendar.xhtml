@@ -7,9 +7,18 @@
 
     <ui:param name="_bean" value="#{calendarBean}"/>
 
+    <ui:define name="title">
+        #{calendarBean.formHeader}
+    </ui:define>
+    
     <ui:define name="toolbarComponents" >
         <p:commandButton id="btnOpen" style="display: none;" actionListener="#{calendarBean.onOpenDay()}">
             <p:ajax event="dialogReturn" listener="#{calendarBean.onDlgClose}" update="calendar"/>
+        </p:commandButton>
+        <p:commandButton icon="ico_event-16" value="#{bundle.AddEvent}" title="#{msg.AddEventStaff}"
+                         actionListener="#{calendarBean.onAddEvent()}"
+                         rendered="#{_bean.selectedStaff != null}">
+            <p:ajax event="dialogReturn" listener="#{calendarBean.onAfterAddEvent}" update="calendar"/>
         </p:commandButton>
     </ui:define>
 
@@ -19,7 +28,8 @@
                 
                 <h:panelGrid columns="2" styleClass="without-spaces">
                     <p:outputLabel value="#{bundle.Organization}:" for="company" indicateRequired="true"/>
-                    <p:selectOneMenu value="#{_bean.company}" id="company" converter="companyConvertor"
+                    <p:selectOneMenu id="company" value="#{_bean.company}" converter="companyConvertor"
+                                     filter="true" filterMatchMode="startsWith"
                                      disabled="#{!sessionBean.userAdmin}">
                         <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />            
                         <p:ajax event="change" update="calendar staffsGrig" listener="#{calendarBean.onRefresh()}" oncomplete="return itemChange = 1;"/>
@@ -28,10 +38,10 @@
                 
                 <h:panelGrid id="staffsGrig" columns="2" styleClass="without-spaces">
                     <p:outputLabel value="#{bundle.ForSomeone}:" />
-                    <p:selectOneMenu value="#{_bean.selectedStaff}" id="staff" converter="staffConvertor" disabled="#{!sessionBean.userAdmin}">
+                    <p:selectOneMenu value="#{_bean.selectedStaff}" id="staff" converter="staffConvertor" disabled="#{!sessionBean.userAdmin}" filter="true" filterMatchMode="startsWith">
                         <f:selectItems value="#{staffBean.findStaffsByCompany(_bean.company)}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}" />
                         <f:selectItem itemValue="#{null}" itemLabel="#{bundle.ForAll}" />
-                        <p:ajax event="change" update="calendar" listener="#{calendarBean.onRefresh()}" oncomplete="return itemChange = 1;"/>
+                        <p:ajax event="change" update="explToolBar calendar" listener="#{calendarBean.onRefresh()}" oncomplete="return itemChange = 1;"/>
                     </p:selectOneMenu>
                 </h:panelGrid>
                 

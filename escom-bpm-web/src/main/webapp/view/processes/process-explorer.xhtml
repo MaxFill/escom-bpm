@@ -23,7 +23,12 @@
     <ui:param name="_CreateItemLabel" value="#{bundle.CreateProcess}" />
 
     <!-- специфичные поля поиска -->
-    <ui:define name="searche">
+    <ui:define name="searche">        
+        <p:selectBooleanCheckbox itemLabel="#{bundle.SelectOnlyTopLevelProcesses}" 
+                                 title="#{bundle.SelectOnlyTopLevelProcesses}" 
+                                 value="#{_bean.model.onlyTopLevelProc}">
+        </p:selectBooleanCheckbox> 
+        
         <p:outputLabel value="#{bundle.Curator}:"/>
         <h:panelGroup styleClass="ui-grid-col-12">
             <div class="ui-inputgroup">

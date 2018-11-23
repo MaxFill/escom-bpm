@@ -567,11 +567,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         for (Map.Entry<String, Object> param : paramIN.entrySet()) { 
             Predicate predicate = root.get(param.getKey()).in(param.getValue());
             criteries.add(predicate);
-        }                
-        
-        for (Map.Entry<String, Object> parameter : paramEQ.entrySet()) {
-           criteries.add(builder.equal(root.get(parameter.getKey()), parameter.getValue()));
-        }
+        }        
         
         for (Map.Entry<String, Date[]> parameter : paramDATE.entrySet()) {            
             Date dateStart = parameter.getValue()[0];
@@ -580,6 +576,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             criteries.add(betweenCrit);
         }
 
+        addEqPredicates(root, criteries, builder, paramEQ);
         addLikePredicates(root, criteries, builder, paramLIKE);
         addJoinPredicatesAndOrders(root, criteries, builder, addParams);
                        
@@ -588,10 +585,20 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return predicates;
     }
     
+    protected void addEqPredicates(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> paramEQ){
+        paramEQ.entrySet().forEach(parameter -> {
+            if(parameter.getValue() == null){
+                predicates.add(builder.isNull(root.get(parameter.getKey())));
+            } else {
+                predicates.add(builder.equal(root.get(parameter.getKey()), parameter.getValue()));
+            }
+        });        
+    }
+    
     protected void addLikePredicates(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> paramLIKE){
-        for (Map.Entry<String, Object> parameter : paramLIKE.entrySet()) {
-            predicates.add(builder.like(root.<String>get(parameter.getKey()), (String) parameter.getValue()));
-        }
+        paramLIKE.entrySet().forEach(parameter -> 
+            predicates.add(builder.like(root.<String>get(parameter.getKey()), (String) parameter.getValue()))
+        );
     }
 
     protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates,  CriteriaBuilder builder, Map<String, Object> addParams){};

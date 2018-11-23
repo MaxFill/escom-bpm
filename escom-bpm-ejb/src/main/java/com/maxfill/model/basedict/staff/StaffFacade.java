@@ -180,6 +180,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         Root<Staff> c = cq.from(Staff.class);        
         Predicate crit1 = builder.equal(c.get("post"), post);
         cq.select(c).where(builder.and(crit1));
+        cq.orderBy(builder.asc(c.get("name")));
         Query q = em.createQuery(cq);       
         return q.getResultList(); 
     }
@@ -221,6 +222,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         Predicate crit2 = builder.equal(c.get("actual"), true);
         Predicate crit3 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2, crit3));
+        cq.orderBy(builder.asc(c.get("name")));
         TypedQuery<Staff> query = em.createQuery(cq);       
         return query.getResultStream()      
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
@@ -242,6 +244,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         Predicate crit2 = builder.isNull(c.get("owner"));   
         Predicate crit3 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2, crit3));
+        cq.orderBy(builder.asc(c.get("name")));
         TypedQuery<Staff> query = em.createQuery(cq);       
         return query.getResultStream()      
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
@@ -261,6 +264,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         Predicate crit1 = builder.equal(c.get(Staff_.owner), department);
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2));
+        cq.orderBy(builder.asc(c.get("name")));
         Query q = em.createQuery(cq);       
         return q.getResultList();
     }

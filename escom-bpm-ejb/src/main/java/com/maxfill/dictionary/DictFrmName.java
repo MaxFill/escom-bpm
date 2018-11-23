@@ -58,6 +58,7 @@ public final class DictFrmName {
     public static final String FRM_MY_TASKS = "tasks";
     public static final String FRM_WORKTIME = "work-time";
     public static final String FRM_CALENDAR = "calendar";
+    public static final String FRM_ADD_WTEVENT = "add-wtevent";
     
     /* ПРОЦЕССЫ */
     public static final String FRM_PROC_TEMPL_SELECTOR = "templ-selector";

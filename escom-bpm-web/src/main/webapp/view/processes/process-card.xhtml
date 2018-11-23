@@ -76,16 +76,18 @@
         <ui:define name="page_body">                
             <p:tab title="#{bundle.Process}">
                 <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="ui-grid-col-12 without-spaces" >
-                    <p:outputLabel value="#{bundle.Organization}:" indicateRequired="true"/>                    
-                    <p:selectOneMenu value="#{_bean.editedItem.company}" converter="companyConvertor"
+                    <p:outputLabel value="#{bundle.Company}:" indicateRequired="true"/>                    
+                    <p:selectOneMenu id="smCompany" value="#{_bean.editedItem.company}" converter="companyConvertor"
+                                     filter="true" filterMatchMode="startsWith"
                                      title="#{bundle.CompanyDocRegistred}"
                                      disabled="#{_bean.isReadOnly()}"
                                      styleClass="ui-grid-col-12"
                                      onchange="return itemChange = 1;"
                                      required="#{param['isRequired'] == 'true'}"
-                                     requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
+                                     requiredMessage="#{bundle.Field} [#{bundle.Company}] #{bundle.MustBeFilled}">
                         <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
-                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>                        
+                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/> 
+                        <p:ajax event="valueChange" process="@this"/>
                     </p:selectOneMenu>
 
                     <p:outputLabel value="#{bundle.Number}:" />
@@ -94,26 +96,46 @@
                                  readonly="true"/>                                                           
 
                     <p:outputLabel value="#{bundle.Curator}:" indicateRequired="true" rendered="#{_bean.isShowCurator()}"/>
-                    <p:selectOneMenu value="#{_bean.editedItem.curator}" converter="staffConvertor" 
-                                     title="#{bundle.Curator}" styleClass="ui-grid-col-12"
-                                     disabled="#{_bean.isReadOnly()}" rendered="#{_bean.isShowCurator()}"
-                                     onchange="return itemChange = 1;"
-                                     required="#{param['isRequired'] == 'true'}"
-                                     requiredMessage="#{bundle.Field} [#{bundle.Curator}] #{bundle.MustBeFilled}">
-                        <f:selectItems value="#{_bean.curators}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}" />
-                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
-                    </p:selectOneMenu>                    
-
+                    <h:panelGroup rendered="#{_bean.isShowCurator()}">
+                        <div class="ui-inputgroup">
+                            <p:selectOneMenu id="smCurator" value="#{_bean.editedItem.curator}" converter="staffConvertor" 
+                                             title="#{bundle.Curator}" styleClass="ui-grid-col-12"
+                                             filter="true" filterMatchMode="startsWith"
+                                             disabled="#{_bean.isReadOnly()}" 
+                                             onchange="return itemChange = 1;"
+                                             required="#{param['isRequired'] == 'true'}"
+                                             requiredMessage="#{bundle.Field} [#{bundle.Curator}] #{bundle.MustBeFilled}">
+                                <f:selectItems value="#{_bean.curators}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}" />
+                                <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
+                                <p:ajax event="valueChange" listener="#{_bean.onChangeCurator()}" />
+                            </p:selectOneMenu> 
+                            <p:commandButton icon="ico_clock-16" title="#{bundle.CheckAvailabilityEmployee}"
+                                             actionListener="#{_bean.onChangeCurator()}">
+                            </p:commandButton>
+                        </div>
+                    <p:message for="smCurator" display="icon"/>
+                    </h:panelGroup>
+                    
                     <p:outputLabel value="#{bundle.Inspector}:" indicateRequired="true" rendered="#{_bean.isShowInspector()}"/>
-                    <p:selectOneMenu value="#{_bean.editedItem.inspector}" converter="staffConvertor"
-                                     title="#{bundle.Inspector}" styleClass="ui-grid-col-12"
-                                     disabled="#{_bean.isReadOnly()}" rendered="#{_bean.isShowInspector()}"
-                                     onchange="return itemChange = 1;"
-                                     required="#{param['isRequired'] == 'true'}"
-                                     requiredMessage="#{bundle.Field} [#{bundle.Inspector}] #{bundle.MustBeFilled}">
-                        <f:selectItems value="#{_bean.inspectors}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}" />
-                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
-                    </p:selectOneMenu>
+                    <h:panelGroup rendered="#{_bean.isShowInspector()}">
+                        <div class="ui-inputgroup">
+                        <p:selectOneMenu id="smInspector" value="#{_bean.editedItem.inspector}" converter="staffConvertor"
+                                         filter="true" filterMatchMode="startsWith"
+                                         title="#{bundle.Inspector}" styleClass="ui-grid-col-12"
+                                         disabled="#{_bean.isReadOnly()}"
+                                         onchange="return itemChange = 1;"
+                                         required="#{param['isRequired'] == 'true'}"
+                                         requiredMessage="#{bundle.Field} [#{bundle.Inspector}] #{bundle.MustBeFilled}">
+                            <f:selectItems value="#{_bean.inspectors}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}" />
+                            <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
+                            <p:ajax event="valueChange" listener="#{_bean.onChangeInspector()}" />
+                        </p:selectOneMenu>
+                        <p:commandButton icon="ico_clock-16" title="#{bundle.CheckAvailabilityEmployee}"
+                                         actionListener="#{_bean.onChangeInspector()}">
+                        </p:commandButton>
+                        </div>
+                    <p:message for="smInspector" display="icon" />
+                    </h:panelGroup>
                     
                     <p:outputLabel value="#{bundle.MainDoc}:" indicateRequired="true" />
                     <ui:include src="/view/common/doc-select-btn.xhtml" >
@@ -147,7 +169,7 @@
                             <f:selectItem itemLabel="" itemValue="data" />
                             <p:ajax update="planEndDate deltaDay deltaHour btnCalcPlan" event="valueChange" onstart="itemChange = 1;"/>
                         </p:selectOneRadio>                        
-                        <h:panelGrid columns="1">
+                        <h:panelGrid id="dtPlansGrid" columns="1">
                             <h:panelGroup>
                                 <div class="ui-inputgroup">
                                 <p:spinner id="deltaDay" value="#{_bean.deadLineDeltaDay}" min="0" max="999" 

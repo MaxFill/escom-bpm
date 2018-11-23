@@ -14,4 +14,5 @@ public interface WorkTimeService {
     Date calcWorkDayByCompany(Date startDate, Integer deltasec, Company company);
     WorkTimeCalendar getWorkTimeDate(Date date, Staff staff, Company company);
     void update(WorkTimeCalendar wtc);
+    boolean checkStaffAvailable(Staff staff, Company company, Date dateBegin, Date dateEnd);
 }

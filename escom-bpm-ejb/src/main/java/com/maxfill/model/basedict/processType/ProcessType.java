@@ -3,6 +3,7 @@ package com.maxfill.model.basedict.processType;
 import com.google.gson.Gson;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.Results;
+import com.maxfill.model.basedict.company.Company;
 import com.maxfill.model.basedict.numeratorPattern.NumeratorPattern;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.procTempl.ProcTempl;
@@ -77,7 +78,11 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     @Size(max=10)
     @Column(name = "Code")
     private String code;
-        
+     
+    @JoinColumn(name = "Company", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private Company company;     //по умолчанию для процессов
+    
     @JoinColumn(name = "RoleInProc", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private UserGroups defaultTaskRole;     //роль по умолчанию для задач процесса
@@ -122,6 +127,13 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
         
     /* GETS & SETS */
 
+    public Company getCompany() {
+        return company;
+    }
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+    
     public NumeratorPattern getNumerator() {
         return numerator;
     }

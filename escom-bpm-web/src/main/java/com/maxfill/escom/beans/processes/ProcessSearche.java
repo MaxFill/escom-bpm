@@ -13,6 +13,7 @@ public class ProcessSearche extends SearcheModel{
 
     private User curator;
     private String numberSearche;
+    private boolean onlyTopLevelProc = true;
     
     @Override
     public void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<BaseDict> searcheGroups, Map<String, Object> addParams){
@@ -21,6 +22,9 @@ public class ProcessSearche extends SearcheModel{
         }
         if(StringUtils.isNotBlank(numberSearche)){
             paramLIKE.put("regNumber", numberSearche);
+        }
+        if (onlyTopLevelProc){
+            paramEQ.put("parent", null);
         }
     }        
        
@@ -40,5 +44,11 @@ public class ProcessSearche extends SearcheModel{
         this.numberSearche = numberSearche;
     }
 
+    public boolean isOnlyTopLevelProc() {
+        return onlyTopLevelProc;
+    }
+    public void setOnlyTopLevelProc(boolean onlyTopLevelProc) {
+        this.onlyTopLevelProc = onlyTopLevelProc;
+    }
     
 }

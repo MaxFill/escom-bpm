@@ -1,0 +1,75 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 template="/view/templ/templ-dlg.xhtml"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">          
+
+    <ui:param name="_bean" value="#{addEventWTBean}"/>
+
+    <ui:define name="specToolButtons" >
+        <p:commandButton icon="ui-icon-disk" title="#{bundle.SaveAndClose}" update="mainFRM"
+                         actionListener="#{_bean.onCloseCard('save')}">
+            <f:param name="isRequired" value="true"/>
+       </p:commandButton>
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
+    </ui:define> 
+    
+    <ui:define name="centerFormContent">
+        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">                             
+            <p:outputLabel value="#{bundle.Event}:" indicateRequired="true"/>
+            <h:panelGrid columns="2" >
+                <p:selectOneMenu id="typeDay" value="#{_bean.selectedDayType}" var="td" converter="DayTypesConverter"
+                                 required="#{param['isRequired'] == 'true'}"
+                                 requiredMessage="#{bundle.Field} [#{bundle.Type}] #{bundle.MustBeFilled}">
+                    <f:selectItems value="#{_bean.dayTypes}" var="dayType" itemLabel="#{dayType.name}" itemValue="#{dayType}" />                        
+                    <p:ajax event="valueChange" update="icoEvent" />
+                    <p:column style="width:10%">
+                        <p:graphicImage value="/resources/icon/#{td.iconName}-16.png" /> 
+                    </p:column>
+
+                    <p:column>
+                        <h:outputText value="#{td.name}" />
+                    </p:column>
+                </p:selectOneMenu>
+                <p:graphicImage id="icoEvent" value="/resources/icon/#{_bean.selectedDayType.iconName}-32.png" /> 
+            </h:panelGrid>
+                
+            <h:panelGrid columns="2" >
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="#{bundle.With}:" style="float: right;"/>
+                    <p:calendar value="#{_bean.beginDate}" inputStyle="width: 145px;"
+                                widgetVar="dateCreateStartSearche"
+                                navigator="true" yearRange="c-120:c+20"
+                                pattern="dd.MM.yyyy"
+                                locale="#{sessionBean.locale}"
+                                required="#{param['isRequired'] == 'true'}"
+                                requiredMessage="#{bundle.Field} [#{bundle.DateBegin}] #{bundle.MustBeFilled}">
+                    </p:calendar>
+                </h:panelGrid>
+
+                <h:panelGrid columns="2">            
+                    <p:outputLabel value="#{bundle.At}:" style="float: right;" />
+                    <p:calendar value="#{_bean.endDate}" inputStyle="width: 145px;"
+                                widgetVar="dateCreateEndSearche"
+                                navigator="true" yearRange="c-120:c+20"
+                                pattern="dd.MM.yyyy"
+                                locale="#{sessionBean.locale}"
+                                required="#{param['isRequired'] == 'true'}"
+                                requiredMessage="#{bundle.Field} [#{bundle.DateEnd}] #{bundle.MustBeFilled}">
+                    </p:calendar>                
+                </h:panelGrid>
+            </h:panelGrid>
+            
+            <p:separator/>
+            
+            <h:panelGrid columns="3" styleClass="without-spaces">
+                <p:graphicImage value="/resources/icon/importance-32.png" />
+                <p:outputLabel value="#{bundle.PublishEventFeed}"/>
+                <p:selectBooleanCheckbox value="#{_bean.publicEventFeed}" disabled="#{_bean.readOnly}"/>                
+            </h:panelGrid>
+        </p:panelGrid>
+    </ui:define>
+</ui:composition>

@@ -110,6 +110,32 @@ public class CalendarBean extends BaseViewBean {
     }
     
     /**
+     * Открытие формы добавления события в календарь сотрудника
+     */
+    public void onAddEvent(){
+        sessionBean.openDialogFrm(DictFrmName.FRM_ADD_WTEVENT, getParamsMap());
+    }
+    
+    /**
+     * Обработка события после добавления события 
+     * @param event
+     */
+    public void onAfterAddEvent(SelectEvent event){
+        if (event.getObject() == null) return;        
+        String action = (String) event.getObject();
+
+        switch (action){
+            case SysParams.EXIT_NEED_UPDATE:{
+                modelRefresh();
+                break;
+            }
+            case SysParams.EXIT_NOTHING_TODO:{
+                break;
+            }
+        }
+    } 
+    
+    /**
      * Обработка события после закрытия карточки настроек дня
      * @param event
      */
