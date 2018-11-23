@@ -2,6 +2,7 @@ package com.maxfill.escom.beans.processes;
 
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.user.User;
 import java.util.Date;
 import java.util.List;
@@ -11,7 +12,7 @@ import org.apache.commons.lang.StringUtils;
 public class ProcessSearche extends SearcheModel{
     private static final long serialVersionUID = 3953544990596152030L;
 
-    private User curator;
+    private Staff curator;
     private String numberSearche;
     private boolean onlyTopLevelProc = true;
     
@@ -26,14 +27,14 @@ public class ProcessSearche extends SearcheModel{
         if (onlyTopLevelProc){
             paramEQ.put("parent", null);
         }
-    }        
+    }  
        
     /* GETS & SETS */
 
-    public User getCurator() {
+    public Staff getCurator() {
         return curator;
     }
-    public void setCurator(User curator) {
+    public void setCurator(Staff curator) {
         this.curator = curator;
     }
 

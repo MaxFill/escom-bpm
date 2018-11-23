@@ -35,7 +35,7 @@
                 <p:selectOneMenu value="#{_bean.model.curator}" filter="true" converter="usersConvertor"
                                  widgetVar="curatorSearche"
                                  styleClass="ui-grid-col-12">
-                    <f:selectItems value="#{userBean.findAll()}" var="user" itemValue="#{user}" itemLabel="#{user.shortFIO}" />
+                    <f:selectItems value="#{staffBean.findActualStaff()}" var="user" itemValue="#{user}" itemLabel="#{user.employeeFIO}" />
                     <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}"/>
                 </p:selectOneMenu>
                 <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('curatorSearche').selectValue();"/>
