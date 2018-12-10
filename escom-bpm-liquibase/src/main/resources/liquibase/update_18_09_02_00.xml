@@ -140,4 +140,25 @@
             </column>            
         </addColumn>
     </changeSet> 
+    
+    <changeSet id="counters_change_company_type" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="numerator" columnName="CompanyId" />
+            </not>
+        </preConditions>
+        <addColumn tableName="numerator">
+            <column name="CompanyId" type="INT" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="CompanyId"
+                                 baseTableName="numerator"
+                                 constraintName="FK_Numerator_CompanyId"
+                                 referencedColumnNames="Id"
+                                 onUpdate="NO ACTION"
+                                 onDelete="NO ACTION"
+                                 referencedTableName="companies"/>
+    </changeSet>
+    
 </databaseChangeLog> 

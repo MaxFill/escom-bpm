@@ -633,6 +633,10 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     
     /* GETS & SETS */
 
+    public Boolean getIsItemRegisted() {
+        return isItemRegisted;
+    }
+    
     public NumeratorService getNumerator(){
         return numeratorService;
     }

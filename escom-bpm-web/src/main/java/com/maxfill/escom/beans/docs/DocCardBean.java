@@ -53,6 +53,7 @@ import javax.inject.Inject;
 import com.maxfill.model.basedict.doc.numerator.DocNumerator;
 import com.maxfill.model.basedict.process.reports.ProcReportFacade;
 import com.maxfill.services.numerators.NumeratorService;
+import org.primefaces.PrimeFaces;
 
 /**
  * Контролер формы "Карточка документа"
@@ -111,10 +112,14 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
                 onItemChange(); //установка признака что документ изменён
             }
             if (getEditedItem().getRegNumber() != null){
-                onItemChange(); //установка признака что документ изменён
+                onItemChange(); //установка признака что документ изменён, потому что зарегистрирован автоматически при создании
                 isItemRegisted = true;
             }
-        }        
+        } 
+        
+        if (StringUtils.isNoneBlank(getEditedItem().getRegNumber())){        
+            isItemRegisted = true;
+        }
     }
      
     @Override
@@ -289,6 +294,20 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     
     /* *** РЕГИСТРАЦИЯ *** */
     
+    /* Определяет доступность кнопки регистрации документа */
+    public boolean isCanRegistred(){
+        if (isReadOnly()) return false;
+        Doc doc = getEditedItem();      
+        return StringUtils.isBlank(doc.getRegNumber()) && doc.getDocType() != null && doc.getDocType().getNumerator() != null;
+    }  
+    
+    /* Определяет доступность кнопки отмены регистрации документа */
+    public boolean isCanUnregistred(){
+        if (isReadOnly()) return false;
+        Doc doc = getEditedItem();      
+        return StringUtils.isNotBlank(doc.getRegNumber()) && doc.getDocType() != null && doc.getDocType().getNumerator() != null;
+    }
+    
     /* Сброс регистрационного номера */
     public void onClearRegNumber(){
         Doc doc = getEditedItem();
@@ -311,6 +330,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
         if (errors.isEmpty()){
             onItemChange();
             isItemRegisted = true;
+            MsgUtils.succesMsg("DocIsRegistred");
         } else {
             MsgUtils.showTupleErrsMsg(errors);
         }
@@ -319,9 +339,8 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     /* Проверка регистрационного номера   */
     public void checkRegNumber(Doc doc, Set<String> errors) {
         String regNumber = doc.getRegNumber();
-        if (StringUtils.isNotBlank(regNumber)){
-            boolean isDuble = getFacade().checkRegNumber(regNumber, doc);
-            if (!isDuble) {
+        if (StringUtils.isNotBlank(regNumber)){            
+            if (!getFacade().checkRegNumber(regNumber, doc)) {                
                 errors.add(MessageFormat.format(MsgUtils.getMessageLabel("REGNUMBER_IS_DUBLICATE"), new Object[]{doc.getDocTypeName(), regNumber, doc.getCompanyName()}));                
             }
         }
@@ -444,6 +463,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
         DocType docType = (DocType) event.getNewValue();
         getEditedItem().setDocType(docType);
         docBean.addDocStatusFromDocType(getEditedItem(), docType);
+        PrimeFaces.current().ajax().update("mainFRM:mainTabView:regNumberPanel");
     }      
   
     /* Событие обработки выбора главного документа на карточке */
@@ -530,15 +550,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
         getEditedItem().setDocsLinks(linkedDocs);
     }
     
-    /* ПРИЗНАКИ */
-    
-    /* Определяет доступность кнопки регистрации документа */
-    public boolean isCanRegistred(){
-       Doc doc = getEditedItem();
-       if (doc == null) return false;
-       
-       return StringUtils.isBlank(doc.getRegNumber()) && doc.getDocType() != null && doc.getDocType().getNumerator() != null;
-    }    
+    /* ПРИЗНАКИ */      
  
     public boolean isCanCreateProcess(){
         return isHaveRightExec();

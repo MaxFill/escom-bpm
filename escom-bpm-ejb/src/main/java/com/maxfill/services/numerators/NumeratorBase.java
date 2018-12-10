@@ -46,6 +46,7 @@ public abstract class NumeratorBase implements NumeratorService{
             Counter counter = new Counter();
             counter.setName(counterName);
             counter.setNumber(0);
+            counter.setCompany(null);
             counter.setCompanyName("---");
             counter.setTypeName("---");
             getCounterFacade().create(counter);
@@ -64,7 +65,7 @@ public abstract class NumeratorBase implements NumeratorService{
    
     /* Формирование регистрационного номера объекта по заданной маске  */
     @Override
-    public String doRegistrNumber(BaseDict item, Map<String, Object> params, Date dateReg) {
+    public synchronized String doRegistrNumber(BaseDict item, Map<String, Object> params, Date dateReg) {
         NumeratorPattern numPattern = getNumeratorPattern(item);
         Counter counter = doGetCounter(item, numPattern);
         Integer number = doGetNextRegNumber(counter);
@@ -85,7 +86,7 @@ public abstract class NumeratorBase implements NumeratorService{
     }
     
     /* Формирование номера по порядку  */
-    private Integer doGetNextRegNumber(Counter numerator) {
+    private synchronized Integer doGetNextRegNumber(Counter numerator) {
         Integer number = numerator.getNumber();
         number++;
         numerator.setNumber(number);

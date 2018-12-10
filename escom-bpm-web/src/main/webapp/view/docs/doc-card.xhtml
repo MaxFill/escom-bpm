@@ -30,7 +30,7 @@
                     <p:outputLabel value="#{bundle.Organization}:" for="company" indicateRequired="true"/>
                     <p:selectOneMenu value="#{_bean.editedItem.company}" id="company" converter="companyConvertor"
                                      title="#{bundle.CompanyDocRegistred}"
-                                     disabled="#{_bean.isReadOnly()}"
+                                     disabled="#{_bean.isReadOnly() or docCardBean.isItemRegisted}"
                                      styleClass="ui-grid-col-12"
                                      required="#{param['isRequired'] == 'true'}"
                                      requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
@@ -44,7 +44,7 @@
                         <ui:param name="_itemValue" value="#{_bean.editedItem.docType}"/>
                         <ui:param name="_itemLabel" value="nameEndElipse"/>
                         <ui:param name="_required" value="#{true}" />
-                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
+                        <ui:param name="_disabled" value="#{_bean.isReadOnly() or docCardBean.isItemRegisted}"/>
                         <ui:param name="_converter" value="docsTypesConvertor" />
                         <ui:param name="_itemPanel" value="docTypePanel"/>
                         <ui:param name="_titleItem" value="#{bundle.DocTypes}"/>
@@ -97,24 +97,24 @@
                                              value="#{_item.regNumber}"/>
 
                                 <p:commandButton icon="ui-icon-gear" title="#{bundle.Generate}"
-                                                 disabled="#{_bean.isReadOnly() or !docCardBean.canRegistred}"
+                                                 disabled="#{!docCardBean.canRegistred}"
                                                  actionListener="#{_bean.onGenerateRegNumber(_item)}"
-                                                 update="docTypePanel datePanel regNumberPanel"/>
+                                                 update="docTypePanel company datePanel regNumberPanel"/>
                                 <p:commandButton id="clearNumberBtn"
                                                  icon="ui-icon-close" title="#{bundle.UnRegistred}"
-                                                 update="docTypePanel datePanel regNumberPanel"
-                                                 actionListener="#{_bean.onClearRegNumber()}"
-                                                 disabled="#{_bean.isReadOnly() or _bean.canRegistred}"/>
+                                                 update="docTypePanel company datePanel regNumberPanel"
+                                                 actionListener="#{docCardBean.onClearRegNumber()}"
+                                                 disabled="#{!docCardBean.canUnregistred}"/>
                             </div>
                         </h:panelGroup>
                     </h:panelGrid>
 
                     <h:panelGrid id="datePanel" columns="1" styleClass="without-spaces">                        
                         <p:outputLabel value="#{bundle.DateDoc}:" indicateRequired="true"/>
-                        <p:calendar id="dateDoc" value="#{_bean.editedItem.itemDate}"  title="#{bundle.DateRegistredDoc}"
+                        <p:calendar id="dateDoc" value="#{_bean.editedItem.itemDate}" title="#{bundle.DateRegistredDoc}"
                                     inputStyle="width: 145px;"
                                     onkeypress="checkEsc();"
-                                    disabled="#{_bean.isReadOnly()}"
+                                    disabled="#{_bean.isReadOnly() or docCardBean.isItemRegisted}"
                                     onselect="return itemChange = 1;"
                                     required="#{param['isRequired'] == 'true'}" 
                                     locale="#{sessionBean.locale}"

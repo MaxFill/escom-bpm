@@ -44,7 +44,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.naming.AuthenticationException;

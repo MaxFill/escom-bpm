@@ -1,6 +1,6 @@
 package com.maxfill.model.basedict.numeratorPattern.counter;
 
-import com.maxfill.facade.BaseFacade;
+import com.maxfill.facade.BaseLazyFacade;
 import com.maxfill.model.basedict.numeratorPattern.counter.Counter;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -11,7 +11,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 @Stateless
-public class CounterFacade extends BaseFacade<Counter>{
+public class CounterFacade extends BaseLazyFacade<Counter>{
 
     public CounterFacade() {
         super(Counter.class);
@@ -34,14 +34,5 @@ public class CounterFacade extends BaseFacade<Counter>{
         return q.getResultList();
     }
     
-    public List<Counter> findAll() {
-        em.getEntityManagerFactory().getCache().evict(Counter.class);
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Counter> cq = builder.createQuery(Counter.class);
-        Root root = cq.from(Counter.class);
-        cq.select(root);
-        Query q = em.createQuery(cq);       
-        return q.getResultList(); 
-    }
     
 }

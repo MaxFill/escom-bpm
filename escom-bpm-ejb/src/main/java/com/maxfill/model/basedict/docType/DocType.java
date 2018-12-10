@@ -100,6 +100,7 @@ public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLo
         this.numerator = numerator;
     }
 
+    @Override
     public String getCode() {
         return code;
     }

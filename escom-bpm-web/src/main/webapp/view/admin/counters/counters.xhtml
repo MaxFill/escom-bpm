@@ -8,10 +8,31 @@
     <ui:param name="_bean" value="#{countersExplBean}"/>    
     
     <ui:define name="centerFormContent">      
-
-        <p:dataTable id="itemsTbl" value="#{countersExplBean.counters}" 
-                     emptyMessage="#{bundle.EmptyTable}"
-                     editable="true" editMode="cell"
+        <p:panel toggleable="true" header="#{bundle.Filter}" toggleSpeed="500" widgetVar="panel">
+            <h:panelGrid columns="2"> 
+                <h:panelGrid columns="1"> 
+                    <p:outputLabel value="#{bundle.Organization}:" for="company" indicateRequired="true"/>
+                    <p:selectOneMenu value="#{_bean.company}" id="company" converter="companyConvertor"
+                                     title="#{bundle.CompanyDocRegistred}"                             
+                                     styleClass="ui-grid-col-12"
+                                     required="#{param['isRequired'] == 'true'}"
+                                     requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
+                        <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
+                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>                
+                    </p:selectOneMenu>                 
+                </h:panelGrid>
+            
+                <p:commandButton id="btnSearche" value="#{bundle.Find}"
+                        onstart="PF('statusDialog').show()"
+                        oncomplete="PF('statusDialog').hide();"
+                        actionListener="#{countersExplBean.onRefresh()}">
+                    <f:param name="isRequired" value="true"/>
+                </p:commandButton>
+            </h:panelGrid>
+        </p:panel>
+        
+        <p:dataTable id="itemsTbl" value="#{countersExplBean.lazyDataModel}" lazy="true" editable="true" 
+                     emptyMessage="#{bundle.EmptyTable}"                     
                      paginator="true" paginatorPosition="bottom"                       
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                      rowsPerPageTemplate="10,25,50" rows="10"
@@ -20,32 +41,32 @@
                      selection="#{countersExplBean.selected}" selectionMode="single"
                      var="item" rowKey="#{item.id}">
 
-            <p:ajax event="cellEdit" listener="#{countersExplBean.onNumberEdit}" />
+            <p:ajax event="rowEdit" listener="#{countersExplBean.onNumberEdit}" />
 
             <p:column width="16">
                 <h:graphicImage value="/resources/icon/counter.png"/>   
             </p:column>
             
             <p:column headerText="#{bundle.Name}" sortBy="#{item.name}">
-                <h:outputLabel value="#{item.name}"/>
+                #{item.name}
             </p:column>
             
             <p:column headerText="#{bundle.Company}" sortBy="#{item.companyName}">
-                <h:outputLabel value="#{item.companyName}"/>
+                #{item.companyName}
             </p:column> 
             
             <p:column headerText="#{bundle.Type}" sortBy="#{item.typeName}">
-                <h:outputLabel value="#{item.typeName}"/>
+                #{item.typeName}
             </p:column> 
 
             <p:column headerText="#{bundle.Year}" sortBy="#{item.year}">
-                <h:outputLabel value="#{item.year}" />                                    
+                #{item.year}
             </p:column> 
 
             <p:column headerText="#{bundle.Number}">
                 <p:cellEditor>
                     <f:facet name="output">
-                        <h:outputLabel value="#{item.number}" />
+                        #{item.number}
                     </f:facet>
                     <f:facet name="input">
                         <p:inputNumber value="#{item.number}" decimalPlaces="0" />
@@ -53,6 +74,10 @@
                 </p:cellEditor>
             </p:column>
 
+            <p:column style="width:25px">
+                <p:rowEditor />
+            </p:column>
+            
             <p:column>
                 <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" 
                                  update="itemsTbl"

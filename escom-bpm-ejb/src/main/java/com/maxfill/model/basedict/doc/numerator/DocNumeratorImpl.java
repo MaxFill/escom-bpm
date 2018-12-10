@@ -36,6 +36,7 @@ public class DocNumeratorImpl extends NumeratorBase implements DocNumerator{
             Counter counter = new Counter();
             counter.setName(counterName);
             counter.setNumber(0);
+            counter.setCompany(doc.getCompany());
             counter.setCompanyName(doc.getCompany().getName());
             counter.setTypeName(doc.getDocType().getName());
             counter.setYear(Integer.valueOf(EscomUtils.getYearYY(doc.getItemDate())));
@@ -52,14 +53,13 @@ public class DocNumeratorImpl extends NumeratorBase implements DocNumerator{
         DocType docType = doc.getDocType();
         
         StringBuilder sb = new StringBuilder();
+        sb.append("DOC_");
         if (doc.getCompany() != null){
             sb.append("Company_").append(doc.getCompany().getId()).append("_");
-        }
-        
-        sb.append(docFacade.getFRM_NAME());
+        }                
         
         if (numPattern.isSerialNumber()){
-            sb.append("_SerialNumber");
+            sb.append("SerialNumber");
         } else {
             String counterName = docType.getGuide();
             if (StringUtils.isEmpty(counterName)){
@@ -101,8 +101,11 @@ public class DocNumeratorImpl extends NumeratorBase implements DocNumerator{
             params.put("T", typeCode);
         }
         params.put("O", doc.getCompany().getCode());
-        String number = doRegistrNumber(doc, params, dateReg);
-        doc.setRegNumber(number);        
+        String regNumber = doRegistrNumber(doc, params, dateReg);
+        while(docFacade.checkRegNumber(regNumber, doc) == false){
+            regNumber = doRegistrNumber(doc, params, dateReg);
+        }        
+        doc.setRegNumber(regNumber);        
     }   
 
     @Override

@@ -1,6 +1,5 @@
 package com.maxfill.model.basedict.staff;
 
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.company.Company;
 import com.maxfill.model.basedict.department.Department;

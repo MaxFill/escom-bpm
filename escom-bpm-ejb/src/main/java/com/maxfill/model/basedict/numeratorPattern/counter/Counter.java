@@ -1,6 +1,7 @@
 package com.maxfill.model.basedict.numeratorPattern.counter;
 
 import com.maxfill.model.Dict;
+import com.maxfill.model.basedict.company.Company;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -8,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
@@ -52,6 +55,10 @@ public class Counter implements Serializable, Dict {
     @Column(name = "Company")    
     private String companyName;
     
+    @JoinColumn(name = "CompanyId", referencedColumnName = "Id")
+    @ManyToOne(optional = false)   
+    private Company company;
+    
     @Basic(optional = false)
     @Column(name = "Type")    
     private String typeName;
@@ -83,6 +90,13 @@ public class Counter implements Serializable, Dict {
     }
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     public String getTypeName() {

@@ -4,7 +4,6 @@ import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.numeratorPattern.NumeratorPattern;
 import com.maxfill.model.basedict.numeratorPattern.counter.Counter;
-import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.basedict.processType.ProcessType;
 import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import com.maxfill.services.numerators.NumeratorBase;
@@ -24,10 +23,9 @@ import org.apache.commons.lang3.StringUtils;
  */ 
 @Stateless
 public class ProcessNumeratorImpl extends NumeratorBase implements ProcessNumerator{    
+    
     @EJB
     private ProcessTypesFacade processTypesFacade;
-    @EJB
-    private ProcessFacade processFacade;
     
     /**
      * Возвращает счётчик для объекта
@@ -44,6 +42,7 @@ public class ProcessNumeratorImpl extends NumeratorBase implements ProcessNumera
             Counter counter = new Counter();
             counter.setName(counterName);
             counter.setNumber(0);
+            counter.setCompany(process.getCompany());
             counter.setCompanyName(process.getCompanyName());
             counter.setTypeName(process.getOwner().getName());
             counter.setYear(Integer.valueOf(EscomUtils.getYearYY(process.getItemDate())));
@@ -66,11 +65,10 @@ public class ProcessNumeratorImpl extends NumeratorBase implements ProcessNumera
         ProcessType procType = process.getOwner();         
         
         StringBuilder sb = new StringBuilder();
+        sb.append("PROCESS_");
         if (process.getCompany() != null){
             sb.append("Company_").append(process.getCompany().getId()).append("_");
-        }
-        
-        sb.append(processFacade.getFRM_NAME());
+        }                
         
         Process parent = process.getParent();
         if (parent != null){
