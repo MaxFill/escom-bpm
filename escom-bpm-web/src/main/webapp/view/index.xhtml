@@ -6,6 +6,8 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/view/templ/templ.xhtml">
 
+    <ui:param name="_bean" value="#{sessionBean}"/>
+    
     <ui:define name="title">
         #{applicationBean.appName}
     </ui:define>
@@ -19,6 +21,7 @@
 
     <ui:define name="body">
         <h:outputScript library="js" name="confirm-close-window.js"/>
+        
         <p:importConstants type="com.maxfill.dictionary.DictFilters" var="DictFilters" />
         <p:importConstants type="com.maxfill.dictionary.DictFrmName" var="DictFrmName" />        
         <h:form id="mainFRM">
@@ -159,6 +162,7 @@
                     <ui:include src="/view/dashboard/disk-info.xhtml"/>
                     <ui:include src="/view/dashboard/messages.xhtml"/>
                     <ui:include src="/view/dashboard/tasks.xhtml"/>
+                    <ui:include src="/view/dashboard/tasks_pie_exe.xhtml"/>
                     
                     <p:panel id="services" header="#{bundle.Services}" rendered="#{sessionBean.userAdmin}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
@@ -310,11 +314,11 @@
 
     <ui:define name="customStyleCSS">
         <style type="text/css">
-            .ui-dashboard-column {
-                width: 280px !important;
-            }
             .dash-panel{
                 margin: 5px !important;                
+            }              
+            .jqplot-data-label{
+                color: white !important;
             }
         </style>
     </ui:define>

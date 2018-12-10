@@ -1,7 +1,9 @@
 package com.maxfill.escom.beans.task;
 
 import com.maxfill.dictionary.DictFrmName;
+import com.maxfill.dictionary.DictTaskStatus;
 import com.maxfill.dictionary.SysParams;
+import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.model.basedict.process.Process;
@@ -62,12 +64,19 @@ public class TaskListBean extends LazyLoadBean<Task>{
     private Staff executor;
     private String number;
     private String name;
+    private Integer tasksStatus; //0 ExeInTime, 1 ExeOverdue, 2 FinishInTime, 3 FinishOverdue
     
     @Override
     public void doBeforeOpenCard(Map<String, String> params) {
         states.add(stateFacade.getRunningState());
         executor = getCurrentStaff();
-        executors = initExecutors();        
+        executors = initExecutors();
+        if (params.containsKey("tasksStatus")){
+            tasksStatus = Integer.valueOf(params.get("tasksStatus"));
+            period = sessionBean.getTaskPeriod();
+            dateStart = sessionBean.getTaskDateStart();
+            dateEnd = sessionBean.getTaskDateEnd();
+        }
     }
     
     /**
@@ -173,8 +182,7 @@ public class TaskListBean extends LazyLoadBean<Task>{
     
     @Override
     protected Map<String, Object> makeFilters(Map filters) {
-        filters.put("owner", executor);
-        filters.put("states", states); 
+        filters.put("owner", executor);         
         if (!showOnlyExecute){     
             if(dateStart != null || dateEnd != null) {
                 Map <String, Date> dateFilters = new HashMap <>();
@@ -189,6 +197,37 @@ public class TaskListBean extends LazyLoadBean<Task>{
         if (StringUtils.isNotBlank(name)){
             filters.put("name", name);
         }
+        if (tasksStatus != null){
+            Map <String, Date> periodFilters = new HashMap <>();
+            periodFilters.put("startDate", dateStart);
+            periodFilters.put("endDate", dateEnd);
+            filters.put("dateCreate", periodFilters);
+            filters.put("tasksStatus", tasksStatus);
+            states.clear();
+            switch (tasksStatus){
+                case DictTaskStatus.EXE_IN_TIME:{ 
+                    states.add(stateFacade.getRunningState());
+                    break;
+                }
+                case DictTaskStatus.EXE_IN_OVERDUE:{
+                    states.add(stateFacade.getRunningState());
+                    break;
+                }
+                case DictTaskStatus.FINISH_IN_TIME:{
+                    states.add(stateFacade.getCompletedState());
+                    break;
+                }
+                case DictTaskStatus.FINISH_IN_OVERDUE:{
+                    states.add(stateFacade.getCompletedState());
+                    break;
+                }
+                case DictTaskStatus.EXE_PLAN_TODAY:{
+                    states.add(stateFacade.getRunningState());
+                    break; 
+                }
+            }
+        }
+        filters.put("states", states);
         return filters;
     }
     

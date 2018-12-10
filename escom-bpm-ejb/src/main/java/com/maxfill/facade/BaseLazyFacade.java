@@ -1,8 +1,10 @@
 package com.maxfill.facade;
 
+import com.maxfill.dictionary.DictTaskStatus;
 import com.maxfill.model.Dict;
 import com.maxfill.model.core.states.State;
 import com.maxfill.model.basedict.user.User;
+import com.maxfill.utils.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
@@ -151,8 +153,36 @@ public abstract class BaseLazyFacade<T extends Dict> extends BaseFacade<T>{
                                     predicate = builder.like(root.<String>get(filterProperty),"%"+filterValue+"%");                                
                                     break;
                                 }
+                                case "tasksStatus":{                                    
+                                    switch ((int)filterValue){
+                                        case DictTaskStatus.EXE_IN_TIME:{
+                                            predicate = builder.greaterThanOrEqualTo(root.get("planExecDate"), new Date());
+                                            break;
+                                        }
+                                        case DictTaskStatus.EXE_IN_OVERDUE:{
+                                            predicate = builder.lessThan(root.get("planExecDate"), new Date());
+                                            break;
+                                        }
+                                        case DictTaskStatus.FINISH_IN_TIME:{
+                                            predicate = builder.lessThanOrEqualTo(root.get("factExecDate"), root.get("planExecDate"));
+                                            break;
+                                        }
+                                        case DictTaskStatus.FINISH_IN_OVERDUE:{
+                                            predicate = builder.greaterThan(root.get("factExecDate"), root.get("planExecDate"));
+                                            break;
+                                        }
+                                        case DictTaskStatus.EXE_PLAN_TODAY:{
+                                            criteries.add(builder.greaterThan(root.get("planExecDate"), new Date()));
+                                            criteries.add(builder.lessThan(root.get("planExecDate"), DateUtils.endDate(new Date())));
+                                            predicate = null;
+                                            break;
+                                        }
+                                    }                                    
+                                    break;
+                                }
                                 default:{
                                     predicate = builder.equal(root.get(filterProperty), filterValue);
+                                    break;
                                 }
                             }                 
                         } else {

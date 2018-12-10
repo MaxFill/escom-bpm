@@ -69,6 +69,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.*;
 import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsFirst;
@@ -77,11 +78,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.ItemSelectEvent;
 import org.primefaces.model.UploadedFile;
 import org.primefaces.model.chart.MeterGaugeChartModel;
+import org.primefaces.model.chart.PieChartModel;
 
 /* Cессионный бин приложения */
 @SessionScoped
@@ -105,6 +109,13 @@ public class SessionBean implements Serializable{
     private final List<Attaches> attaches = new ArrayList<>();
     private BigDecimal totalfilesSize;
     private MeterGaugeChartModel meterFileSize;
+    protected PieChartModel taskPieModel;
+    
+    private Date taskDateStart;
+    private Date taskDateEnd;
+    private String taskPeriod;
+    private Integer taskTypeId;
+    private Integer countTasks = 0;
     
     private final List<SelectItem> PERIODS = Collections.unmodifiableList(
         new ArrayList<SelectItem>() {
@@ -185,7 +196,7 @@ public class SessionBean implements Serializable{
     
     @PostConstruct
     public void init(){        
-        temeInit(); 
+        temeInit();                
     }   
     
     public void initDashBoard(){         
@@ -204,10 +215,11 @@ public class SessionBean implements Serializable{
             dbsList.add(new DashBoardSettings("services", MsgUtils.getBandleLabel("Services"), 2 , 3));
             dbsList.add(new DashBoardSettings("loggers", MsgUtils.getBandleLabel("Logging"), 3 , 3));            
         }
-                
-        dbsList.add(new DashBoardSettings("eventFeed", MsgUtils.getBandleLabel("EventFeed"), 1 , 4));   
+         
+        dbsList.add(new DashBoardSettings("eventFeed", MsgUtils.getBandleLabel("EventFeed"), 1 , 4));
+        dbsList.add(new DashBoardSettings("tasks_pie_exe", MsgUtils.getBandleLabel("ExecutionInfo"), 2 , 4));   
         if (isUserAdmin()){
-            dbsList.add(new DashBoardSettings("diskInfo", MsgUtils.getBandleLabel("DiskInfo"), 2, 4));
+            dbsList.add(new DashBoardSettings("diskInfo", MsgUtils.getBandleLabel("DiskInfo"), 3, 4));
         }                               
 
         onLoadDashboard();
@@ -217,13 +229,26 @@ public class SessionBean implements Serializable{
     }    
     
     public void onLoadDashboard(){
-        dashboardModel = new DefaultDashboardModel();        
-        dashboardModel.addColumn(new DefaultDashboardColumn());
-        dashboardModel.addColumn(new DefaultDashboardColumn());
-        dashboardModel.addColumn(new DefaultDashboardColumn()); 
-        dashboardModel.addColumn(new DefaultDashboardColumn());
-        dashboardModel.addColumn(new DefaultDashboardColumn());
-        dashboardModel.addColumn(new DefaultDashboardColumn());
+        dashboardModel = new DefaultDashboardModel(); 
+        DefaultDashboardColumn col0 = new DefaultDashboardColumn();
+        DefaultDashboardColumn col1 = new DefaultDashboardColumn();
+        DefaultDashboardColumn col2 = new DefaultDashboardColumn();
+        DefaultDashboardColumn col3 = new DefaultDashboardColumn();
+        DefaultDashboardColumn col4 = new DefaultDashboardColumn();
+        DefaultDashboardColumn col5 = new DefaultDashboardColumn();
+        col0.setStyle("width:280px;");
+        col1.setStyle("width:280px;");
+        col2.setStyle("width:280px;");
+        col3.setStyle("width:280px;");
+        col4.setStyle("width:280px;");
+        col5.setStyle("width:280px;");
+        
+        dashboardModel.addColumn(col0);
+        dashboardModel.addColumn(col1);
+        dashboardModel.addColumn(col2);
+        dashboardModel.addColumn(col3);
+        dashboardModel.addColumn(col4);
+        dashboardModel.addColumn(col5);        
         
         if (getUserSettings().getDashBoard().isEmpty()){
             dbsList.stream()
@@ -880,8 +905,72 @@ public class SessionBean implements Serializable{
        openDialogFrm(DictFrmName.FRM_HELP, getParamsMap()); 
     }                   
     
+    /* ЗАДАЧИ диаграмма исполнения */
+    public void initTaskExePie(){
+        taskDateStart = DateUtils.firstDayYear(LocalDate.now());
+        taskDateEnd = DateUtils.lastDayYear(LocalDate.now());
+        taskPeriod = "curYear";
+    }
+
+    public void onTaskPieExerefresh(){
+        taskPieModel = null;
+    }
+    public PieChartModel getTaskPieModel() {
+        if (taskPieModel == null){            
+            Tuple<Integer, Map<String, Integer>> results = taskFacade.countTaskStaffByStates(getCurrentUserStaff(), taskDateStart, taskDateEnd);
+            countTasks = results.a;
+            Map<String, Integer> mapResult = results.b; 
+            
+            taskPieModel = new PieChartModel();            
+            
+            taskPieModel.set(MsgUtils.getBandleLabel("ExeInTime"), mapResult.get("ExeInTime"));           //row 0
+            taskPieModel.set(MsgUtils.getBandleLabel("ExeOverdue"), mapResult.get("ExeOverdue"));         //row 1
+            taskPieModel.set(MsgUtils.getBandleLabel("FinishInTime"), mapResult.get("FinishInTime"));     //row 2
+            taskPieModel.set(MsgUtils.getBandleLabel("FinishOverdue"), mapResult.get("FinishOverdue"));   //row 3
+            taskPieModel.set(MsgUtils.getBandleLabel("ExePlanToday"), mapResult.get("ExePlanToday"));     //row 4
+            
+            // синий, красный, зелёный, бордовый, желтый
+            taskPieModel.setSeriesColors("0000FF, FF0000, 008000, 800000, FFFF00");
+            taskPieModel.setShowDataLabels(true); 
+            taskPieModel.setShadow(true);
+            taskPieModel.setShowDatatip(true);
+            
+        }
+        return taskPieModel;
+    }
+
+    /**
+     * Обработка события щелчка мышью по диаграмме исполнения задач
+     * @param event 
+     */
+    public void onPieTasksExeSelect(ItemSelectEvent event){         
+        taskTypeId = event.getItemIndex();
+        setOpenFormName(DictFrmName.FRM_MY_TASKS);     
+    }
+    
+    public void onOpenTasks(){
+       if (StringUtils.isNotEmpty(openFormName)){
+            Map<String, List<String>> params = getParamsMap();
+            params.put("tasksStatus", Collections.singletonList(taskTypeId.toString()));
+            openDialogFrm(openFormName, params);
+        } 
+    }
+    
+    public void onPeriodChange(ValueChangeEvent event){
+        taskPeriod = (String) event.getNewValue();  
+        if (taskPeriod != null){
+            taskDateStart = DateUtils.periodStartDate(taskPeriod, taskDateStart);
+            taskDateEnd = DateUtils.periodEndDate(taskPeriod, taskDateEnd);
+            taskPieModel = null;
+        }
+    }
+    
     /* GETS & SETS */
 
+    public Integer getCountTasks() {
+        return countTasks;
+    }
+    
     public BigDecimal getTotalfilesSize() {
         return totalfilesSize;
     }
@@ -1089,6 +1178,25 @@ public class SessionBean implements Serializable{
     public void setDbsChecked(DashBoardSettings[] dbsChecked) {
         this.dbsChecked = dbsChecked;
     }
-        
-         
+
+    public Date getTaskDateStart() {
+        return taskDateStart;
+    }
+    public void setTaskDateStart(Date taskDateStart) {
+        this.taskDateStart = taskDateStart;
+    }
+
+    public Date getTaskDateEnd() {
+        return taskDateEnd;
+    }
+    public void setTaskDateEnd(Date taskDateEnd) {
+        this.taskDateEnd = taskDateEnd;
+    }
+
+    public String getTaskPeriod() {
+        return taskPeriod;
+    }
+    public void setTaskPeriod(String taskPeriod) {
+        this.taskPeriod = taskPeriod;     
+    }
 }

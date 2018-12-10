@@ -3,7 +3,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-
+    
     <h:panelGrid id="#{_itemPanel}" columns="1" styleClass="ui-grid-col-12 col-padding"> 
         <p:outputLabel value="#{_titleItem}:"/>
         <p:selectOneMenu id="#{_itemPanel}_item" value="#{_itemValue}" title="#{_titleItem}" 
@@ -14,7 +14,7 @@
                          onchange="itemChange = 1;">
             <p:ajax update="#{_itemPanel}_period #{_update}" partialSubmit="true" oncomplete="itemChange = 1;"/>
             <f:selectItems value="#{sessionBean.PERIODS}"/>
-        </p:selectOneMenu>        
+        </p:selectOneMenu>
                 
         <h:panelGroup id="#{_itemPanel}_period">
             <h:panelGrid columns="2" styleClass="col-padding" rendered="#{_itemValue eq 'period'}">

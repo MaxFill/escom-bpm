@@ -1,0 +1,40 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">    
+        
+    <p:panel id="tasks_pie_exe" header="#{bundle.ExecutionInfo}" toggleable="true" styleClass="dash-panel">
+        <f:facet name="actions">
+            <p:commandLink id="refreshTasksPie" type="button" title="#{bundle.Refresh}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+                           actionListener="#{sessionBean.onTaskPieExerefresh()}"
+                           update="tasks_pie_exe">   
+                <h:outputText styleClass="ui-icon ui-icon-arrowrefresh-1-s" />
+            </p:commandLink>
+        </f:facet> 
+        
+        <p:panelGrid columns="1" columnClasses="col-padding" styleClass="without-spaces">
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
+                <ui:include src="/view/common/period-select.xhtml" >
+                    <ui:param name="_itemValue" value="#{sessionBean.taskPeriod}"/>
+                    <ui:param name="_titleItem" value="#{bundle.Period}"/>
+                    <ui:param name="_beginDate" value="#{sessionBean.taskDateStart}"/>
+                    <ui:param name="_endDate" value="#{sessionBean.taskDateEnd}"/>
+                    <ui:param name="_required" value="false" />
+                    <ui:param name="_disabled" value="false"/>
+                    <ui:param name="_itemPanel" value="periodTaskPanel"/>  
+                    <ui:param name="_actionSelect" value="onPeriodChange"/>  
+                    <ui:param name="_update" value="tasks_pie_exe"/>
+                </ui:include>        
+            </p:panelGrid>             
+            
+            <p:chart type="pie" model="#{sessionBean.taskPieModel}" style="width:255px;height:255px"                              
+                     responsive="true" styleClass="ui-grid-col-12">
+                <p:ajax event="itemSelect" listener="#{sessionBean.onPieTasksExeSelect}" oncomplete="document.getElementById('mainFRM:btnOpenTasks').click();"/> 
+            </p:chart>            
+
+            <p:commandButton id="btnOpenTasks" style="display: none;" actionListener="#{sessionBean.onOpenTasks()}">
+            </p:commandButton> 
+        </p:panelGrid>        
+    </p:panel>
+</ui:composition>
