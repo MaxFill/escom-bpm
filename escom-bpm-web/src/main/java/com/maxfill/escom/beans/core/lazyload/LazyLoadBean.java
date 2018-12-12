@@ -56,7 +56,7 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
         extractors.put("name", BaseDict::getName);
         extractors.put("iconName", BaseDict::getIconName);   
         extractors.put("companyName", BaseDict::getCompanyName);
-        extractors.put("docTypeName", BaseDict::getDocTypeName);
+        extractors.put("docTypeName", BaseDict::getTypeName);
         extractors.put("regNumber", BaseDict::getRegNumber);
         extractors.put("itemDate", BaseDict::getItemDate);
         extractors.put("stateName", BaseDict::getStateName);

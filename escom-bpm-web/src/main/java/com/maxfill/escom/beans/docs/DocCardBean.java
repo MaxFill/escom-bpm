@@ -341,7 +341,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
         String regNumber = doc.getRegNumber();
         if (StringUtils.isNotBlank(regNumber)){            
             if (!getFacade().checkRegNumber(regNumber, doc)) {                
-                errors.add(MessageFormat.format(MsgUtils.getMessageLabel("REGNUMBER_IS_DUBLICATE"), new Object[]{doc.getDocTypeName(), regNumber, doc.getCompanyName()}));                
+                errors.add(MessageFormat.format(MsgUtils.getMessageLabel("REGNUMBER_IS_DUBLICATE"), new Object[]{doc.getTypeName(), regNumber, doc.getCompanyName()}));                
             }
         }
     }

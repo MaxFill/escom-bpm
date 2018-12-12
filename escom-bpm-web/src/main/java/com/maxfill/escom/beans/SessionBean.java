@@ -66,6 +66,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.Collator;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.time.Instant;
@@ -963,6 +964,21 @@ public class SessionBean implements Serializable{
             taskDateEnd = DateUtils.periodEndDate(taskPeriod, taskDateEnd);
             taskPieModel = null;
         }
+    }
+    
+    public Comparator<BaseDict> getBaseDictComporator(){
+        Collator collator = Collator.getInstance(getLocale());
+        
+        return (BaseDict item1, BaseDict item2) -> {
+            int rezult = collator.compare(item1.getCompanyName(), item2.getCompanyName());
+            if (rezult == 0){                
+                rezult = collator.compare(item1.getTypeName(), item2.getTypeName());
+            }
+            if (rezult == 0){                
+                rezult = collator.compare(item1.getRegNumber(), item2.getRegNumber());
+            }
+            return rezult;
+        };        
     }
     
     /* GETS & SETS */

@@ -175,7 +175,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         return "";
     }
     
-    public String getDocTypeName(){
+    public String getTypeName(){
         return "";
     }
     
@@ -276,6 +276,12 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         return "";
     }
 
+    public String getStatusName(){
+       return ""; 
+    }
+    public void setStatusName(String statusName){        
+    }
+    
     public List<D> getDetailItems() {
         return detailItems;
     }

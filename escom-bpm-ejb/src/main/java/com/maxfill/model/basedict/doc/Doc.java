@@ -140,7 +140,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     }
     
     @Override
-    public String getDocTypeName(){
+    public String getTypeName(){
         return docType != null ? docType.getName() : "";
     }
     

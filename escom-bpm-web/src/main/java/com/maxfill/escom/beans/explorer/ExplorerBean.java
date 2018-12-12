@@ -25,7 +25,6 @@ import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.facade.BaseLazyFacade;
 import com.maxfill.model.WithDatesPlans;
 import com.maxfill.model.core.metadates.Metadates;
-import com.maxfill.model.core.print.JurnalReport;
 import com.maxfill.services.searche.SearcheService;
 import java.io.IOException;
 import org.apache.commons.beanutils.BeanUtils;
@@ -42,7 +41,6 @@ import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.lang.reflect.InvocationTargetException;
-import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -1608,55 +1606,20 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         docBean.onViewMainAttache((Doc) item);
     }
     
-    /* ПЕЧАТЬ */
+    /* ПЕЧАТЬ */        
     
     /* ПЕЧАТЬ : Открытие на предпросмотр журнала документов */
     public void openDocJournalReport() {
         Map<String, Object> params = new HashMap<>();
         params.put("USER_LOGIN", getCurrentUser().getLogin());
         params.put("REPORT_TITLE", MsgUtils.getBandleLabel("DocJournal"));
-        List<Doc> docs = new ArrayList<>();
-        loadItems.stream().filter(item -> item instanceof Doc).forEach(item -> docs.add((Doc) item)); 
-
-        Collator collator = Collator.getInstance(getLocale());
         
-        Comparator<Doc> comparator = (Doc doc1, Doc doc2) -> {
-            int rezult;
-            String companyName1 = "";
-            String companyName2 = "";
-            if (doc1.getCompany() != null && StringUtils.isNotBlank(doc1.getCompany().getName())){
-                companyName1 = doc1.getCompany().getName();
-            }
-            if (doc2.getCompany() != null && StringUtils.isNotBlank(doc2.getCompany().getName())){
-                companyName2 = doc2.getCompany().getName();
-            }
-            rezult = collator.compare(companyName1, companyName2);
-            if (rezult == 0){
-                String docTypeName1 = "";
-                String docTypeName2 = "";
-                if (doc1.getDocType() != null && StringUtils.isNotBlank(doc1.getDocType().getName())){
-                    docTypeName1 = doc1.getDocType().getName();
-                }
-                if (doc2.getDocType() != null && StringUtils.isNotBlank(doc2.getDocType().getName())){
-                    docTypeName2 = doc2.getDocType().getName();
-                }
-                rezult = collator.compare(docTypeName1, docTypeName2);
-            }
-            if (rezult == 0){
-                String docNumber1 = "";
-                String docNumber2 = "";
-                if (doc1.getRegNumber() != null && StringUtils.isNotBlank(doc1.getRegNumber())){
-                    docNumber1 = doc1.getRegNumber();
-                }
-                if (doc2.getRegNumber() != null && StringUtils.isNotBlank(doc2.getRegNumber())){
-                    docNumber2 = doc2.getRegNumber();
-                }
-                rezult = collator.compare(docNumber1, docNumber2);
-            }
-            return rezult;
-        };       
-        
-        List<Object> dataReport = docs.stream().sorted(comparator).collect(Collectors.toList());
+        Comparator<BaseDict> comparator = sessionBean.getBaseDictComporator();
+        List<Object> dataReport = loadItems.stream()
+                .filter(item -> item instanceof Doc)
+                .sorted(comparator)
+                .collect(Collectors.toList()); 
+                        
         sessionBean.preViewReport(dataReport, params, DictFrmName.REP_DOC_JOURNAL);
     }
           
@@ -1664,21 +1627,14 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         Map<String, Object> params = new HashMap<>();
         params.put("USER_LOGIN", getCurrentUser().getLogin());
         params.put("REPORT_TITLE", MsgUtils.getBandleLabel("Journal"));
-        List<Object> dataReport = loadItems.stream().map(item->{
-                JurnalReport jr = new JurnalReport();
-                jr.setName(item.getName());
-                jr.setRegNumber(item.getRegNumber());
-                jr.setCuratorName(item.getCuratorName());
-                jr.setAuthorName(item.getAuthorName());
-                jr.setDateCreate(item.getDateCreate());
-                jr.setDatePlan(item.getPlanExecDate());
-                jr.setItemDate(item.getItemDate());
-                jr.setTypeName(item.getOwner().getName());
-                jr.setCompanyName(item.getCompanyName());
-                jr.setStatus(sessionBean.getItemStatus((WithDatesPlans)item));
-                return jr;
-            })
-            .collect(Collectors.toList());        
+        Comparator<BaseDict> comparator = sessionBean.getBaseDictComporator();
+        List<Object> dataReport = loadItems.stream()
+                .sorted(comparator)
+                .map(item->{
+                    item.setStatusName(sessionBean.getItemStatus((WithDatesPlans) item));
+                    return item;
+                })
+                .collect(Collectors.toList());        
         sessionBean.preViewReport(dataReport, params, DictFrmName.REP_PROC_JOURNAL);
     }
     

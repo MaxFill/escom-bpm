@@ -133,6 +133,10 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, mappedBy = "process")
     private Set<ProcReport> reports = new HashSet<>();
     
+    @Transient
+    @XmlTransient
+    private String statusName;
+    
     public Process() {
     }        
 
@@ -154,6 +158,16 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
         return "subproc";
     }
     
+    @XmlTransient
+    @Override
+    public String getStatusName(){
+       return statusName; 
+    }
+    @Override
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+        
     /* GETS & SETS */
 
     @Override
@@ -179,6 +193,11 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @Override
     public void setItemDate(Date itemDate) {
         this.itemDate = itemDate;
+    }
+    
+    @Override
+    public String getTypeName(){
+        return owner != null ? owner.getName() : "";
     }
     
     @Override
