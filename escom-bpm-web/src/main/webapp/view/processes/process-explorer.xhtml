@@ -69,7 +69,20 @@
             <h:outputText value="#{item.curatorName}" />
         </p:column>
     </ui:define>
-        
+    
+    <ui:define name="addToolButtons">  
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
+        <p:menuButton icon="ui-icon-print" title="#{bundle.Reports}" >
+            <p:menuitem value="#{bundle.Journal}" 
+                        icon="ui-icon-note"
+                        onstart="PF('statusDialog').show()"
+                        oncomplete="PF('statusDialog').hide();"
+                        actionListener="#{_bean.openProcJournalReport()}"/>
+        </p:menuButton>        
+    </ui:define>
+    
     <ui:define name="centerFormFooter">        
     </ui:define>
     

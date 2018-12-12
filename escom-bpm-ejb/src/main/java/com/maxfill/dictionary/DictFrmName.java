@@ -70,4 +70,5 @@ public final class DictFrmName {
     /* Отчёты */
     public static final String REP_DOC_COUNT_TYPES = "doc-count-types";
     public static final String REP_DOC_JOURNAL = "doc-journal";
+    public static final String REP_PROC_JOURNAL = "proc-journal";
 }

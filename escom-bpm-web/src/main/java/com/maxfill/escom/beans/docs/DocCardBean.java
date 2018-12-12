@@ -298,14 +298,14 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     public boolean isCanRegistred(){
         if (isReadOnly()) return false;
         Doc doc = getEditedItem();      
-        return StringUtils.isBlank(doc.getRegNumber()) && doc.getDocType() != null && doc.getDocType().getNumerator() != null;
+        return StringUtils.isBlank(doc.getRegNumber()) && doc.getCompany() != null && doc.getDocType() != null && doc.getDocType().getNumerator() != null;
     }  
     
     /* Определяет доступность кнопки отмены регистрации документа */
     public boolean isCanUnregistred(){
         if (isReadOnly()) return false;
         Doc doc = getEditedItem();      
-        return StringUtils.isNotBlank(doc.getRegNumber()) && doc.getDocType() != null && doc.getDocType().getNumerator() != null;
+        return StringUtils.isNotBlank(doc.getRegNumber()) && doc.getCompany() != null && doc.getDocType() != null && doc.getDocType().getNumerator() != null;
     }
     
     /* Сброс регистрационного номера */

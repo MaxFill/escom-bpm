@@ -3,16 +3,19 @@ package com.maxfill.escom.beans.processes;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.processes.types.ProcessTypesBean;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.basedict.processType.ProcessType;
+import java.util.HashMap;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Сервисный бин для работы с сущностью "Процессы"
@@ -64,5 +67,5 @@ public class ProcessBean extends BaseDetailsBean<Process, ProcessType>{
         sm.setAuthorSearche(getCurrentUser());
         return sm;
     }
-      
+    
 }

@@ -23,7 +23,9 @@ import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.facade.BaseLazyFacade;
+import com.maxfill.model.WithDatesPlans;
 import com.maxfill.model.core.metadates.Metadates;
+import com.maxfill.model.core.print.JurnalReport;
 import com.maxfill.services.searche.SearcheService;
 import java.io.IOException;
 import org.apache.commons.beanutils.BeanUtils;
@@ -1657,6 +1659,28 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         List<Object> dataReport = docs.stream().sorted(comparator).collect(Collectors.toList());
         sessionBean.preViewReport(dataReport, params, DictFrmName.REP_DOC_JOURNAL);
     }
+          
+    public void openProcJournalReport(){
+        Map<String, Object> params = new HashMap<>();
+        params.put("USER_LOGIN", getCurrentUser().getLogin());
+        params.put("REPORT_TITLE", MsgUtils.getBandleLabel("Journal"));
+        List<Object> dataReport = loadItems.stream().map(item->{
+                JurnalReport jr = new JurnalReport();
+                jr.setName(item.getName());
+                jr.setRegNumber(item.getRegNumber());
+                jr.setCuratorName(item.getCuratorName());
+                jr.setAuthorName(item.getAuthorName());
+                jr.setDateCreate(item.getDateCreate());
+                jr.setDatePlan(item.getPlanExecDate());
+                jr.setItemDate(item.getItemDate());
+                jr.setTypeName(item.getOwner().getName());
+                jr.setCompanyName(item.getCompanyName());
+                jr.setStatus(sessionBean.getItemStatus((WithDatesPlans)item));
+                return jr;
+            })
+            .collect(Collectors.toList());        
+        sessionBean.preViewReport(dataReport, params, DictFrmName.REP_PROC_JOURNAL);
+    }
     
     /* ПРОЧИЕ МЕТОДЫ */
     
@@ -1683,7 +1707,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         setCurrentPage(((DataTable) event.getSource()).getFirst());
     }       
             
-    /* Построение объекта для сортировки таблицы обозревателя  */
+    /* Построение объекта для сортировки таблицы обозревателя Не использую, т.к. загрузка теперь лэзи */
     /*
     public List<SortMeta> getSortOrder() {
         if (sortOrder == null){
