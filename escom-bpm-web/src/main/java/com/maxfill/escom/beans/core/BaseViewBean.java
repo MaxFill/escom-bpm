@@ -168,10 +168,16 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         return MsgUtils.getBandleLabel(key);        
     }
     
+    /**
+     * Создание сообщения из строки с параметрами
+     * @param key
+     * @param param
+     * @return 
+     */
     public String getFormatLabelFromBundle(String key, String param){
         if (StringUtils.isEmpty(key)) return "";
-        Object[] params = new Object[]{param};        
-        return MessageFormat.format(MsgUtils.getBandleLabel(key), params);                
+        Object[] params = param.split(",");
+        return MessageFormat.format(MsgUtils.getBandleLabel(key), params);
     }
     
     /**

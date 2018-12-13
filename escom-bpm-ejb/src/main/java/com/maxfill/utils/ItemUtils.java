@@ -15,6 +15,7 @@ public final class ItemUtils {
     }
     
     public static String getBandleLabel(String key, Locale locale){
+        if (StringUtils.isBlank(key)) return "";
         ResourceBundle bundle = ResourceBundle.getBundle("locale.Bundle", locale);
         return bundle.getString(key);
     }

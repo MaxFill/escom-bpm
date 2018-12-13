@@ -183,10 +183,14 @@ public class MonitorBean extends BaseViewBean<BaseView>{
            selProcId = null;
         } else {           
             filters.put("actual", true);
-            filters.put("deleted", false);        
-            //filters.put("parent", null);
+            filters.put("deleted", false);
             if (selProcTypeNode != null){
-                filters.put("owner", selProcTypeNode.getData());
+                ProcessType owner = (ProcessType) selProcTypeNode.getData();
+                if (owner != null && owner.getId() != 0){
+                    filters.put("owner", owner);
+                } else {
+                    filters.put("parent", null);
+                }
             }
             if(dateStart != null || dateEnd != null) {
                 Map <String, Date> dateFilters = new HashMap <>();

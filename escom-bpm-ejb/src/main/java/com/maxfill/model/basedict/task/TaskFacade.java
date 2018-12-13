@@ -15,11 +15,13 @@ import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.core.messages.UserMessagesFacade;
 import com.maxfill.services.worktime.WorkTimeService;
 import com.maxfill.utils.DateUtils;
+import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -280,7 +282,9 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         task.setFactExecDate(new Date());        
         task.getState().setCurrentState(stateFacade.getCompletedState());
         messagesFacade.makeAsReadByTask(task, new Date());
-        addLogEvent(task, DictLogEvents.TASK_FINISHED, user);
+        addLogEvent(task, DictLogEvents.TASK_FINISHED, 
+                new String[]{task.getOwner().getEmployeeFIO(), task.getName(), ItemUtils.getBandleLabel(task.getResult(), userFacade.getUserLocale(user))}
+                , user);
     }
     
     /**

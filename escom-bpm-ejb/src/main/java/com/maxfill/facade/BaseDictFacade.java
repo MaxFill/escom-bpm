@@ -24,7 +24,9 @@ import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -487,17 +489,22 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return ((Long) q.getSingleResult()).intValue();
     }
     
-    /* Добавление события в журнал событий */
-    public void addLogEvent(T item, String msgKey, User user) {
-        addLogEvent(item, msgKey, "", user);
+    /**
+     * Добавление события в журнал событий
+     * @param item
+     * @param keyMsg - ключ ресурса msg
+     * @param user 
+     */
+    public void addLogEvent(T item, String keyMsg, User user) {
+        addLogEvent(item, keyMsg, new String[]{}, user);
     }
     
     /* Создание записи лога  */
-    public void addLogEvent(T item, String template, String parameter, User user) {     
+    public void addLogEvent(T item, String template, String[] params, User user) {     
         try {
             L logEvent = logClass.newInstance();
             logEvent.setEvent(template);
-            logEvent.setParams(parameter);
+            logEvent.setParams(String.join(",", params));
             logEvent.setDateEvent(new Date());
             logEvent.setUserId(user);
             logEvent.setItem(item);            

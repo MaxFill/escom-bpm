@@ -203,6 +203,7 @@ public class DiagramBean extends BaseViewBean<BaseView>{
         scheme.getElements().getEnters().forEach((k, v)->elementMap.put(k, createElement(v)));
         scheme.getElements().getStates().forEach((k, v)->elementMap.put(k, createElement(v)));
         scheme.getElements().getConditions().forEach((k, v)->elementMap.put(k, createElement(v)));
+        scheme.getElements().getLoops().forEach((k, v)->elementMap.put(k, createElement(v)));
         StartElem startElem = scheme.getElements().getStartElem();
         if (startElem != null){
             elementMap.put(startElem.getUid(), createElement(startElem));

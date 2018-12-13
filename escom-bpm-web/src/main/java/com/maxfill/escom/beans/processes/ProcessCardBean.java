@@ -31,7 +31,6 @@ import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.basedict.userGroups.UserGroups;
 import com.maxfill.services.workflow.Workflow;
-import com.maxfill.services.worktime.WorkTimeCalendar;
 import com.maxfill.services.worktime.WorkTimeService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
@@ -180,7 +179,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      */
     @Override
     public String doFinalCancelSave() {
-        return closeItemForm(exitParam);  //закрыть форму объекта
+        return closeItemForm(exitParam);  
     }
     
     @Override
@@ -280,7 +279,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     }    
     
     /* *** МЕТОДЫ РАБОТЫ С ПРОЦЕССОМ *** */
-    
+
     /**
      * Определает отображение кнопки пуска процесса на форме карточки
      * @return 
@@ -288,7 +287,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     public boolean isDisableRunBtn(){        
         return isReadOnly();
     }
-    
+
     /**
      * Обработка события запуска процесса на исполнение
      */
@@ -300,7 +299,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         Process process = getEditedItem();
         calculateDeadline(errors);
         validatePlanDate(process, errors);
-        validateRemarks(process.getDocument(), errors);
+        //validateRemarks(process.getDocument(), errors);
         processFacade.validateCanRun(process, getCurrentUser(), errors);
         workflow.initScheme(process, null, getCurrentUser(), errors);
         if (!errors.isEmpty()){
@@ -324,14 +323,9 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             }
             exitParam = SysParams.EXIT_EXECUTE;            
             PrimeFaces.current().ajax().update("mainFRM");
-            if (!forShow.isEmpty()){
-                if (forShow.size() == 1){
-                    Process subproc = (Process)forShow.get(0);
-                    processBean.prepEditItem(subproc, getParamsMap());
-                } else {
-                    PrimeFaces.current().ajax().update("initObjFRM");
-                    PrimeFaces.current().executeScript("PF('InitObjectsWV').show();");
-                }
+            if (!forShow.isEmpty()){                
+                PrimeFaces.current().ajax().update("initObjFRM");
+                PrimeFaces.current().executeScript("PF('InitObjectsWV').show();");                
             }
         }
     }
@@ -377,7 +371,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         if (remark != null){
             errors.add(new Tuple("CannotStartProcessUnprocessedRemarks", new Object[]{}));
         }
-    }    
+    }
     
     /* *** ПРОЧИЕ МЕТОДЫ *** */
     
@@ -770,7 +764,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         if (curators == null){
             UserGroups userGroup = processFacade.getRoleDataSource(getEditedItem(), DictRoles.ROLE_CURATOR);
             if (userGroup != null){
-                curators = userFacade.findUserByGroupID(userGroup.getId(), getCurrentUser()) //TODO id группы нужно задавать в видах процессов!
+                curators = userFacade.findUserByGroupID(userGroup.getId(), getCurrentUser()) 
                     .stream()                    
                     .filter(user->user.getStaff() != null)
                     .map(user->user.getStaff())

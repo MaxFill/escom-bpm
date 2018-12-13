@@ -34,7 +34,7 @@
        
         <p:column width="16" >
             <p:commandButton title="#{bundle.Open}" icon="ui-icon-document"
-                             update="reportFRM"
+                             update="reportFRM" style="display: none;"
                              actionListener="#{_bean.onOpenExeReport(report)}"
                              onclick="PF('dlgReport').show();">
             </p:commandButton>

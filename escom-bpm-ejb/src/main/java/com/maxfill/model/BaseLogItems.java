@@ -33,11 +33,11 @@ public abstract class BaseLogItems<M extends BaseDict> implements Serializable, 
     private Integer id;
     
     @XmlTransient
-    @Column(name = "Event")
+    @Column(name = "Event", length = 1024)
     private String event;
 
     @XmlTransient
-    @Column(name = "Params")
+    @Column(name = "Params", length = 1024)
     private String params;
     
     @XmlTransient

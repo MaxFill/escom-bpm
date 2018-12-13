@@ -161,4 +161,20 @@
                                  referencedTableName="companies"/>
     </changeSet>
     
+    <changeSet id="logs_change_len_columns" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="mysql" />
+        </preConditions>
+        <sql>
+            ALTER TABLE processesLog
+                CHANGE COLUMN `Event` `Event` VARCHAR(1024) NULL DEFAULT NULL ,
+                CHANGE COLUMN `Params` `Params` VARCHAR(1024) NULL DEFAULT NULL ;
+            ALTER TABLE taskLog
+                CHANGE COLUMN `Event` `Event` VARCHAR(1024) NULL DEFAULT NULL ,
+                CHANGE COLUMN `Params` `Params` VARCHAR(1024) NULL DEFAULT NULL ;
+            ALTER TABLE docsLog
+                CHANGE COLUMN `Event` `Event` VARCHAR(1024) NULL DEFAULT NULL ,
+                CHANGE COLUMN `Params` `Params` VARCHAR(1024) NULL DEFAULT NULL ;
+        </sql>
+    </changeSet>
 </databaseChangeLog> 

@@ -3,7 +3,6 @@ package com.maxfill.escom.beans.processes;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.staff.Staff;
-import com.maxfill.model.basedict.user.User;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

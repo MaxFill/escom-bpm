@@ -9,7 +9,6 @@ import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.doc.Doc;
-import com.maxfill.model.basedict.doc.DocFacade;
 import com.maxfill.model.core.messages.UserMessagesFacade;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.basedict.remark.Remark;

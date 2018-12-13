@@ -21,6 +21,7 @@ import com.maxfill.model.basedict.processType.ProcessType;
 import com.maxfill.model.core.rights.Rights;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.staff.StaffFacade;
+import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.task.TaskFacade;
 import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.basedict.userGroups.UserGroups;
@@ -35,6 +36,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.Map;
@@ -231,6 +233,23 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
     }  
+    
+    /**
+     * Запись в лог процесса события по задаче, связанной с процессом
+     * @param process
+     * @param template
+     * @param task
+     * @param user 
+     */
+    public void addTaskEvent(Process process, String template, Task task, User user){
+        String[] params = new String[]{task.getOwner().getEmployeeFIO(), task.getName(), ItemUtils.getBandleLabel(task.getResult(), userFacade.getUserLocale(user))};
+        addLogEvent(process, template, params, user);
+        Process parent = process.getParent();
+        while (parent != null){
+            addLogEvent(parent, template, params, user);
+            parent = parent.getParent();
+        }
+    }
     
     /* *** РОЛИ *** */    
     

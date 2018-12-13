@@ -72,6 +72,8 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import com.maxfill.model.basedict.doc.numerator.DocNumerator;
 import com.maxfill.model.basedict.process.numerator.ProcessNumerator;
+import com.maxfill.utils.ItemUtils;
+import java.util.Locale;
 
 /**
  * Сервис реализует методы управления бизнес-процессами
@@ -458,20 +460,20 @@ public class WorkflowImpl implements Workflow {
         StartElem startElem = scheme.getElements().getStartElem();
         Process process = scheme.getProcess();
         if (startElem == null && scheme.getElements().getEnters().isEmpty()){
-            errors.add(new Tuple("DiagramNotHaveStart", new Object[]{}));
+            errors.add(new Tuple("DiagramNotHaveStart", new Object[]{process.getId(), process.getName()}));
         }
         if (scheme.getElements().getExits().isEmpty()){
-            errors.add(new Tuple("DiagramNotHaveExit", new Object[]{}));
+            errors.add(new Tuple("DiagramNotHaveExit", new Object[]{process.getId(), process.getName()}));
         }
         if (scheme.getElements().getConnectors().isEmpty()){
-            errors.add(new Tuple("DiagramNotHaveConnectors", new Object[]{}));
+            errors.add(new Tuple("DiagramNotHaveConnectors", new Object[]{process.getId(), process.getName()}));
         }
         
         if (scheme.getElements().getTasks().isEmpty() && MapUtils.isEmpty(scheme.getElements().getSubprocesses())){
-            errors.add(new Tuple("DiagramNotHaveTasks", new Object[]{}));
+            errors.add(new Tuple("DiagramNotHaveTasks", new Object[]{process.getId(), process.getName()}));
         }
         if (processFacade.isHaveRole(process, DictRoles.ROLE_CURATOR) && process.getCurator() == null){
-            errors.add(new Tuple("CuratorNotSet", new Object[]{}));
+            errors.add(new Tuple("CuratorNotSet", new Object[]{process.getId(), process.getName()}));
         }
         Date planEndDate = process.getPlanExecDate();
         if (checkTasks){            
@@ -629,7 +631,7 @@ public class WorkflowImpl implements Workflow {
         if (!errors.isEmpty()){                            
             ctx.setRollbackOnly();                      
         } else {
-            processFacade.addLogEvent(process, DictLogEvents.TASK_FINISHED, currentUser);
+            processFacade.addTaskEvent(process, DictLogEvents.TASK_FINISHED, task, currentUser);
         }
         
         return forShow;
@@ -694,7 +696,7 @@ public class WorkflowImpl implements Workflow {
             .filter(task-> !task.getState().getCurrentState().equals(stateFacade.getRunningState()))                    
             .forEach(task->{
                 //если нужно отправить только не согласовавшим и задача согласована, то обходим задачу
-                if (sendNotAgree && Objects.equals(DictResults.RESULT_AGREED, task.getResult())){
+                if (sendNotAgree && !Objects.equals(DictResults.RESULT_REFUSED, task.getResult())){
                     TaskElem taskEl = process.getScheme().getElements().getTasks().get(task.getTaskLinkUID());
                     run(process, taskEl, new HashSet<>(), currentUser, params, errors);
                 } else {                    
@@ -717,8 +719,11 @@ public class WorkflowImpl implements Workflow {
 
                         taskFacade.makeReminder(task); 
                         taskFacade.inicializeExecutor(task, task.getOwner().getEmployee());
-                        taskFacade.addLogEvent(task, DictLogEvents.TASK_ASSIGNED, task.getAuthor());
                         task.getState().setCurrentState(stateFacade.getRunningState());
+                        
+                        //запись в лог
+                        taskFacade.addLogEvent(task, DictLogEvents.TASK_ASSIGNED, new String[]{task.getOwner().getEmployeeFIO(), task.getName()}, task.getAuthor());
+                        processFacade.addTaskEvent(process, DictLogEvents.TASK_ASSIGNED, task, currentUser);
                     } else {
                         errors.add(new Tuple("OneTasksFailedSetRole", new Object[]{task.getId(), task.getName()}));
                     }
@@ -925,8 +930,10 @@ public class WorkflowImpl implements Workflow {
      * @return - возвращает список объектов, которые должны быть показаны пользователю
      */
     @Override
-    synchronized public Set<BaseDict> run(Process process, WFConnectedElem startElement, Set<SubProcessElem> exeSubProc, User currentUser, Map<String, Object> params, Set<Tuple> errors) {   
-        Set<BaseDict> forShow = new HashSet<>();
+    synchronized public Set<BaseDict> run(Process process, WFConnectedElem startElement, Set<SubProcessElem> exeSubProc, User currentUser, Map<String, Object> params, Set<Tuple> errors){
+        if (DictStates.STATE_RUNNING != process.getState().getCurrentState().getId()) return new HashSet<>(); //выходим если процесс не в статусе RUN
+        
+        Set<BaseDict> forShow = new HashSet<>();                
         Set<Task> exeTasks = new HashSet<>();        
         doRun(startElement.getAnchors(), process, exeTasks, exeSubProc, currentUser, params, errors);
         if (!errors.isEmpty()){
@@ -1080,7 +1087,7 @@ public class WorkflowImpl implements Workflow {
                             .forEach(loopElem->{
                                 loopElem.setEnter(true);
                                 loopElem.setDone(true);
-                                makeLoop(process, loopElem);                                
+                                makeLoop(scheme, loopElem);                                
                                 doRun(loopElem.getAnchors(), process, exeTasks, exeSubProc, currentUser, params, errors);
                             });
                         
@@ -1278,11 +1285,12 @@ public class WorkflowImpl implements Workflow {
     
     /**
      * Сброс отметок по всем пройденным элементам
+     * сброс всех коннекторов, исходящих из цикла, кроме того, через который произошёл вход в цикл
      * @param process
      * @param elem 
      */
-    private void makeLoop(Process process, LoopElem elem){
-        
+    private void makeLoop(Scheme scheme, LoopElem loopEl){
+        scheme.getElements().getConnectors().forEach(con->con.setDone(false));
     }
     
     /* *** УВЕДОМЛЕНИЯ  *** */

@@ -26,7 +26,7 @@ public class LoopElem extends WFConnectedElem{
 
     @Override
     public String getStyle() {        
-        return DictWorkflowElem.STYLE_ENTER;
+        return DictWorkflowElem.STYLE_LOOP;
     }
 
     @Override

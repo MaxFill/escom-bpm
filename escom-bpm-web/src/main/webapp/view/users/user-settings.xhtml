@@ -23,7 +23,7 @@
     
     <ui:define name="specToolButtons" >
         <p:commandButton icon="ui-icon-disk" title="#{bundle.SaveAndClose}" update="mainFRM"
-                         actionListener="#{_bean.onCloseCard('save')}"
+                         actionListener="#{_bean.onSaveAndClose()}"
                          onclick="sendFormSize('#{_bean.getFormName()}');">
        </p:commandButton>
         <span class="ui-separator">
@@ -32,9 +32,6 @@
     </ui:define> 
     
     <ui:define name="centerFormContent">        
-        <p:commandButton id="btnSave"
-                         style="float: right; display: none;"
-                         actionListener="#{userSettingsBean.saveSettings()}"/>
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" dynamic="true">
             <p:tab title="#{bundle.password}">
                 <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
@@ -78,6 +75,12 @@
                         <h3>#{msg.UsedLDAPauth}</h3>
                     </p:outputPanel>
                 </p:panelGrid>
+            </p:tab>
+            
+            <p:tab title="#{bundle.Assistants}">
+                <ui:include src="/view/users/assistants/assistants.xhtml">
+                    <ui:param name="_readOnly" value="#{!userSettingsBean.canChangeAssists}" />
+                </ui:include>
             </p:tab>
             
             <p:tab title="#{bundle.Other}">

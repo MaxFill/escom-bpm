@@ -46,7 +46,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -216,7 +215,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
                     .filter(docsStatus -> docsStatus.getId() != null)
                     .forEach(docsStatus -> {
                         docStatusFacade.remove(docsStatus);
-                        getFacade().addLogEvent(getEditedItem(), "DeletedDocStatus", docsStatus.toString(), getCurrentUser());
+                        getFacade().addLogEvent(getEditedItem(), "DeletedDocStatus", new String[]{docsStatus.toString()}, getCurrentUser());
                     });
         }        
     }     
