@@ -65,8 +65,6 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private DocBean docBean;
     @Inject
     private RemarkBean remarkBean;
-    @Inject
-    private ProcessBean processBean;
        
     @EJB
     private ProcessFacade processFacade;

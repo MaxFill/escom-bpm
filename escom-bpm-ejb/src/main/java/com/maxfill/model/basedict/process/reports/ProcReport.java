@@ -45,11 +45,15 @@ public class ProcReport implements Serializable, Dict{
     private String content;
     
     @Basic(optional = false)    
-    @Column(name = "Status")    
+    @Column(name = "Status")
     private String status;
     
+    @Basic(optional = false)
+    @Column(name = "StatusIcon")
+    private String statusIcon;
+    
     @Basic(optional = false)    
-    @Column(name = "Role")    
+    @Column(name = "Role")
     private String roleName;
     
     @XmlTransient
@@ -120,6 +124,13 @@ public class ProcReport implements Serializable, Dict{
         this.id = id;
     }
 
+    public String getStatusIcon() {
+        return statusIcon;
+    }
+    public void setStatusIcon(String statusIcon) {
+        this.statusIcon = statusIcon;
+    }
+    
     public Doc getDoc() {
         return doc;
     }

@@ -461,7 +461,7 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     
     @Override
     public String toString() {
-        return "Task [ id=" + id + " ]";
+        return "Task [ id=" + id + " ] " + getName();
     }
 
 }

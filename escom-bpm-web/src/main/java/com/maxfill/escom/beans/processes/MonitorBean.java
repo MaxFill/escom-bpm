@@ -253,7 +253,18 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         }
         return sb.toString();
     }        
-        
+      
+    public String onGetItemTypeName(BaseDict item){
+        if (item instanceof Process){
+            Process process = (Process) item;
+            if (process.getParent() == null){
+                return getLabelFromBundle("Process");
+            } else 
+                return getLabelFromBundle("SubProcess");
+        } else 
+            return getLabelFromBundle("Task");        
+    }
+    
     public String onGetItemResult(Results item){        
         if (StringUtils.isBlank(item.getResult())) return "";                
         return getLabelFromBundle(item.getResult());

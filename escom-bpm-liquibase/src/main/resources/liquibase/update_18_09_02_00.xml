@@ -177,4 +177,18 @@
                 CHANGE COLUMN `Params` `Params` VARCHAR(1024) NULL DEFAULT NULL ;
         </sql>
     </changeSet>
+    
+    <changeSet id="processReports_add_StatusIcon" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="processReports" columnName="StatusIcon" />
+            </not>
+        </preConditions>
+        <addColumn tableName="processReports">
+            <column name="StatusIcon" type="varchar(32)" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet> 
+    
 </databaseChangeLog> 

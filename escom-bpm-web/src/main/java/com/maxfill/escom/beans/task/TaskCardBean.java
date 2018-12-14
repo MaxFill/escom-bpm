@@ -168,6 +168,9 @@ public class TaskCardBean extends BaseCardBean<Task>{
                 */
             }
         }
+        if (task.getReminderType() == null){
+            task.setReminderType("no");
+        }
         //проверка для напоминания
         switch (task.getReminderType()){
             case "repeat":{                

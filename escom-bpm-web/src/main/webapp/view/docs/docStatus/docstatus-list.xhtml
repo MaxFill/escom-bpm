@@ -30,9 +30,9 @@
             <p:dataTable id="docStatusTbl" var="item" value="#{_bean.editedItem.docsStatusList}" 
                          editable="#{_bean.isHaveRightEdit()}"
                          emptyMessage="#{bundle.EmptyTable}"
-                         rows="10" paginator="true" paginatorPosition="bottom"
+                         paginator="true" paginatorPosition="bottom"
                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                         rowsPerPageTemplate="5, 10, 20, 35, 50, 75, 100" 
+                         rowsPerPageTemplate="5, 10, 20, 35, 50, 75" rows="5" 
                          currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                          editMode="cell" widgetVar="docsStatus">
 

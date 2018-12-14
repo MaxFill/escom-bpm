@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">                
+
+    <p:tab title="#{bundle.ConcorderList}">
+        <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
+            <p:dataTable var="item" value="#{docCardBean.concorders}" 
+                    rowKey="#{item.id}" selectionMode="single" 
+                    emptyMessage="#{bundle.EmptyTable}"
+                    paginator="true" paginatorPosition="bottom"  
+                    tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
+                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    rowsPerPageTemplate="5, 10, 20, 35" rows="5"
+                    currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                    sortBy="#{item.author.shortFIO}">                                        
+                
+                <p:column headerText="#{bundle.Author}" sortBy="#{item.author.shortFIO}">
+                    #{item.author.shortFIO}
+                </p:column>                
+                
+                <p:column width="16" >                
+                    <h:graphicImage rendered="#{item.statusIcon != null}" value="/resources/icon/#{item.statusIcon}.png"/>
+                </p:column>
+                
+                <p:column headerText="#{bundle.Status}" sortBy="#{item.status}" >                
+                    #{_bean.getLabelFromBundle(item.status)}                    
+                </p:column>
+
+                <p:column headerText="#{bundle.Date}" sortBy="#{item.dateCreate}" style="text-align: center;">
+                    <h:outputLabel value="#{item.dateCreate}">
+                        <f:convertDateTime pattern="dd.MM.yy HH:mm" />
+                    </h:outputLabel>
+                </p:column>
+
+            </p:dataTable>
+        </p:panelGrid>
+    </p:tab>
+
+</ui:composition>

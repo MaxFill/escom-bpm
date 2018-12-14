@@ -4,7 +4,9 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">                
 
-    <p:dataTable id="tblRemarks" var="remark" value="#{_bean.editedItem.detailItems}" 
+    <p:tab title="#{bundle.Remarks}">
+        <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
+        <p:dataTable id="tblRemarks" var="remark" value="#{_bean.editedItem.detailItems}" 
                 rowKey="#{remark.tempId}" selectionMode="single" selection="#{_bean.selectedDetail}"
                 emptyMessage="#{bundle.EmptyTable}"
                 paginator="true" paginatorPosition="bottom"  
@@ -14,57 +16,59 @@
                 currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                 sortBy="#{remark.dateCreate}" sortOrder="descending">                        
         
-        <p:column headerText="#{bundle.Author}" sortBy="#{remark.author.shortFIO}">
-            #{remark.author.shortFIO}
-        </p:column>
-        
-        <p:column headerText="#{bundle.Status}" sortBy="#{remark.state}" >
-            <div class="ui-inputgroup">
-                <h:graphicImage value="#{remark.state.currentState.icon}"/>
-                #{_bean.getLabelFromBundle(remark.state.currentState.name)}
-            </div>
-        </p:column>
-        
-        <p:column headerText="#{bundle.Remark}" >
-            <h:outputLabel escape="false" value="#{remark.nameEndElipse}" />
-        </p:column>
-        
-        <p:column headerText="#{bundle.Date}" sortBy="#{remark.dateChange}" style="text-align: center;">
-            <h:outputLabel value="#{remark.dateChange}">
-                <f:convertDateTime pattern="dd.MM.yy HH:mm" />
-            </h:outputLabel>
-        </p:column>                        
-        
-        <p:column headerText="#{bundle.Checked}" width="20" rendered="false">
-            <p:selectBooleanCheckbox value="#{remark.checked}"/>
-        </p:column> 
-        
-        <p:column rendered="false">
-            <div class="ui-inputgroup">
-                <p:commandButton icon="ico_look" title="#{bundle.Open}" 
+            <p:column headerText="#{bundle.Author}" sortBy="#{remark.author.shortFIO}">
+                #{remark.author.shortFIO}
+            </p:column>
+
+            <p:column headerText="#{bundle.Status}" sortBy="#{remark.state}" >
+                <div class="ui-inputgroup">
+                    <h:graphicImage value="#{remark.state.currentState.icon}"/>
+                    #{_bean.getLabelFromBundle(remark.state.currentState.name)}
+                </div>
+            </p:column>
+
+            <p:column headerText="#{bundle.Remark}" >
+                <h:outputLabel escape="false" value="#{remark.nameEndElipse}" />
+            </p:column>
+
+            <p:column headerText="#{bundle.Date}" sortBy="#{remark.dateChange}" style="text-align: center;">
+                <h:outputLabel value="#{remark.dateChange}">
+                    <f:convertDateTime pattern="dd.MM.yy HH:mm" />
+                </h:outputLabel>
+            </p:column>                        
+
+            <p:column headerText="#{bundle.Checked}" width="20" rendered="false">
+                <p:selectBooleanCheckbox value="#{remark.checked}"/>
+            </p:column> 
+
+            <p:column rendered="false">
+                <div class="ui-inputgroup">
+                    <p:commandButton icon="ico_look" title="#{bundle.Open}" 
+                                     immediate="true"
+                                     actionListener="#{_bean.onOpenDetail(remark)}">
+                        <p:ajax event="dialogReturn" listener="#{_bean.afterCloseDetailItem}" update="mainFRM:mainTabView:tblRemarks"/>
+                    </p:commandButton>
+                    <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" rendered="false"
+                                     immediate="true"
+                                     disabled="#{_bean.isReadOnly() or remark.author != _bean.currentUser}"
+                                     update="mainFRM:mainTabView:tblRemarks"
+                                     actionListener="#{_bean.onDeleteDetail(remark)}">
+                        <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
+                    </p:commandButton>
+                </div>
+            </p:column>
+
+            <f:facet name="footer">
+                <p:commandButton icon="ui-icon-circle-plus" value="#{bundle.Add}" title="#{bundle.AddRemark}" 
                                  immediate="true"
-                                 actionListener="#{_bean.onOpenDetail(remark)}">
+                                 rendered="false"
+                                 disabled="#{_bean.isReadOnly()}"
+                                 actionListener="#{_bean.onCreateDetail()}">
                     <p:ajax event="dialogReturn" listener="#{_bean.afterCloseDetailItem}" update="mainFRM:mainTabView:tblRemarks"/>
                 </p:commandButton>
-                <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" rendered="false"
-                                 immediate="true"
-                                 disabled="#{_bean.isReadOnly() or remark.author != _bean.currentUser}"
-                                 update="mainFRM:mainTabView:tblRemarks"
-                                 actionListener="#{_bean.onDeleteDetail(remark)}">
-                    <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
-                </p:commandButton>
-            </div>
-        </p:column>
-        
-        <f:facet name="footer">
-            <p:commandButton icon="ui-icon-circle-plus" value="#{bundle.Add}" title="#{bundle.AddRemark}" 
-                             immediate="true"
-                             rendered="false"
-                             disabled="#{_bean.isReadOnly()}"
-                             actionListener="#{_bean.onCreateDetail()}">
-                <p:ajax event="dialogReturn" listener="#{_bean.afterCloseDetailItem}" update="mainFRM:mainTabView:tblRemarks"/>
-            </p:commandButton>
-        </f:facet>
-    </p:dataTable>
+            </f:facet>
+        </p:dataTable>
+        </p:panelGrid>
+    </p:tab>
 
 </ui:composition>

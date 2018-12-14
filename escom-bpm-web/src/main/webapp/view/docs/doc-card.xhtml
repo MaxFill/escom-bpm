@@ -52,7 +52,7 @@
                         <ui:param name="_items" value="#{docTypeBean.findAll()}"/>
                         <ui:param name="_actionClear" value="setDocType"/>
                         <ui:param name="_actionSelect" value="onDocTypeSelected"/>
-                        <ui:param name="_update" value="mainFRM:mainTabView:regNumberPanel mainFRM:mainTabView:docStatusTbl mainFRM:mainTabView:explToolBar"/>
+                        <ui:param name="_update" value="mainFRM:mainTabView:regNumberPanel"/>
                     </ui:include>
                                         
                     <p:outputLabel value="#{bundle.Partner}:" rendered="#{applicationBean.isCanUsesPartners()}"/>
@@ -144,16 +144,16 @@
             </p:panelGrid>
         </p:tab>
         
-        <p:tab title="#{bundle.Remarks}">
-            <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
-                <ui:include src="/view/docs/remarks/remarks-list.xhtml" />
-            </p:panelGrid>
-        </p:tab>
-        
-        <ui:include src="/view/docs/docStatus/docstatus-list.xhtml"/>
+        <p:tab title="#{bundle.Concorded}">
+            <p:accordionPanel>
+                <ui:include src="/view/docs/concorders/concorder-list.xhtml" />
+                <ui:include src="/view/docs/remarks/remarks-list.xhtml" />            
+            </p:accordionPanel>
+        </p:tab>                
         
         <p:tab title="#{bundle.Other}">
             <p:accordionPanel>
+                <ui:include src="/view/docs/docStatus/docstatus-list.xhtml"/>
                 <ui:include src="/view/docs/doc-places.xhtml"/>    
                 <ui:include src="/view/docs/doc-links.xhtml"/>        
             </p:accordionPanel>            

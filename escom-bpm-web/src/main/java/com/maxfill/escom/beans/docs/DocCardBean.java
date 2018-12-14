@@ -16,6 +16,7 @@ import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictNumerator;
 import com.maxfill.dictionary.DictPrintTempl;
+import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.interfaces.WithDetails;
 import com.maxfill.escom.beans.processes.ProcessBean;
@@ -50,6 +51,7 @@ import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import com.maxfill.model.basedict.doc.numerator.DocNumerator;
+import com.maxfill.model.basedict.process.reports.ProcReport;
 import com.maxfill.model.basedict.process.reports.ProcReportFacade;
 import com.maxfill.services.numerators.NumeratorService;
 import org.primefaces.PrimeFaces;
@@ -84,9 +86,10 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     private ProcessFacade processFacade;
     @EJB
     private ProcReportFacade procReportFacade;
-        
+    
     private final List<DocStatuses> forDelDocStatus = new ArrayList<>();
     private final List<Attaches> forDelAttaches = new ArrayList<>();
+    private List<ProcReport> concorders = new ArrayList<>();
     
     private String docURL;  
     private Attaches selectedAttache;
@@ -119,8 +122,9 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
         if (StringUtils.isNoneBlank(getEditedItem().getRegNumber())){        
             isItemRegisted = true;
         }
+        initConcorders();
     }
-     
+         
     @Override
     protected void checkItemBeforeSave(Doc doc, FacesContext context, Set<String> errors){        
         checkRegNumber(doc, errors);
@@ -640,8 +644,18 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
         remarkBean.onPreViewRemarks(getEditedItem());        
     }    
     
+    /* ЛИСТ СОГЛАСОВАНИЯ */
+    
+    private void initConcorders(){
+        concorders = procReportFacade.findReportByDoc(getEditedItem(), DictRoles.ROLE_CONCORDER);    
+    }
+    
     /* GETS & SETS */
 
+    public List<ProcReport> getConcorders() {
+        return concorders;
+    }        
+    
     @Override
     public Doc getEditedItem() {
         return super.getEditedItem(); 

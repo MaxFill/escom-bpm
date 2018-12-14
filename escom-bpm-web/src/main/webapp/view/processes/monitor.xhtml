@@ -151,9 +151,9 @@
                      rowStyleClass="#{sessionBean.getItemStyle(item)}"
                      tableStyle="table-layout: auto; font-size: 80%;" styleClass="ui-grid-col-12 without-spaces">                
 
-            <p:column width="20" sortBy="#{item.iconName}" >
+            <p:column width="20" headerText="#{bundle.Type}" sortBy="#{item.iconName}" >
                 <p:spacer width="3"/>
-                <p:graphicImage value="/resources/icon/#{item.iconName}-20.png"  /> 
+                <p:graphicImage value="/resources/icon/#{item.iconName}-20.png" title="#{monitorBean.onGetItemTypeName(item)}" /> 
             </p:column>
 
             <p:column headerText="#{bundle.Number}" sortBy="#{item.regNumber}">

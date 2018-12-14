@@ -544,25 +544,33 @@ public class WorkflowImpl implements Workflow {
     public void clearScheme(Process process, User currentUser, Map<String, Object> params, Set<Tuple> errors){
         Scheme scheme = process.getScheme();
         if (scheme == null) return;
-        clearElements(scheme);
         boolean sendNotAgree = params.containsKey(ProcessParams.PARAM_SEND_NOTAGREE);
+        
+        scheme.getElements().getConnectors().forEach(c->c.setDone(false));        
+        scheme.getElements().getLogics().forEach((k, logicEl)->logicEl.getTasksExec().clear());        
+                
         State draftState = stateFacade.getDraftState();
         scheme.getTasks().stream()
-                .filter(task-> !sendNotAgree || Objects.equals(DictResults.RESULT_REFUSED, task.getResult()))
+                .filter(task-> sendNotAgree == false || Objects.equals(DictResults.RESULT_REFUSED, task.getResult()))
                 .forEach(task->{
                     task.setFactExecDate(null);
                     task.setBeginDate(null);
                     task.setResult(null);
                     task.setResultIcon("");
                     task.getState().setCurrentState(draftState);
+                    TaskElem te = scheme.getElements().getTasks().get(task.getTaskLinkUID());
+                    if (te != null){
+                        te.getTasksExec().clear();
+                    }
             });
         
         process.setResult(null);
         process.setFactExecDate(null);
+        process.setResultIcon("");
         process.getState().setCurrentState(draftState);
-        
+                
         process.getChildItems().stream()
-                .filter(subProc-> !(sendNotAgree == true && Objects.equals(DictStates.STATE_COMPLETED, subProc.getState().getCurrentState().getId())))
+                .filter(subProc-> !(sendNotAgree == true && DictStates.STATE_COMPLETED == subProc.getState().getCurrentState().getId()))
                 .forEach(subproc->clearScheme(subproc, currentUser, params, errors));
     }    
     
@@ -615,7 +623,7 @@ public class WorkflowImpl implements Workflow {
 
         //Внесение инф. в отчёт по процессу
         if (task.getConsidInProcReport()){
-            ProcReport procReport = updateReportStatus(process, task.getOwner(), task.getRoleInProc(), task.getResult(), currentUser);
+            ProcReport procReport = updateReportStatus(process, task.getOwner(), task.getRoleInProc(), task.getResult(), task.getResultIcon(), currentUser);
             procReport.setTask(task);
         }
 
@@ -663,12 +671,13 @@ public class WorkflowImpl implements Workflow {
      * @param status
      * @param currentUser 
      */
-    private ProcReport updateReportStatus(Process process, Staff staff, UserGroups role, String status, User currentUser){        
+    private ProcReport updateReportStatus(Process process, Staff staff, UserGroups role, String status, String icon, User currentUser){        
         ProcReport procReport = process.getReports().stream()
                     .filter(report-> Objects.equals(staff, report.getExecutor()))
                     .findFirst()
                     .orElse(new ProcReport(currentUser, staff, process));
         procReport.setStatus(status);
+        procReport.setStatusIcon(icon);
         procReport.setDateCreate(new Date()); 
         Doc doc = process.getDocument(); //запись в отчёт версии, за которую проголосовал 
         procReport.setDoc(doc); 
@@ -690,20 +699,24 @@ public class WorkflowImpl implements Workflow {
      * @param scheme 
      */
     private void startTasks(Process process, Set<Task> tasks, User currentUser, Map<String, Object> params, Set<Tuple> errors){
-        if (tasks.isEmpty()) return;
+        if (tasks.isEmpty()) return;        
         boolean sendNotAgree = params.containsKey(ProcessParams.PARAM_SEND_NOTAGREE);
         tasks.stream()
             .filter(task-> !task.getState().getCurrentState().equals(stateFacade.getRunningState()))                    
             .forEach(task->{
                 //если нужно отправить только не согласовавшим и задача согласована, то обходим задачу
-                if (sendNotAgree && !Objects.equals(DictResults.RESULT_REFUSED, task.getResult())){
+                if (sendNotAgree == true 
+                        && (Objects.equals(DictResults.RESULT_AGREED, task.getResult()) || Objects.equals(DictResults.RESULT_AGREE_WITH_REMARK, task.getResult()))){
                     TaskElem taskEl = process.getScheme().getElements().getTasks().get(task.getTaskLinkUID());
                     run(process, taskEl, new HashSet<>(), currentUser, params, errors);
                 } else {                    
                     task.setBeginDate(new Date());
                     task.setFactExecDate(null);
                     task.setResult(null);
+                    task.setResultIcon("");
                     task.setComment(null);
+                    task.getState().setCurrentState(stateFacade.getRunningState());
+        
                     if (task.getOwner() == null && task.getRoleInProc() != null){
                         User actor = processFacade.getActor(process, task.getRoleInProc().getRoleFieldName());
                         if (actor != null){
@@ -718,8 +731,7 @@ public class WorkflowImpl implements Workflow {
                         notificationService.makeNotification(task, "YouReceivedNewTask", new Object[]{task.getId()}); 
 
                         taskFacade.makeReminder(task); 
-                        taskFacade.inicializeExecutor(task, task.getOwner().getEmployee());
-                        task.getState().setCurrentState(stateFacade.getRunningState());
+                        taskFacade.inicializeExecutor(task, task.getOwner().getEmployee());                        
                         
                         //запись в лог
                         taskFacade.addLogEvent(task, DictLogEvents.TASK_ASSIGNED, new String[]{task.getOwner().getEmployeeFIO(), task.getName()}, task.getAuthor());
@@ -746,22 +758,23 @@ public class WorkflowImpl implements Workflow {
                     errors.add(new Tuple("ObjectWithIDNotFound", new Object[]{"ProcessType", subProcElem.getProctypeId()})); 
                     return;
                 }
-                subProcess = processFacade.createSubProcess(owner, mainProcess, curUser, subProcElem);                
-            } 
-            
+                subProcess = processFacade.createSubProcess(owner, mainProcess, curUser, subProcElem);
+            }
+
             boolean sendNotAgree = params.containsKey(ProcessParams.PARAM_SEND_NOTAGREE);
-            
+
             //если отправить только не согласовавшим и подпроцесс согласован, то обходим подпроцесс
             if (sendNotAgree && Objects.equals(DictStates.STATE_COMPLETED, subProcess.getState().getCurrentState().getId()) ){                
-                run(subProcess, subProcElem, new HashSet<>(), curUser, params, errors);
+                params.put("subprocess", subProcess);
+                run(mainProcess, subProcElem, new HashSet<>(), curUser, params, errors);
             } else {
                 subProcess.setResult(null);
                 subProcess.setFactExecDate(null);
                 processFacade.setRoleOwner(subProcess, curUser);
-                processFacade.edit(subProcess);                
+                processFacade.edit(subProcess);
                 if (subProcElem.isShowCard()){
-                    processesForShow.add(subProcess);                    
-                } else {                
+                    processesForShow.add(subProcess);
+                } else {
                     start(subProcess, curUser, params,  errors);
                 }
             }
@@ -794,7 +807,7 @@ public class WorkflowImpl implements Workflow {
         
         /* Перевод документа в статус Действующий */
         Doc doc = process.getDocument();
-        if (doc != null){
+        if (doc != null && DictStates.STATE_VALID != doc.getState().getCurrentState().getId()){
             doc = docFacade.find(doc.getId());
             if (process.getCurator() != null){
                 doc.addUserInRole(DictRoles.ROLE_EDITOR, process.getCurator().getEmployee());
@@ -838,13 +851,13 @@ public class WorkflowImpl implements Workflow {
     }
     
     /**
-     * Остановка всех запущенных подпроцессов
+     * Остановка всех подпроцессов
      * @param process          
      * @param currentUser 
      */
     private void cancelSubProc(Process process, User currentUser){         
         process.getChildItems().stream()
-                .filter(subProc->DictStates.STATE_DRAFT != subProc.getState().getCurrentState().getId()) //отмена всех, кроме черновиков
+                //.filter(subProc->DictStates.STATE_DRAFT != subProc.getState().getCurrentState().getId()) //отмена всех, кроме черновиков
                 .forEach(subProc->stop(subProc, currentUser));
     }
     
