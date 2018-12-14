@@ -1,6 +1,5 @@
 package com.maxfill.escom.beans.task;
 
-import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictResults;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.DictStates;
@@ -99,7 +98,6 @@ public class TaskCardBean extends BaseCardBean<Task>{
     private int reminderDeltaMinute = 0;
       
     private ProcReport currentReport;
-    private boolean isNeedUpdateProcessReports; 
     private List<String> selectedDays;
     private List<Staff> executors;
     private List<BaseDict> forShow;
@@ -272,23 +270,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
     @Override
     protected void onBeforeSaveItem(Task task){
         saveDateFields(task);
-        /*
-        if (isChangeExecutor){
-            replaceReportExecutor(task, getCurrentUser());
-        }
-        */
         taskFacade.actualizeRoles(task);
         super.onBeforeSaveItem(task);
-    }
-    
-    @Override
-    protected void onAfterSaveItem(Task task){
-        //изменение в листе согласования процесса, если изменили задачу        
-        if (task.getScheme() == null) return;   //задача не связана с процессом 
-        if (getTypeEdit() == DictEditMode.CHILD_MODE) return;
-        if (isNeedUpdateProcessReports){
-            workflow.makeProcessReport(task.getScheme().getProcess(), getCurrentUser());
-        }
     }
      
     /**
@@ -445,25 +428,18 @@ public class TaskCardBean extends BaseCardBean<Task>{
         List<Staff> items = (List<Staff>) event.getObject();
         if (items.isEmpty()) return;
         getEditedItem().setOwner(items.get(0));
-        isNeedUpdateProcessReports = true;
         onItemChange();
     }
     public void onExecutorChanged(ValueChangeEvent event){
         getEditedItem().setOwner((Staff) event.getNewValue());
-        isNeedUpdateProcessReports = true;
         onItemChange();
     }
     public void onExecutorChanged(){        
-        isNeedUpdateProcessReports = true;
         onItemChange(); 
         if (isShowBtnResults()){
             PrimeFaces.current().ajax().update("mainFRM:mainTabView:btnTaskExe");
         }
-    }
-    
-    public void onConsidInProcReportChange(){
-        isNeedUpdateProcessReports = true;
-    }
+    }    
     
     public Boolean isShowExtTaskAtr(){
         boolean flag = false;

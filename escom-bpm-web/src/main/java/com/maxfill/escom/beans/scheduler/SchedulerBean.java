@@ -99,7 +99,6 @@ public class SchedulerBean extends BaseViewBean {
                 } else {                
                     taskFacade.edit(task);
                 }
-                updateProcess(task);
                 modelRefresh();
                 break;
             }
@@ -111,7 +110,6 @@ public class SchedulerBean extends BaseViewBean {
                 } else {
                     taskFacade.edit(task);
                 }
-                updateProcess(task);
                 modelRefresh();
                 break;
             }
@@ -119,12 +117,7 @@ public class SchedulerBean extends BaseViewBean {
                 break;
             }
         }        
-    }
-    
-    private void updateProcess(Task task){
-        if (task.getScheme() == null) return;
-        workflow.makeProcessReport(task.getScheme().getProcess(), getCurrentUser()); 
-    }
+    }    
     
     /* ОБРАБОТКА СОБЫТИЙ ПЛАНИРОВЩИКА */
     

@@ -200,7 +200,7 @@
                                          itemLabel="#{taskCardBean.getCheckBoxAddCaption()}" 
                                          rendered="#{taskCardBean.isShowCheckBoxAdd()}"
                                          disabled="#{taskCardBean.isTaskReadOnly()}">
-                    <p:ajax process="@this" listener="#{taskCardBean.onConsidInProcReportChange()}" oncomplete="itemChange = 1;"/>
+                    <p:ajax process="@this" oncomplete="itemChange = 1;"/>
                 </p:selectBooleanCheckbox> 
             </p:panelGrid>
         </p:tab>

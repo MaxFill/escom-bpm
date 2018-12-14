@@ -1570,6 +1570,7 @@ public class WorkflowImpl implements Workflow {
      * @param p
      * @param user - автор изменений
      */
+    /*
     @Override 
     public void makeProcessReport(Process p, User user){
         final Process process = processFacade.find(p.getId());
@@ -1595,5 +1596,5 @@ public class WorkflowImpl implements Workflow {
         
         processFacade.edit(process);
     }
-        
+     */  
 }

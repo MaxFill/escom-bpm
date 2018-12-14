@@ -215,20 +215,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         
         List<Task> forRemoveTasks = new ArrayList<>(scheme.getTasks()); //старые задачи?
         forRemoveTasks.removeAll(liveTasks); //в списке остались только задачи, которые нужно удалить
-        scheme.getTasks().removeAll(forRemoveTasks);     
-        
-        //создаём записи в "листе согласования" для участников согласования из модели процесса        
-        Set<ProcReport> newReports = liveTasks.stream()
-                .filter(task->task.getOwner() != null && task.getConsidInProcReport())
-                .map(task -> new ProcReport(getCurrentUser(), task.getOwner(), process))
-                .collect(Collectors.toSet()); 
-
-        Set<ProcReport> procReports = process.getReports();        
-        List<ProcReport> removeRepors = procReports.stream()
-                .filter(report-> report.getDateCreate() == null)   //кроме тех кто уже согласовал/отклонил             
-                .collect(Collectors.toList());
-        procReports.removeAll(removeRepors);
-        procReports.addAll(newReports);
+        scheme.getTasks().removeAll(forRemoveTasks);               
         
         //сохраняем только оставшиеся на схеме таймеры, а старые удаляем
         List<ProcTimer> liveTimers = getProcTimersFromModel();

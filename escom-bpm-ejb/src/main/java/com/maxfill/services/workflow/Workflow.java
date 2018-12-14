@@ -63,5 +63,5 @@ public interface Workflow {
     Set<BaseDict> executeTask(Process process, Task task, Result result, User user, Map<String, Object> params, Set<Tuple> errors);
     void executeTimer(ProcTimer procTimer, Set<Tuple> errors);
     
-    void makeProcessReport(Process process, User user);
+    //void makeProcessReport(Process process, User user);
 }
