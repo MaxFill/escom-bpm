@@ -78,28 +78,28 @@
         <p:outputLabel value="#{bundle.DefaultParams}"/>
         <p:outputLabel value="#{bundle.Company}:"/>
         <p:selectOneMenu value="#{ldapBean.settings.company}" id="company" converter="companyConvertor"
-                         required="#{param['isRequired'] == 'true'}"
+                        required="#{param['isRequired'] == 'true'}"
                         styleClass="ui-grid-col-12"
                         requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
-            <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
+            <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.nameEndElipse}" itemValue="#{org}" />
             <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
         </p:selectOneMenu>
 
         <p:outputLabel value="#{bundle.Departament}:"/>
         <p:selectOneMenu value="#{ldapBean.settings.department}" id="department" converter="departmentConvertor"
-                         required="#{param['isRequired'] == 'true'}"
-                         styleClass="ui-grid-col-12"
+                         required="#{param['isRequired'] == 'true'}" 
+                         styleClass="ui-grid-col-12" autoWidth="false"
                          requiredMessage="#{bundle.Field} [#{bundle.Departament}] #{bundle.MustBeFilled}">
-            <f:selectItems value="#{departmentBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
+            <f:selectItems value="#{departmentBean.findAll()}" var="org" itemLabel="#{org.nameEndElipse}" itemValue="#{org}" />
             <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
         </p:selectOneMenu>  
 
         <p:outputLabel value="#{bundle.Post}:" indicateRequired="true"/>
         <p:selectOneMenu value="#{ldapBean.settings.post}" id="post" converter="postConverter"
                          required="#{param['isRequired'] == 'true'}"
-                         styleClass="ui-grid-col-12"
+                         styleClass="ui-grid-col-12" autoWidth="false"
                          requiredMessage="#{bundle.Field} [#{bundle.Departament}] #{bundle.MustBeFilled}">
-            <f:selectItems value="#{postBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
+            <f:selectItems value="#{postBean.findAll()}" var="org" itemLabel="#{org.nameEndElipse}" itemValue="#{org}" />
             <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
         </p:selectOneMenu> 
     </ui:define>

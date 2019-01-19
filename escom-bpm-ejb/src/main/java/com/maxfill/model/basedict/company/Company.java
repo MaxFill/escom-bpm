@@ -57,8 +57,12 @@ public class Company extends BaseDict<Company, Company, Department, CompanyLog, 
 
     @Basic(optional = false)    
     @Column(name = "WorkTime")
-    private Integer workTime = 8; //кол-во рабочих часов в дне
+    private Integer workTimeHour = 8; //кол-во рабочих часов в дне
     
+    @Basic(optional = false)    
+    @Column(name = "WorkTimeMinute")
+    private Integer workTimeMinute = 0; 
+     
     @Basic(optional = false)    
     @Column(name = "BeginTime")
     private Integer beginTime = 28800; //начало рабочего дня в секундах
@@ -67,13 +71,20 @@ public class Company extends BaseDict<Company, Company, Department, CompanyLog, 
     }
 
     /* GETS & SETS */
-    
-    public Integer getWorkTime() {
-        return workTime;
+
+    public Integer getWorkTimeMinute() {
+        return workTimeMinute;
     }
-    public void setWorkTime(Integer workTime) {
-        this.workTime = workTime;
+    public void setWorkTimeMinute(Integer workTimeMinute) {
+        this.workTimeMinute = workTimeMinute;
     }
+
+    public Integer getWorkTimeHour() {
+        return workTimeHour;
+    }
+    public void setWorkTimeHour(Integer workTimeHour) {
+        this.workTimeHour = workTimeHour;
+    }        
 
     public Integer getBeginTime() {
         return beginTime;

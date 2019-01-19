@@ -71,7 +71,8 @@ public class CompanyCardBean extends BaseCardTree<Company> {
     }
 
     public Date getEndTime() {
-        endTime = DateUtils.addHour(beginTime, getEditedItem().getWorkTime());
+        endTime = DateUtils.addHour(beginTime, getEditedItem().getWorkTimeHour());
+        endTime = DateUtils.addMinute(endTime, getEditedItem().getWorkTimeMinute());
         return endTime;
     }
     public void setEndTime(Date endTime) {

@@ -47,15 +47,15 @@
 
     <context-param>
         <param-name>VersionNumber</param-name>
-        <param-value>1.04</param-value>
+        <param-value>1.05</param-value>
     </context-param>    
     <context-param>
         <param-name>ReleaseNumber</param-name>
-        <param-value>016</param-value>
+        <param-value>017</param-value>
     </context-param>    
     <context-param>
         <param-name>ReleaseDate</param-name>
-        <param-value>2018-10-14</param-value>
+        <param-value>2019-01-18</param-value>
     </context-param>   
               
     <filter>

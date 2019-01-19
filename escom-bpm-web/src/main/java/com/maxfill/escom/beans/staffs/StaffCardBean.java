@@ -46,7 +46,8 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
             if (time != null){
                 beginTime = new Date(time);
                 beginTime = DateUtils.convertHourFromUTCToLocalTimeZone(beginTime); 
-                staff.setWorkTime(company.getWorkTime());
+                staff.setWorkTimeHour(company.getWorkTimeHour());
+                staff.setWorkTimeMinute(company.getWorkTimeMinute());
                 staff.setBeginTime(time);
             }
         } else {
@@ -140,7 +141,8 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
     public void onInheritsWTchange(){
         Staff staff = getEditedItem();
         if (!staff.isInheritsWorkTime()){            
-            staff.setWorkTime(company.getWorkTime());
+            staff.setWorkTimeHour(company.getWorkTimeHour());
+            staff.setWorkTimeMinute(company.getWorkTimeMinute());
             staff.setBeginTime(company.getBeginTime());
         } 
     }    
@@ -170,10 +172,11 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
     public Date getEndTime() {   
         Staff staff = getEditedItem();
         if (staff.isInheritsWorkTime()){
-            endTime = DateUtils.addHour(beginTime, company.getWorkTime());            
-        } else {            
-            Integer worktime = staff.getWorkTime();
-            endTime = DateUtils.addHour(beginTime, worktime);            
+            endTime = DateUtils.addHour(beginTime, company.getWorkTimeHour());            
+            endTime = DateUtils.addMinute(endTime, company.getWorkTimeMinute());
+        } else {                        
+            endTime = DateUtils.addHour(beginTime, staff.getWorkTimeHour());
+            endTime = DateUtils.addMinute(endTime, staff.getWorkTimeMinute());
         }         
         return endTime;
     }

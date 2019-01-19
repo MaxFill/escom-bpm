@@ -46,4 +46,36 @@
             </column>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="company_add_WorkTimeMinute" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="companies" columnName="WorkTimeMinute" />
+            </not>
+        </preConditions>
+        <addColumn tableName="companies">
+            <column name="WorkTimeMinute" type="int()" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+         <addColumn tableName="staffs">
+            <column name="WorkTimeMinute" type="int()" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="workTimeCalendar">
+            <column name="WorkTimeMinute" type="int()" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>        
+    </changeSet>
+    
+    <changeSet id="updates_WorkTimeMinute" author="filatov" context="initdata" runOnChange="true">
+        <sql>
+            UPDATE companies SET WorkTimeMinute=0;
+            UPDATE staffs SET WorkTimeMinute=0;
+            UPDATE workTimeCalendar SET WorkTimeMinute=0;
+        </sql>
+    </changeSet>
+    
 </databaseChangeLog> 

@@ -63,8 +63,12 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
     
     @Basic(optional = false)    
     @Column(name = "WorkTime")
-    private Integer workTime = 8; //кол-во рабочих часов в дне
+    private Integer workTimeHour = 8; //кол-во рабочих часов в дне
     
+    @Basic(optional = false)    
+    @Column(name = "WorkTimeMinute")
+    private Integer workTimeMinute = 0; 
+        
     @Basic(optional = false)    
     @Column(name = "BeginTime")
     private Integer beginTime = 28800; //начало рабочего дня
@@ -81,15 +85,6 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
     public Staff() {
     }
     
-    @Override
-    public StaffStates getState() {
-        return state;
-    }
-    @Override
-    public void setState(StaffStates state) {
-        this.state = state;
-    }
-
     /**
      * Формирует полное наименование штатной единицы: Должность ФИО Подразделение Компания
      * @return
@@ -179,6 +174,22 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
         return "16_inspector";
     }
 
+    @Override
+    public StaffStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(StaffStates state) {
+        this.state = state;
+    }
+
+    public Integer getWorkTimeMinute() {
+        return workTimeMinute;
+    }
+    public void setWorkTimeMinute(Integer workTimeMinute) {
+        this.workTimeMinute = workTimeMinute;
+    }
+    
     public Company getCompany() {
         return company;
     }
@@ -232,11 +243,11 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
         this.inheritsWorkTime = inheritsWorkTime;
     }
 
-    public Integer getWorkTime() {
-        return workTime;
+    public Integer getWorkTimeHour() {
+        return workTimeHour;
     }
-    public void setWorkTime(Integer workTime) {
-        this.workTime = workTime;
+    public void setWorkTimeHour(Integer workTimeHour) {
+        this.workTimeHour = workTimeHour;
     }
 
     public Integer getBeginTime() {

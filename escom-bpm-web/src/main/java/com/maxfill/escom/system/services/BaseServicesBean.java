@@ -124,23 +124,21 @@ public abstract class BaseServicesBean<P> extends LazyLoadBean<ServicesEvents>{
      * Остановка службы
      */
     public void onStopService(){  
-        if (service.getTimeHandle() != null){
-            ByteArrayInputStream bais;
-            ObjectInputStream ins;
-            try {
-                bais = new ByteArrayInputStream(service.getTimeHandle());
-                ins = new ObjectInputStream(bais);
-                TimerHandle timerHandle =(TimerHandle)ins.readObject();
-                ins.close();
-                timerHandle.getTimer().cancel();
-                service.setStarted(Boolean.FALSE);
-                service.setDateNextStart(null);
-                servicesFacade.edit(service);
+        if (service.getTimeHandle() != null){                        
+            try(ByteArrayInputStream bais = new ByteArrayInputStream(service.getTimeHandle());
+                ObjectInputStream ins = new ObjectInputStream(bais)) 
+            {                
+                TimerHandle timerHandle =(TimerHandle)ins.readObject();                
+                timerHandle.getTimer().cancel();                
                 MsgUtils.succesMsg("ServiceStopped");
                 LOG.log(Level.INFO, "Timer for service {0} is cancelled!", service.getName()); 
             }  catch (NoSuchObjectLocalException | IOException | ClassNotFoundException exception) {
-                MsgUtils.errorMessage(exception.getMessage());
-                throw new RuntimeException(exception);
+                MsgUtils.errorMessage(exception.getMessage());                
+            } finally {                
+                service.setStarted(Boolean.FALSE);
+                service.setDateNextStart(null);
+                service.setTimeHandle(null);
+                servicesFacade.edit(service);
             }
         }
     }           

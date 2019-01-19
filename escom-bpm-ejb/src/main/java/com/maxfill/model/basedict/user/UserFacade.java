@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.naming.AuthenticationException;
+import javax.naming.NamingException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
@@ -376,23 +377,34 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         if (Objects.equals(pwl, user.getPassword())){
             return user;
         }
-        if (user.isLdap() && checkLdapUser(login, password)){
-            return user;
+        LOGGER.log(Level.INFO, "LOGGIN: password incorrect for {0} ", login);
+        if (user.isLdap()){
+            LOGGER.log(Level.INFO, "LOGGIN: LDAP check will be performed for the {0} user ", user.getLogin());
+            if (checkLdapUser(login, password)){ 
+                LOGGER.log(Level.INFO, "LOGGIN: LDAP check successfully for the {0} user ", user.getLogin());
+                return user;
+            }
+            LOGGER.log(Level.INFO, "LOGGIN: LDAP check failure for the {0} user ", user.getLogin());
+        } else {
+            LOGGER.log(Level.INFO, "LOGGIN: LDAP no check because user {0} not have LDAP property!", user.getLogin());
         }
         return null;
     }
 
     /* Проверка подключения к LDAP серверу  */
-    public boolean checkLdapUser(String userName, char[] password){        
-        try {      
+    public boolean checkLdapUser(String userName, char[] password){ 
+        boolean flag = false;
+        try {
+            LOGGER.log(Level.INFO, "LOGGIN: LDAP check start for the {0} user ", userName);
             LdapUtils.initLDAP(userName, String.valueOf(password), configuration.getLdapServer());
-            return true;
+            flag = true;
+            LOGGER.log(Level.INFO, "LOGGIN: LDAP check finish for the {0} user ", userName);
         } catch (AuthenticationException ex){
             LOGGER.log(Level.SEVERE, null, ex);
-        } catch (Exception ex){
+        } catch (NamingException ex){
             LOGGER.log(Level.SEVERE, null, ex);
         }
-        return false;
+        return flag;
     }
     
     /* Проверка JWT token */

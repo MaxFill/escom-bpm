@@ -33,7 +33,12 @@ public class CalendarDay extends DefaultScheduleEvent{
         if (wtc == null) return super.getTitle(); 
         if (wtc.isWorkDay()){
             StringBuilder sb = new StringBuilder();
-            sb.append(wtc.getWorkTime()).append(ItemUtils.getBandleLabel("HourShort", locale));
+            sb
+                .append(wtc.getWorkTimeHour())
+                .append(ItemUtils.getBandleLabel("HourShort", locale))
+                .append(" ")
+                .append(wtc.getWorkTimeMinute())
+                .append(ItemUtils.getBandleLabel("Minute", locale));
             return sb.toString();
         } else {
             return ItemUtils.getBandleLabel(wtc.getStyle(), locale);

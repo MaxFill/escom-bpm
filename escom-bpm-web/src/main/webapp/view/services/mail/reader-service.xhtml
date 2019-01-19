@@ -19,8 +19,6 @@
         <p:outputLabel value="#{bundle.IMAPport}:"/>
         <p:inputText id="smtpPort" styleClass="ui-grid-col-12"
                      title="#{bundle.IMAPport}"
-                     required="#{param['isRequired'] == 'true'}"
-                     requiredMessage="#{bundle.Field} [#{bundle.SMTPport}] #{bundle.MustBeFilled}"
                      value="#{mailReaderBean.settings.port}"/>
         <p:message for="smtpPort" display="tooltip"/>
 
@@ -58,14 +56,14 @@
                      required="#{param['isRequired'] == 'true'}"
                      requiredMessage="#{bundle.Field} [#{bundle.password}] #{bundle.MustBeFilled}"
                      value="#{mailReaderBean.settings.password}"/>
-        <p:message for="password"/>
-
-        <p:separator />            
+        <p:message for="password"/>          
 
         <h:panelGrid columns="2">
             <p:commandButton icon="ui-icon-check"
                         value="#{bundle.Test}" title="#{bundle.CheckConnect}"
                         actionListener="#{mailReaderBean.onCheckConnect()}"
+                        onstart="PF('waitDialog').show();"
+                        oncomplete="PF('waitDialog').hide();"
                         update="mainFRM:centerFRM mainFRM:eastFRM">
                 <f:param name="isRequired" value="true"/>
             </p:commandButton>

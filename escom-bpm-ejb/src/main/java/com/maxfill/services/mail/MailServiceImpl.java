@@ -35,16 +35,23 @@ public class MailServiceImpl implements MailService{
      * @return 
      */
     @Override
-    public Session getSessionReader(MailSettings settings) {
-        Authenticator auth = new MailAuth(settings.getUser(), settings.getPassword());
+    public Session getSessionReader(MailSettings settings) {        
         final Properties props = new Properties();
-        props.put("mail.debug", "false");
-        props.put("mail.store.protocol", "imaps");
+        props.put("mail.debug", "false");        
         if(settings.getUseSSL()) {
-            props.put("mail.imap.ssl.enable", "true");
-        }
-        props.put("mail.imap.port", settings.getPort());
-        final Session session = Session.getInstance(props, auth);
+            props.put("mail.store.protocol", "imaps");            
+            props.put("mail.imaps.timeout", "1000");
+            if (settings.getPort()!= null){
+                props.put("mail.imaps.port", settings.getPort());
+            }
+        } else {
+            props.put("mail.store.protocol", "imap");            
+            props.put("mail.imap.timeout", "1000");
+            if (settings.getPort()!= null){
+                props.put("mail.imap.port", settings.getPort());
+            }
+        }        
+        final Session session = Session.getInstance(props, new MailAuth(settings.getUser(), settings.getPassword()));
         if (session == null){
             throw new RuntimeException("Failed to establish connection!");
         }
@@ -87,11 +94,10 @@ public class MailServiceImpl implements MailService{
         return session;
     }
 
-    private Folder getFolder(Session session, MailSettings settings, String folderName) throws MessagingException{
-        Folder folder = null;
+    private Folder getFolder(Session session, MailSettings settings, String folderName) throws MessagingException{        
         Store store = session.getStore();
         store.connect(settings.getServerAdress(), settings.getUser(), settings.getPassword());
-        folder = store.getFolder(folderName);
+        Folder folder = store.getFolder(folderName);
         if (folder == null) {
             throw new RuntimeException("Failed to connect to mailbox!");
         }

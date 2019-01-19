@@ -31,6 +31,7 @@ public final class LdapUtils {
      * @throws javax.naming.NamingException
      */
     public static LdapContext initLDAP(String ldapUsername, String ldapPassword, String ldapAdServer) throws NamingException{    
+        LOG.log(Level.INFO, "LDAP: LDAP connect: {0}", ldapUsername + "_" + ldapPassword + "_" + ldapAdServer);
         Hashtable<String, Object> env = new Hashtable<>();
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
         if(ldapUsername != null) {
@@ -46,10 +47,7 @@ public final class LdapUtils {
         //will be returned as a byte[] instead of a String
         env.put("java.naming.ldap.attributes.binary", "objectSID");
         
-        LdapContext ldapContext = null;
-                 
-        ldapContext = new InitialLdapContext(env, null);
-        return ldapContext;
+        return new InitialLdapContext(env, null);        
     }
     
     public static SearchResult findAccountByAccountName(DirContext ctx, String ldapSearchBase, String accountName) throws NamingException {     

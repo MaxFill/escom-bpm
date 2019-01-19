@@ -43,8 +43,12 @@ public class WorkTimeCalendar implements Serializable, Dict{
     
     @Basic(optional = false)
     @Column(name = "WorkTime")
-    private Integer workTime;   //кол-во рабочих часов в дне
+    private Integer workTimeHour;   //кол-во рабочих часов в дне
 
+    @Basic(optional = false)    
+    @Column(name = "WorkTimeMinute")
+    private Integer workTimeMinute = 0;
+        
     @Basic(optional = false)
     @Column(name = "BeginTime")
     private Integer beginTime;  //начало рабочего дня в милисекундах    
@@ -67,16 +71,18 @@ public class WorkTimeCalendar implements Serializable, Dict{
         this.uid = EscomUtils.generateGUID();
     }
 
-    public WorkTimeCalendar(String date, Integer workTime, Integer dayType) {
+    public WorkTimeCalendar(String date, Integer workTimeHour, Integer workTimeMinute, Integer dayType) {
         this.dateCalendar = date;
-        this.workTime = workTime;
+        this.workTimeHour = workTimeHour;
+        this.workTimeMinute = workTimeMinute;
         this.dayType = dayType;
         this.uid = EscomUtils.generateGUID();
     }     
     
-    public WorkTimeCalendar(String date, Integer beginTime, Integer workTime, Integer dayType) {
+    public WorkTimeCalendar(String date, Integer beginTime, Integer workTimeHour, Integer workTimeMinute, Integer dayType) {
         this.dateCalendar = date;
-        this.workTime = workTime;
+        this.workTimeHour = workTimeHour;
+        this.workTimeMinute = workTimeMinute;
         this.dayType = dayType;
         this.beginTime = beginTime;
         this.uid = EscomUtils.generateGUID();
@@ -144,7 +150,7 @@ public class WorkTimeCalendar implements Serializable, Dict{
     @Transient
     public Date getEnd(){
         Date dt = getDate();
-        Integer endTime = beginTime + workTime * 3600 * 1000;
+        Integer endTime = beginTime + workTimeHour * 3600 * 1000 + workTimeMinute * 60 * 1000;
         return DateUtils.addMilliseconds(dt, endTime);
     }
     
@@ -183,11 +189,18 @@ public class WorkTimeCalendar implements Serializable, Dict{
         this.dateCalendar = dateCalendar;
     }
 
-    public Integer getWorkTime() {
-        return workTime;
+    public Integer getWorkTimeHour() {
+        return workTimeHour;
     }
-    public void setWorkTime(Integer workTime) {
-        this.workTime = workTime;
+    public void setWorkTimeHour(Integer workTimeHour) {
+        this.workTimeHour = workTimeHour;
+    }
+
+    public Integer getWorkTimeMinute() {
+        return workTimeMinute;
+    }
+    public void setWorkTimeMinute(Integer workTimeMinute) {
+        this.workTimeMinute = workTimeMinute;
     }
 
     public Staff getStaff() {

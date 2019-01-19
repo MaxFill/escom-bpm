@@ -43,7 +43,7 @@ public class WorkTimeImpl implements WorkTimeService{
         while(deltasec >= 0){
             WorkTimeCalendar wtc = getWorkTimeDate(date, staff, company);
             if (wtc.isWorkDay()){
-                Integer duration = wtc.getWorkTime() * 3600;
+                Integer duration = wtc.getWorkTimeHour()* 3600 + wtc.getWorkTimeMinute() * 60;
                 if (deltasec <= duration){
                     date = wtc.getDate();
                     Integer beginDay = wtc.getBeginTime();                    
@@ -74,7 +74,7 @@ public class WorkTimeImpl implements WorkTimeService{
         while(deltasec >= 0){
             WorkTimeCalendar wtc = getWorkTimeDate(date, null, company);
             if (wtc.isWorkDay()){
-                Integer duration = wtc.getWorkTime() * 3600;
+                Integer duration = wtc.getWorkTimeHour()* 3600 + wtc.getWorkTimeMinute() * 60;
                 if (deltasec <= duration){
                     date = wtc.getDate();
                     Integer beginDay = wtc.getBeginTime();                    
@@ -141,7 +141,8 @@ public class WorkTimeImpl implements WorkTimeService{
         wtc.setDate(clear);
         if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY){
             wtc.setWeekEnd();
-            wtc.setWorkTime(0);
+            wtc.setWorkTimeHour(0);
+            wtc.setWorkTimeMinute(0);
             wtc.setBeginTime(0);
         } else {
             wtc.setWorkDay();
@@ -162,18 +163,22 @@ public class WorkTimeImpl implements WorkTimeService{
      * @return 
      */
     private void makeDefaultWorkTime(WorkTimeCalendar wtc, Staff staff, Company company){
-        Integer workTime = 0;
+        Integer workTimeHour = 0;
+        Integer workTimeMinute = 0;
         Integer beginTime = 0;
         if (staff != null && !staff.isInheritsWorkTime()){
-            workTime = staff.getWorkTime();
+            workTimeHour = staff.getWorkTimeHour();
+            workTimeMinute = staff.getWorkTimeMinute();
             beginTime = staff.getBeginTime();
         } else {
             if (company != null){
-                workTime = company.getWorkTime();
+                workTimeHour = company.getWorkTimeHour();
+                workTimeMinute = company.getWorkTimeMinute();
                 beginTime = company.getBeginTime();
             }
         }
-        wtc.setWorkTime(workTime);
+        wtc.setWorkTimeHour(workTimeHour);
+        wtc.setWorkTimeMinute(workTimeMinute);
         wtc.setBeginTime(beginTime);
     }
     

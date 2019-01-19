@@ -91,7 +91,8 @@ public class WorkTimeCardBean extends BaseViewBean<BaseView>{
             }
             
             if (!editedItem.getStandart() && !editedItem.isWorkDay()){
-                editedItem.setWorkTime(0);
+                editedItem.setWorkTimeHour(0);
+                editedItem.setWorkTimeMinute(0);
                 editedItem.setBeginTime(0);
             } else {
                 beginTime = DateUtils.convertHourToUTCTimeZone(beginTime);
@@ -180,7 +181,8 @@ public class WorkTimeCardBean extends BaseViewBean<BaseView>{
     }
 
     public Date getEndTime() {
-        endTime = DateUtils.addHour(beginTime, editedItem.getWorkTime());
+        endTime = DateUtils.addHour(beginTime, editedItem.getWorkTimeHour());
+        endTime = DateUtils.addMinute(endTime, editedItem.getWorkTimeMinute());
         return endTime;
     }
     public void setEndTime(Date endTime) {
