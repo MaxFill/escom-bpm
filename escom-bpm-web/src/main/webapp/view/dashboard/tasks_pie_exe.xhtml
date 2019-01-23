@@ -4,7 +4,7 @@
                  xmlns:f="http://xmlns.jcp.org/jsf/core"
                  xmlns:h="http://xmlns.jcp.org/jsf/html">    
         
-    <p:panel id="tasks_pie_exe" header="#{bundle.ExecutionInfo}" toggleable="true" styleClass="dash-panel">
+    <p:panel id="tasks_pie_exe" header="#{bundle.ExecutionInfo}" rendered="#{applicationBean.isCanUsesTasks()}" toggleable="true" styleClass="dash-panel">
         <f:facet name="actions">
             <p:commandLink id="refreshTasksPie" type="button" title="#{bundle.Refresh}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
                            actionListener="#{sessionBean.onTaskPieExerefresh()}"

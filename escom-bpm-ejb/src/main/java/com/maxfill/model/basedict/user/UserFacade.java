@@ -166,10 +166,10 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         em.getEntityManagerFactory().getCache().evict(User.class);
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<User> cq = builder.createQuery(User.class);
-        Root<User> c = cq.from(User.class);        
-        Predicate crit1 = builder.equal(c.get(User_.login), login);
-        Predicate crit2 = builder.equal(c.get(User_.LDAPname), login);
-        cq.select(c).where(builder.or(crit1, crit2)); 
+        Root<User> root = cq.from(User.class);        
+        Predicate crit1 = builder.equal(root.get(User_.login), login);
+        Predicate crit2 = builder.equal(root.get(User_.LDAPname), login);
+        cq.select(root).where(builder.or(crit1, crit2)); 
         Query q = em.createQuery(cq);
         return q.getResultList();
     }
@@ -370,23 +370,34 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
      * @return 
      **/
     public User checkUserLogin(String login, char[] password){        
-        List<User> users = findByLogin(login);
-        if (users.isEmpty()) return null;
-        User user = users.get(0);
-        String pwl = EscomUtils.encryptPassword(String.valueOf(password));
-        if (Objects.equals(pwl, user.getPassword())){
-            return user;
+        List<User> users;
+        if (login.contains("@")){
+            String userLogin = StringUtils.substringBefore(login, "@");
+            //LOGGER.log(Level.INFO, "LOGIN: find user {0} ", userLogin);
+            users = findByLogin(userLogin);
+        } else {
+            users = findByLogin(login);
         }
-        LOGGER.log(Level.INFO, "LOGGIN: password incorrect for {0} ", login);
+        
+        if (users.isEmpty()){
+            LOGGER.log(Level.INFO, "LOGIN: user {0} not found!", login);
+            return null;
+        }
+        
+        User user = users.get(0);
+        
         if (user.isLdap()){
-            LOGGER.log(Level.INFO, "LOGGIN: LDAP check will be performed for the {0} user ", user.getLogin());
+            LOGGER.log(Level.INFO, "LOGIN: LDAP check will be performed for the {0} user ", user.getLogin());
             if (checkLdapUser(login, password)){ 
-                LOGGER.log(Level.INFO, "LOGGIN: LDAP check successfully for the {0} user ", user.getLogin());
+                //LOGGER.log(Level.INFO, "LOGIN: LDAP check successfully for the {0} user ", user.getLogin());
                 return user;
             }
-            LOGGER.log(Level.INFO, "LOGGIN: LDAP check failure for the {0} user ", user.getLogin());
-        } else {
-            LOGGER.log(Level.INFO, "LOGGIN: LDAP no check because user {0} not have LDAP property!", user.getLogin());
+            LOGGER.log(Level.INFO, "LOGIN: LDAP check failure for the {0} user ", user.getLogin());
+        } else {            
+            if (Objects.equals(EscomUtils.encryptPassword(String.valueOf(password)), user.getPassword())){
+                return user;
+            }
+            LOGGER.log(Level.INFO, "LOGIN: Password no correct for user {0}!", user.getLogin());
         }
         return null;
     }

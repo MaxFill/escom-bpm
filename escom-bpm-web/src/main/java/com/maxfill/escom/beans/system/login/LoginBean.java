@@ -103,13 +103,13 @@ public class LoginBean extends BaseViewBean{
         }
         
         if(user == null) { 
-            LOGGER.log(Level.INFO, "LOGIN: start user check for userName: {0}", userName);
+            //LOGGER.log(Level.INFO, "LOGIN: start user check for userName: {0}", userName);
             user = userFacade.checkUserLogin(userName, password.toCharArray());
-            LOGGER.log(Level.INFO, "LOGIN: finish user check for userName: {0}", userName);            
+            //LOGGER.log(Level.INFO, "LOGIN: finish user check for userName: {0}", userName);            
         }
 
         if(user == null) {
-            LOGGER.log(Level.INFO, "LOGIN: user check fail for userName: {0}", userName);
+            //LOGGER.log(Level.INFO, "LOGIN: user check fail for userName: {0}", userName);
             errors.add(MsgUtils.prepFormatErrorMsg("BadUserOrPassword", new Object[]{}));
         }
 
@@ -119,7 +119,7 @@ public class LoginBean extends BaseViewBean{
             return "";
         }
 
-        LOGGER.log(Level.INFO, "LOGIN: check user {0} OK", userName);
+        //LOGGER.log(Level.INFO, "LOGIN: check user {0} OK", userName);
         
         if(smsService.isActive() && StringUtils.isBlank(generatePinCode) && user.isDoubleFactorAuth() && StringUtils.isNotBlank(user.getMobilePhone())) {
             generatePinCode = smsService.generatePinCode();

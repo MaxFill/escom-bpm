@@ -7,9 +7,11 @@ import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.users.UserBean;
 import com.maxfill.escom.utils.MsgUtils;
+import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
 import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.basedict.userGroups.UserGroupsFacade;
 import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.processType.roles.ProcessRoleFacade;
 import com.maxfill.model.basedict.userGroups.UserGroups;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -30,12 +32,13 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
 
     @EJB
     private UserGroupsFacade itemFacade;
-
+    @EJB
+    private ProcessRoleFacade processRoleFacade;
+        
     /**
      * Добавление объекта в группу
      * Выполняется в бине группы!
      * @param user
-     * @param item
      * @param group
      */
     @Override
@@ -122,7 +125,12 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
             String message = MsgUtils.getMessageLabel("UserGroupsUsedInRights");
             String error = MessageFormat.format(message, messageParameters);
             errors.add(error);
-        }       
+        } 
+        if (processRoleFacade.findCountUserGroupLinks(userGroups) > 0){
+            Object[] messageParameters = new Object[]{userGroups.getName()};
+            String error = MessageFormat.format(getMessageLabel("UserGroupsUsedInProcessRoles"), messageParameters);
+            errors.add(error);
+        }
     }
 
     /* Обработка события перемещения подчинённых объектов при перемещение группы пользователей в корзину */

@@ -200,14 +200,23 @@ public class SessionBean implements Serializable{
         temeInit();                
     }   
     
-    public void initDashBoard(){         
-        dbsList.add(new DashBoardSettings("userParams", MsgUtils.getBandleLabel("User"), 1 , 0));
-        dbsList.add(new DashBoardSettings("tasks", MsgUtils.getBandleLabel("Tasks"), 2 , 0));
-        dbsList.add(new DashBoardSettings("messages", MsgUtils.getBandleLabel("Messages"), 3 , 0));
+    public void initDashBoard(){
+        int i = 1;
+        dbsList.add(new DashBoardSettings("userParams", MsgUtils.getBandleLabel("User"), i , 0));
+        i++;
+        if (appBean.isCanUsesTasks()){
+            dbsList.add(new DashBoardSettings("tasks", MsgUtils.getBandleLabel("Tasks"), i , 0));
+            i++;
+        }
+        dbsList.add(new DashBoardSettings("messages", MsgUtils.getBandleLabel("Messages"), i , 0));
         
-        dbsList.add(new DashBoardSettings("docsExplorer", MsgUtils.getBandleLabel("Documents"), 1 , 1));
-        dbsList.add(new DashBoardSettings("processes", MsgUtils.getBandleLabel("Processes"), 2 , 1));        
-        
+        i = 1;
+        dbsList.add(new DashBoardSettings("docsExplorer", MsgUtils.getBandleLabel("Documents"), i , 1));
+        i++;
+        if (appBean.isCanUsesProcess()){
+            dbsList.add(new DashBoardSettings("processes", MsgUtils.getBandleLabel("Processes"), i , 1));
+        }
+                
         dbsList.add(new DashBoardSettings("orgStructure", MsgUtils.getBandleLabel("OrgStructure"), 1 , 2));
         dbsList.add(new DashBoardSettings("dictsExplorer", MsgUtils.getBandleLabel("Partners"), 2 , 2));        
         
@@ -217,11 +226,16 @@ public class SessionBean implements Serializable{
             dbsList.add(new DashBoardSettings("loggers", MsgUtils.getBandleLabel("Logging"), 3 , 3));            
         }
          
-        dbsList.add(new DashBoardSettings("eventFeed", MsgUtils.getBandleLabel("EventFeed"), 1 , 4));
-        dbsList.add(new DashBoardSettings("tasks_pie_exe", MsgUtils.getBandleLabel("ExecutionInfo"), 2 , 4));   
+        i = 1;
+        dbsList.add(new DashBoardSettings("eventFeed", MsgUtils.getBandleLabel("EventFeed"), i , 4));
+        i++;
+        if (appBean.isCanUsesTasks()){
+            dbsList.add(new DashBoardSettings("tasks_pie_exe", MsgUtils.getBandleLabel("ExecutionInfo"), i , 4));
+            i++;
+        }
         if (isUserAdmin()){
-            dbsList.add(new DashBoardSettings("diskInfo", MsgUtils.getBandleLabel("DiskInfo"), 3, 4));
-        }                               
+            dbsList.add(new DashBoardSettings("diskInfo", MsgUtils.getBandleLabel("DiskInfo"), i, 4));
+        }
 
         onLoadDashboard();
         
