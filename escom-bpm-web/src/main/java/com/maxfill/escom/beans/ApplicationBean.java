@@ -265,8 +265,7 @@ public class ApplicationBean implements Serializable{
         return licence.isCanUses(DictModules.MODULE_DELO);
     }
     public boolean isCanUsesTasks(){
-        //return licence.isCanUses(DictModules.MODULE_TASKS);
-        return false;
+        return licence.isCanUses(DictModules.MODULE_TASKS);        
     }
     
     /* GETS & SETS */

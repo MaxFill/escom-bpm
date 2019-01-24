@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans.folders;
 
 import com.maxfill.dictionary.DictDetailSource;
+import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.beans.explorer.ExplorerTreeBean;
@@ -8,6 +9,7 @@ import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.escom.beans.processes.types.ProcessTypesBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.MsgUtils;
+import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.doc.DocFacade;
@@ -15,6 +17,7 @@ import com.maxfill.model.basedict.filter.Filter;
 import com.maxfill.model.basedict.folder.Folder;
 import com.maxfill.model.basedict.processType.ProcessType;
 import com.maxfill.model.basedict.process.ProcessFacade;
+import com.maxfill.model.basedict.user.User;
 import com.maxfill.utils.ItemUtils;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -235,6 +238,22 @@ public class FolderExplBean extends ExplorerTreeBean{
     private void doDropToProcTree(List<BaseDict> dragItems){
         if (dragItems.isEmpty() || dropItem == null) return;
         onShowMovedDlg("CreateProcessDlg");        
+    }
+    
+    /**
+     * Создание документа из области загрузки файла в обозревателе документов
+     */
+    public void onCreateDoc(){
+        Set<String> errors = new HashSet<>();
+        if (treeSelectedNode == null || treeSelectedNode.getData() == null){
+            errors.add(MessageFormat.format(MsgUtils.getMessageLabel("FolderIsNotSelected"), new Object[]{}));
+            MsgUtils.showErrorsMsg(errors);
+            return;
+        }          
+        Attaches attache = sessionBean.getAttaches().get(0); 
+        getCreateParams().put("attache", attache);
+        getCreateParams().put("name", attache.getName());
+        onCreateDetailItem();
     }
     
     /**

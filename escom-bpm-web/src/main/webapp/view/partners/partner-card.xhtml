@@ -11,12 +11,13 @@
         <p:tab title="#{bundle.Partner}"> 
             <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                
                 <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3 col-padding, ui-grid-col-9 col-padding" styleClass="ui-grid-col-12 without-spaces">
-                    <p:outputLabel value="#{bundle.Type}:" />
+                    <p:outputLabel value="#{bundle.Type}:" indicateRequired="true"/>
                     <p:selectOneMenu value="#{_bean.editedItem.type}" id="type" converter="partnerTypesConvertor"
                                      disabled="#{_bean.isReadOnly()}" 
                                      placeholder="#{bundle.Select}"
                                      filter="true" 
-                                     onchange="return itemChange = 1;"                                 
+                                     onchange="return itemChange = 1;" 
+                                     required="#{param['isRequired'] == 'true'}" 
                                      requiredMessage="#{bundle.Field} [#{bundle.Type}] #{bundle.MustBeFilled}">
                         <f:selectItems value="#{partnerTypesBean.findAll()}" var="types" itemLabel="#{types.name}" itemValue="#{types}" />
                         <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}"/> 
@@ -71,7 +72,7 @@
                     </p:inputTextarea>                    
                 </p:panelGrid>
 
-                <h:panelGroup id="pnUrType" >
+                <h:panelGroup id="pnUrType" rendered="#{applicationBean.canUsesContracts}">
                     <h:panelGrid columns="2" rendered="#{_bean.editedItem.type.id != 7}" styleClass="ui-grid-col-12 without-spaces">  
                         <h:panelGrid columns="1" styleClass="without-spaces">
                             <p:outputLabel value="#{bundle.Inn}:" indicateRequired="true"/>            

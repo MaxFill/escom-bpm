@@ -66,6 +66,7 @@
         </p:column>
 
         <p:column id="colDateChange" headerText="#{bundle.DateChange}" width="75" 
+                  rendered="#{_showDateChange}" 
                   visible="#{_detailBean.isVisibleColumn('colDateChange')}"
                   sortBy="#{item.dateChange}">
             <h:outputLabel value="#{item.dateChange}">

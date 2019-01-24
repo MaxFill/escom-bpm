@@ -175,6 +175,10 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         return "";
     }
     
+    public String getPartnerName(){
+        return "";
+    }
+    
     public String getTypeName(){
         return "";
     }

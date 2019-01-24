@@ -35,7 +35,7 @@ public class ExplorerTreeBean extends ExplorerBean{
     private static final long serialVersionUID = -5568149615717031598L;
 
     @EJB
-    private AttacheService attacheService;
+    protected AttacheService attacheService;
             
     protected static final String TREE_ITEMS_NAME  = "westFRM:accord:tree:";
     protected static final String TREE_FILTERS_NAME = "westFRM:accord:filtersTree:";

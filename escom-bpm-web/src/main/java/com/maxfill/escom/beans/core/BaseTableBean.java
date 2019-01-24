@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import static com.maxfill.escom.utils.MsgUtils.getBandleLabel;
 import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
 import com.maxfill.model.core.states.State;
+import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.utils.Tuple;
 import java.util.logging.Logger;
 
@@ -49,6 +50,8 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     protected UserFacade userFacade;
     @EJB
     protected RightFacade rightFacade;
+    @EJB
+    protected AttacheService attacheService;
 
     public abstract BaseTableBean getDetailBean();       //возвращает бин подчинённых объектов
 
@@ -184,7 +187,8 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
      */
     public void openItemCard(BaseDict item, Integer editMode, Map<String, List<String>> paramsMap, Set<String> errors){       
         if (!errors.isEmpty()){
-            MsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);            
+            attacheService.deleteAttaches(sessionBean.getAttaches());                    
             return;
         }
         

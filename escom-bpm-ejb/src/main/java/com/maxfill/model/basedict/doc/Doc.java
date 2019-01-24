@@ -140,6 +140,11 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     }
     
     @Override
+    public String getPartnerName(){
+        return partner != null ? partner.getNameEndElipse(): "";
+    }
+        
+    @Override
     public String getTypeName(){
         return docType != null ? docType.getName() : "";
     }

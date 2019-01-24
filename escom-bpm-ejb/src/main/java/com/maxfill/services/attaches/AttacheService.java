@@ -4,7 +4,6 @@ import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.folder.Folder;
 import com.maxfill.model.basedict.user.User;
-import com.maxfill.utils.Tuple;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;

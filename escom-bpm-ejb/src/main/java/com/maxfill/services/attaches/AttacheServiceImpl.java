@@ -109,7 +109,7 @@ public class AttacheServiceImpl implements AttacheService{
     @Override
     public void deleteAttaches(List<Attaches> attaches){
         if (attaches != null){
-            attaches.stream().forEach(attache -> deleteAttache(attache));
+            attaches.forEach(attache -> deleteAttache(attache));
         }
     }
     

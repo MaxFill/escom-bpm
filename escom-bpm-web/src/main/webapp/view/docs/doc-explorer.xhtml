@@ -17,7 +17,7 @@
 
     <ui:param name="_showAuthor"       value="#{true}"/>
     <ui:param name="_showDateCreate"   value="#{false}"/>
-    <ui:param name="_showDateChange"   value="#{true}"/>    
+    <ui:param name="_showDateChange"   value="#{false}"/>    
     <ui:param name="_showUploadPanel"  value="#{_bean.selectorViewMode ? false : true}"/>
     <ui:param name="_showCompany"      value="#{true}"/>
     <ui:param name="_lbGroupName"      value="#{bundle.Folders}"/>  
@@ -124,7 +124,10 @@
         </p:commandButton>         
         <p:commandButton id="btnOpenFilesUploadFRM" actionListener="#{_bean.onOpenUploadFilesFrm()}" style="display: none;">
            <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND();"/>
-       </p:commandButton>  
+        </p:commandButton> 
+        <p:commandButton id="createDocBtn" actionListener="#{_bean.onCreateDoc()}" style="display: none;">
+            <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND();"/>
+        </p:commandButton>         
     </ui:define>
 
     <!-- специфичные поля таблицы обозревателя -->
@@ -133,6 +136,11 @@
                   visible="#{_detailBean.isVisibleColumn('colCompany')}"
                   sortBy="#{item.companyName}" width="90" priority="3">
             <h:outputText value="#{item.companyName}"/>
+        </p:column>
+        
+        <p:column headerText="#{bundle.Partner}"
+                  sortBy="#{item.partnerName}" width="90" priority="3">
+            <h:outputText value="#{item.partnerName}"/>
         </p:column>
         
         <p:column id="colDocType" headerText="#{bundle.Type}" 
@@ -243,6 +251,26 @@
     </ui:define>
     
     <ui:define name="centerFormFooter">
+        <h:panelGrid columns="1" rendered="#{_bean.isNowShowTree()}" styleClass="ui-grid-col-12">
+            <p:fileUpload id="fileUpload" style="font-size: small;"                                       
+                        styleClass="ui-grid-col-12"
+                        allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
+                        sizeLimit="#{sessionBean.maxFileSize}"
+                        invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
+                        invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
+                        fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
+                        process="@this" 
+                        mode="advanced" auto="true"
+                        dragDropSupport="true"
+                        disabled="#{_bean.treeSelectedNode == null}"
+                        label="#{bundle.SelectFileAndCreateDoc}" 
+                        cancelLabel="#{bundle.Cancel}"
+                        uploadLabel="#{bundle.SaveFiles}"
+                        fileUploadListener="#{sessionBean.onUploadFile}" 
+                        onstart="PF('statusDialog').show()"
+                        oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:createDocBtn').click();">
+            </p:fileUpload> 
+        </h:panelGrid>
     </ui:define>
     
     <ui:define name="form_scripts">         

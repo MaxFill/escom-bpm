@@ -1136,7 +1136,11 @@ public class SessionBean implements Serializable{
     public List<DayType> getDayTypes() {
         return dayTypes;
     }   
-        
+
+    public List<Attaches> getAttaches() {
+        return attaches;
+    }
+          
     /**
      * Возвращает папку текущего пользователя
      * @return 

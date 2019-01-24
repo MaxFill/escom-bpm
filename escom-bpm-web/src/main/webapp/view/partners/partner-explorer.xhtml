@@ -24,10 +24,10 @@
         <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{_bean.isNowShowDetail()}">
             #{item.code}
         </p:column>
-        <p:column headerText="#{bundle.Inn}" sortBy="#{item.inn}" rendered="#{_bean.isNowShowDetail()}">
+        <p:column headerText="#{bundle.Inn}" sortBy="#{item.inn}" rendered="#{_bean.isNowShowDetail() and applicationBean.canUsesContracts}">
             #{item.inn}
         </p:column>
-        <p:column headerText="#{bundle.Kpp}" sortBy="#{item.kpp}" rendered="#{_bean.isNowShowDetail()}">
+        <p:column headerText="#{bundle.Kpp}" sortBy="#{item.kpp}" rendered="#{_bean.isNowShowDetail() and applicationBean.canUsesContracts}">
             #{item.kpp}
         </p:column>
     </ui:define> 

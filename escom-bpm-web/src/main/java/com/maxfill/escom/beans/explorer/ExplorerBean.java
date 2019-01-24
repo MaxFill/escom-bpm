@@ -810,6 +810,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 }
                 case DictDetailSource.TREE_SOURCE:{ 
                     BaseDict treeItem = (BaseDict) treeSelectedNode.getData(); 
+                    setCurrentViewModeTree();
                     if (isItemTreeType(treeItem)){                    
                             loadItems = treeBean.makeGroupContent(treeItem, tableBean, viewMode, first, pageSize, sortField,  sortOrder.name());                            
                             //count = treeBean.getDetailBean().getFacade().findCountActualDetails(currentItem).intValue();
@@ -821,6 +822,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                     break;
                 }
                 case DictDetailSource.SEARCHE_SOURCE:{
+                    setCurrentViewModeDetail();
                     loadItems = doSearcheItems(first, pageSize, sortField, sortOrder, makeFilters(filters));
                     break;
                 }
