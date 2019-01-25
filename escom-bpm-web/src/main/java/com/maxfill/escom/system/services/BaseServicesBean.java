@@ -95,20 +95,17 @@ public abstract class BaseServicesBean<P> extends LazyLoadBean<ServicesEvents>{
      * Запуск службы
      */
     public void onStartService(){
-        try {
-            doSaveSettings();
-            Timer timer = getTimerFacade().createTimer(service, getScheduler());
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(bos);
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(bos))
+        {
+            //doSaveSettings();
+            Timer timer = getTimerFacade().createTimer(service, getScheduler());            
             oos.writeObject(timer.getHandle());
-            oos.flush();
-            oos.close();
-            bos.close();
             byte[] data = bos.toByteArray();
             service.setTimeHandle(data);
             service.setDateNextStart(timer.getNextTimeout());
             service.setStarted(Boolean.TRUE);
-            servicesFacade.edit(service);
+            servicesFacade.edit(service);            
             MsgUtils.succesMsg("ServiceRunSchedule");
         } catch (IOException e) {
             throw new RuntimeException(e);

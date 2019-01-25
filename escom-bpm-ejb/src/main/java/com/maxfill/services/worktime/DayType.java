@@ -3,7 +3,7 @@ package com.maxfill.services.worktime;
 import java.util.Objects;
 
 /**
- *
+ * Вид события календаря - тип дня
  * @author maksim
  */
 public class DayType {

@@ -12,7 +12,7 @@
 	<field name="author.shortFIO" class="java.lang.String"/>
 	<field name="regNumber" class="java.lang.String"/>
 	<field name="docType.name" class="java.lang.String"/>
-	<field name="dateDoc" class="java.util.Date"/>
+	<field name="itemDate" class="java.util.Date"/>
 	<field name="company.name" class="java.lang.String"/>
 	<group name="Company">
 		<groupExpression><![CDATA[$F{company.name}]]></groupExpression>
@@ -168,7 +168,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[$F{dateDoc}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{itemDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="150" y="0" width="151" height="20" uuid="662e0816-688e-4171-96f7-0f52348c2463"/>

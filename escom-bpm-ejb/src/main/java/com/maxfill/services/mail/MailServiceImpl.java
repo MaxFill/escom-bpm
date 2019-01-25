@@ -40,7 +40,7 @@ public class MailServiceImpl implements MailService{
         props.put("mail.debug", "false");        
         if(settings.getUseSSL()) {
             props.put("mail.store.protocol", "imaps");            
-            props.put("mail.imaps.timeout", "1000");
+            props.put("mail.imaps.timeout", "1500");
             if (settings.getPort()!= null){
                 props.put("mail.imaps.port", settings.getPort());
             }

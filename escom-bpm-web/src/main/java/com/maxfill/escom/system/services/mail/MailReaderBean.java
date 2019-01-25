@@ -5,7 +5,6 @@ import com.maxfill.dictionary.DictServices;
 import com.maxfill.escom.system.services.BaseServicesBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.services.BaseTimer;
-import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.services.mail.*;
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;
@@ -39,7 +38,7 @@ public class MailReaderBean extends BaseServicesBean<MailSettings>{
             inbox = mailService.getInbox(session, getSettings());
             int countMsg = inbox.getMessageCount();
             int countUnread = inbox.getUnreadMessageCount();
-            String adress = getSettings().getAdressSender();
+            String adress = getSettings().getServerAdress();
             MsgUtils.succesFormatMsg("TestMailInbox", new Object[]{adress, countMsg, countUnread});
         } catch (RuntimeException | MessagingException ex) {
             MsgUtils.errorMessage(ex.getMessage());

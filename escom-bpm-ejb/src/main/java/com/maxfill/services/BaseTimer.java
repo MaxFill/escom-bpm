@@ -90,7 +90,7 @@ public abstract class BaseTimer<P> {
     protected P restoreSettings(Services service){
         P settings = null;
         try {
-            byte[] compressXML = service.getSheduler();
+            byte[] compressXML = service.getSettings();
             String settingsXML = EscomUtils.decompress(compressXML);
             settings = (P) JAXB.unmarshal(new StringReader(settingsXML), settingsClass);
         } catch (IOException ex) {

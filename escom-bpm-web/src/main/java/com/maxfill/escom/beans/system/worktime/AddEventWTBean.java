@@ -52,7 +52,8 @@ public class AddEventWTBean extends BaseViewBean<BaseView>{
     }
 
     private void initDayTypes(){
-        dayTypes = new ArrayList<>();                   
+        dayTypes = new ArrayList<>(); 
+        dayTypes.add(new DayType(DateUtils.WORKDAY, MsgUtils.getBandleLabel("Workday"), "portfolio"));
         dayTypes.add(new DayType(DateUtils.WEEKEND, MsgUtils.getBandleLabel("Weekend"), "weekend"));
         dayTypes.add(new DayType(DateUtils.HOLLYDAY, MsgUtils.getBandleLabel("Hollyday"), "holyday"));
         dayTypes.add(new DayType(DateUtils.HOSPITALDAY, MsgUtils.getBandleLabel("HospitalDay"), "hospital"));
@@ -73,7 +74,11 @@ public class AddEventWTBean extends BaseViewBean<BaseView>{
         //цикл по всем дням периода        
         while(beginDate.before(endDate) || beginDate.equals(endDate)){
             WorkTimeCalendar wtc = workTimeService.getWorkTimeDate(beginDate, staff, null);
-            wtc.setStandart(false);
+            if (DateUtils.WORKDAY == selectedDayType.getId()){
+                wtc.setStandart(true);
+            } else {
+                wtc.setStandart(false);
+            }
             wtc.setDayType(selectedDayType.getId());
             workTimeService.update(wtc);
             beginDate = DateUtils.addDays(beginDate, 1);
