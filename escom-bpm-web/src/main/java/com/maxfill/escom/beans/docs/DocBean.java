@@ -234,10 +234,15 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     }
     
     public Attaches addAttacheFromFile(Doc doc, FileUploadEvent event) throws IOException {
-        UploadedFile uploadedFile = EscomFileUtils.handleUploadFile(event);
-        Attaches attache = attacheBean.uploadAtache(uploadedFile);
-        attacheFacade.addAttacheInDoc(doc, attache);
-        MsgUtils.succesMsg("Successfully");
+        UploadedFile uploadedFile = event.getFile();
+        Attaches attache = null;
+        if (uploadedFile != null){
+            attache = attacheBean.uploadAtache(uploadedFile);
+            attacheFacade.addAttacheInDoc(doc, attache);
+            MsgUtils.succesMsg("Successfully");
+        } else {
+            MsgUtils.errorMessage("ErrorFileOperation");
+        }
         return attache;
     }            
     

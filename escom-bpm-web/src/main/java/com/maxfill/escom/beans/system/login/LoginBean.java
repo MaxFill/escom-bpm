@@ -81,7 +81,7 @@ public class LoginBean extends BaseViewBean{
         Set <FacesMessage> errors = new HashSet <>();
        
         if (StringUtils.isEmpty(userName) ||  StringUtils.isEmpty(password)){
-            LOGGER.log(Level.INFO, "LOGIN: login for userName: {0}", userName + "_" + password);
+            //LOGGER.log(Level.INFO, "LOGIN: login for userName: {0}", userName + "_" + password);
             MsgUtils.errorMsg("BadUserOrPassword");            
             return "";
         }

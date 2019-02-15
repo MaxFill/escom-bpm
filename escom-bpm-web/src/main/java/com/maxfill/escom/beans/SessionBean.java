@@ -397,7 +397,8 @@ public class SessionBean implements Serializable{
     
     public void onUploadFile(FileUploadEvent event) throws IOException{       
         attaches.clear();
-        UploadedFile uploadFile = EscomFileUtils.handleUploadFile(event);        
+        UploadedFile uploadFile = event.getFile(); 
+        if (uploadFile == null) return;
         attaches.add(attacheBean.uploadAtache(uploadFile));
     } 
      
@@ -931,7 +932,9 @@ public class SessionBean implements Serializable{
         taskPieModel = null;
     }
     public PieChartModel getTaskPieModel() {
-        if (taskPieModel == null){            
+        if (taskPieModel == null){  
+            if (taskDateStart == null){taskDateStart = new Date();}
+            if (taskDateEnd == null){taskDateEnd =  new Date();}
             Tuple<Integer, Map<String, Integer>> results = taskFacade.countTaskStaffByStates(getCurrentUserStaff(), taskDateStart, taskDateEnd);
             countTasks = results.a;
             Map<String, Integer> mapResult = results.b; 
@@ -1170,7 +1173,7 @@ public class SessionBean implements Serializable{
     
     /* Возвращает максимальный размер загружаемого файла */    
     public Integer getMaxFileSize(){
-        return configuration.getMaxFileSize();
+        return configuration.getMaxFileSize() - 1000;
     }
 
     public List<SelectItem> getPERIODS() {

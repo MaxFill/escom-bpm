@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 import java.util.stream.Stream;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -113,49 +113,57 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
     
     /* Подсчёт кол-ва задач по статусам */
     public Tuple<Integer, Map<String, Integer>> countTaskStaffByStates(Staff staff, Date startPeriod, Date endPeriod){
-        em.getEntityManagerFactory().getCache().evict(Task.class);
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Task> criteriaQuery = builder.createQuery(Task.class);
-        Root root = criteriaQuery.from(Task.class);       
-        Predicate crit1 = builder.equal(root.get("deleted"), false);
-        Predicate crit2 = builder.greaterThanOrEqualTo(root.get("dateCreate"), startPeriod);
-        Predicate crit3 = builder.lessThanOrEqualTo(root.get("dateCreate"), endPeriod);
-        Predicate crit4 = builder.equal(root.get(Task_.owner), staff);
-        criteriaQuery.where(builder.and(crit1, crit2, crit3, crit4));        
-        TypedQuery<Task> query = em.createQuery(criteriaQuery);  
-        
-        AtomicInteger exeInTime = new AtomicInteger(0);     //в работе в срок
-        AtomicInteger exeOverdue = new AtomicInteger(0);    //в работе просрочено
-        AtomicInteger finisInTime = new AtomicInteger(0);   //завершено в срок
-        AtomicInteger finishOverdue = new AtomicInteger(0); //завершено просрочено
-        AtomicInteger exePlanToday = new AtomicInteger(0);  //срок истекает сегодняо
-        query.getResultStream().forEach(task->{
-            if (Objects.equals(task.getState().getCurrentState().getId(), DictStates.STATE_RUNNING)){
-                if (task.getPlanExecDate().before(new Date())){ //просрочено
-                    exeOverdue.incrementAndGet();
-                } else 
-                    if (task.getPlanExecDate().before(DateUtils.endDate(new Date()))){
-                        exePlanToday.incrementAndGet();
-                    } else {
-                        exeInTime.incrementAndGet();
-                    }
-            } else 
-                if (Objects.equals(task.getState().getCurrentState().getId(), DictStates.STATE_COMPLETED)){
-                    if (task.getPlanExecDate().after(task.getFactExecDate())){ //в срок
-                        finisInTime.incrementAndGet();
-                    } else {
-                        finishOverdue.incrementAndGet();
-                    }
-                }
-        });
         Map<String, Integer> result = new HashMap<>();
-        result.put("ExeInTime", exeInTime.intValue());
-        result.put("ExeOverdue", exeOverdue.intValue());
-        result.put("FinishInTime", finisInTime.intValue());
-        result.put("FinishOverdue", finishOverdue.intValue());
-        result.put("ExePlanToday", exePlanToday.intValue());
-        Integer count = exeInTime.intValue() + exeOverdue.intValue() + finisInTime.intValue() + finishOverdue.intValue();
-        return new Tuple(count, result);
+        if (staff == null || startPeriod == null || endPeriod == null){
+            return new Tuple(0, result);
+        }
+        try {
+            em.getEntityManagerFactory().getCache().evict(Task.class);
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<Task> criteriaQuery = builder.createQuery(Task.class);
+            Root root = criteriaQuery.from(Task.class);       
+            Predicate crit1 = builder.equal(root.get("deleted"), false);
+            Predicate crit2 = builder.greaterThanOrEqualTo(root.get("dateCreate"), startPeriod);
+            Predicate crit3 = builder.lessThanOrEqualTo(root.get("dateCreate"), endPeriod);
+            Predicate crit4 = builder.equal(root.get(Task_.owner), staff);
+            criteriaQuery.where(builder.and(crit1, crit2, crit3, crit4));        
+            TypedQuery<Task> query = em.createQuery(criteriaQuery);  
+
+            AtomicInteger exeInTime = new AtomicInteger(0);     //в работе в срок
+            AtomicInteger exeOverdue = new AtomicInteger(0);    //в работе просрочено
+            AtomicInteger finisInTime = new AtomicInteger(0);   //завершено в срок
+            AtomicInteger finishOverdue = new AtomicInteger(0); //завершено просрочено
+            AtomicInteger exePlanToday = new AtomicInteger(0);  //срок истекает сегодняо
+            query.getResultStream().forEach(task->{
+                if (Objects.equals(task.getState().getCurrentState().getId(), DictStates.STATE_RUNNING)){
+                    if (task.getPlanExecDate().before(new Date())){ //просрочено
+                        exeOverdue.incrementAndGet();
+                    } else 
+                        if (task.getPlanExecDate().before(DateUtils.endDate(new Date()))){
+                            exePlanToday.incrementAndGet();
+                        } else {
+                            exeInTime.incrementAndGet();
+                        }
+                } else 
+                    if (Objects.equals(task.getState().getCurrentState().getId(), DictStates.STATE_COMPLETED)){
+                        if (task.getPlanExecDate().after(task.getFactExecDate())){ //в срок
+                            finisInTime.incrementAndGet();
+                        } else {
+                            finishOverdue.incrementAndGet();
+                        }
+                    }
+            });        
+            result.put("ExeInTime", exeInTime.intValue());
+            result.put("ExeOverdue", exeOverdue.intValue());
+            result.put("FinishInTime", finisInTime.intValue());
+            result.put("FinishOverdue", finishOverdue.intValue());
+            result.put("ExePlanToday", exePlanToday.intValue());
+            Integer count = exeInTime.intValue() + exeOverdue.intValue() + finisInTime.intValue() + finishOverdue.intValue();
+            return new Tuple(count, result);
+        } catch(Exception ex){
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+        return new Tuple(0, result);
     }
     
     public Stream<Task> findTaskByStaffStates(Staff staff, List<State> states){

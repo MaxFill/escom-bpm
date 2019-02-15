@@ -11,11 +11,8 @@ import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletResponse;
-import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
 
 public final class EscomFileUtils {
-    public static final int MAX_FILE_SIZE = 1000000;
     private  static final Logger LOG = Logger.getLogger(EscomFileUtils.class.getName());
     
     private EscomFileUtils() {
@@ -61,26 +58,6 @@ public final class EscomFileUtils {
             }
         } catch (UnsupportedEncodingException ex) {
             LOG.log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    /* Обработка события загрузки файла  */
-    public static UploadedFile handleUploadFile(FileUploadEvent event) {
-        UploadedFile file = event.getFile();
-        if (file == null) {
-            return null;
-        }
-        try {
-            int length = file.getContents().length;
-            if (length > MAX_FILE_SIZE) {
-                String message = MsgUtils.getBandleLabel("INVALID_FILE_SIZE");
-                throw new Exception(message);
-            }
-            return file;
-
-        } catch (Exception exception) {
-            Logger.getLogger(EscomFileUtils.class.getName()).log(Level.SEVERE, null, exception);
-            return null;
         }
     }
 }

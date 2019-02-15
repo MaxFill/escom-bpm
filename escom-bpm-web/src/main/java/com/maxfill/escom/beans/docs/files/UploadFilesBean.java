@@ -75,7 +75,11 @@ public class UploadFilesBean extends BaseViewBean<BaseView>{
     }
     
     public void uploadFile(FileUploadEvent event) throws IOException{
-        UploadedFile uploadFile = EscomFileUtils.handleUploadFile(event); 
+        UploadedFile uploadFile = event.getFile(); 
+        if (uploadFile == null){
+            messages.add(MsgUtils.prepFormatErrorMsg("ErrorFileOperation", new Object[]{}));
+            return;
+        }
         String fileName = uploadFile.getFileName();
         User author = getCurrentUser();
         Doc doc = docFacade.createDocInUserFolder(fileName, author, folder);        

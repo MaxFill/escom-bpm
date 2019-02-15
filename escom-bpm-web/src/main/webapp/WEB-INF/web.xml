@@ -51,11 +51,11 @@
     </context-param>    
     <context-param>
         <param-name>ReleaseNumber</param-name>
-        <param-value>017</param-value>
+        <param-value>020</param-value>
     </context-param>    
     <context-param>
         <param-name>ReleaseDate</param-name>
-        <param-value>2019-01-18</param-value>
+        <param-value>2019-02-15</param-value>
     </context-param>   
               
     <filter>

@@ -43,8 +43,10 @@ public class AddAttacheBean extends BaseViewBean<BaseView>{
     
     public void addAttache(FileUploadEvent event) throws IOException{
         Attaches attache = docBean.addAttacheFromFile(doc, event);
-        attacheFacade.setMainAttache(doc, attache);
-        docFacade.edit(doc);
+        if (attache != null){
+            attacheFacade.setMainAttache(doc, attache);
+            docFacade.edit(doc);
+        }
     }
     
     public void addAttacheFromScan(SelectEvent event){

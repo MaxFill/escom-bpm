@@ -1568,7 +1568,8 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     /* Загрузка файла через контрол на форме обозревателя документов */
     public void onUploadFile(FileUploadEvent event) throws IOException{        
         if (checkCanCreateDetailItem(new HashSet<>())){
-            UploadedFile uploadFile = EscomFileUtils.handleUploadFile(event); 
+            UploadedFile uploadFile = event.getFile();
+            if (uploadFile == null) return;
             Attaches attache = attacheBean.uploadAtache(uploadFile);
             createParams.put("attache", attache);
         }

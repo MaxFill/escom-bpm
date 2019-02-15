@@ -406,10 +406,8 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     public boolean checkLdapUser(String userName, char[] password){ 
         boolean flag = false;
         try {
-            LOGGER.log(Level.INFO, "LOGGIN: LDAP check start for the {0} user ", userName);
             LdapUtils.initLDAP(userName, String.valueOf(password), configuration.getLdapServer());
             flag = true;
-            LOGGER.log(Level.INFO, "LOGGIN: LDAP check finish for the {0} user ", userName);
         } catch (AuthenticationException ex){
             LOGGER.log(Level.SEVERE, null, ex);
         } catch (NamingException ex){
