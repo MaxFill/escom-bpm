@@ -4,7 +4,7 @@
                  xmlns:f="http://xmlns.jcp.org/jsf/core"
                  xmlns:h="http://xmlns.jcp.org/jsf/html">    
             
-    <p:panel id="tasks" header="#{bundle.Tasks}" toggleable="true" styleClass="dash-panel">
+    <p:panel id="tasks" header="#{bundle.Tasks}" toggleable="true" styleClass="dash-panel" rendered="#{applicationBean.isCanUsesTasks()}">
         <f:facet name="actions">
             <p:commandLink id="refreshTasks" type="button" title="#{bundle.Refresh}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
                            update="countTasks">   
@@ -14,9 +14,8 @@
         
         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                <p:graphicImage value="/resources/icon/timer-32.png" rendered="#{applicationBean.isCanUsesTasks()}"/>                                 
-                <p:link href="#{sessionBean.onGetFormURL('/tasks/'.concat(DictFrmName.FRM_SCHEDULER))}" 
-                        rendered="#{applicationBean.isCanUsesTasks()}"
+                <p:graphicImage value="/resources/icon/timer-32.png" />                                 
+                <p:link href="#{sessionBean.onGetFormURL('/tasks/'.concat(DictFrmName.FRM_SCHEDULER))}"                         
                         value="#{bundle.Scheduler}" target="_blank" />
 
                 <p:graphicImage value="/resources/icon/tasks-32.png"/>  

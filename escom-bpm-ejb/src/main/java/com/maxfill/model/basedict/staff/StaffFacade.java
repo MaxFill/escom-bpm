@@ -11,6 +11,7 @@ import com.maxfill.model.basedict.user.User;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.user.User_;
+import com.maxfill.services.worktime.WorkTimeFacade;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,8 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
     private CompanyFacade companyFacade;
     @EJB
     private DepartmentFacade departmentFacade;
+    @EJB
+    private WorkTimeFacade workTimeFacade;
 
     public StaffFacade() {
         super(Staff.class, StaffLog.class, StaffStates.class);
@@ -125,6 +128,10 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         super.edit(staff);
     }    
     
+    /**
+     * Действие перед физическим удалением объекта
+     * @param staff 
+     */
     @Override
     protected void beforeRemoveItem(Staff staff){ 
         CriteriaBuilder builder = em.getCriteriaBuilder(); 
@@ -136,6 +143,8 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         update.where(predicate);
         Query query = em.createQuery(update);
         query.executeUpdate();
+        
+        workTimeFacade.removeWorkTimeByStaff(staff);
     }
         
     @Override

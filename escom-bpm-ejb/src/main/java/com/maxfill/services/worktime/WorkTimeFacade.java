@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -55,5 +56,20 @@ public class WorkTimeFacade extends BaseFacade<WorkTimeCalendar>{
         cq.select(root).where(builder.and(crit1, crit2));
         Query q = em.createQuery(cq);
         return q.getResultList();
+    }
+    
+    /**
+     * Удаление из календаря записей, для указаной штатной единицы
+     * @param staff
+     * @return 
+     */
+    public int removeWorkTimeByStaff(Staff staff){
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaDelete<WorkTimeCalendar> cd = builder.createCriteriaDelete(itemClass);
+        Root root = cd.from(itemClass);
+        Predicate crit1 = builder.equal(root.get(WorkTimeCalendar_.staff), staff);
+        cd.where(crit1);
+        Query query = em.createQuery(cd);
+        return query.executeUpdate();
     }
 }
