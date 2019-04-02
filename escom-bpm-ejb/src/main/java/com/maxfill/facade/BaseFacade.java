@@ -4,20 +4,14 @@ import com.maxfill.model.Dict;
 import com.maxfill.model.basedict.user.User;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 
-/* Абстрактный фасад  */
+/* Абстрактный фасад для сущностей */
 public abstract class BaseFacade<T extends Dict> {
     protected final Class<T> itemClass;
     protected static final Logger LOGGER = Logger.getLogger(BaseFacade.class.getName());
@@ -64,11 +58,15 @@ public abstract class BaseFacade<T extends Dict> {
         em.merge(entity);
     }
 
-    synchronized public void remove(T entity) {
+    synchronized public void remove(T entity){
         entity = em.getReference(itemClass, entity.getId());
+        beforeRemoveItem(entity);
         em.remove(entity);
     }
 
+    protected void beforeRemoveItem(T entity){        
+    }
+    
     public int count() {
         CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
         Root<T> rt = cq.from(itemClass);

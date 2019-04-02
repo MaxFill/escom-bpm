@@ -23,6 +23,8 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -124,6 +126,19 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
     }    
     
     @Override
+    protected void beforeRemoveItem(Staff staff){ 
+        CriteriaBuilder builder = em.getCriteriaBuilder(); 
+        CriteriaUpdate<User> update = builder.createCriteriaUpdate(User.class);    
+        Root root = update.from(User.class);
+        Expression<Staff> nullStaff = builder.nullLiteral(itemClass);
+        update.set(User_.staff, nullStaff);
+        Predicate predicate = builder.equal(root.get(User_.staff), staff);
+        update.where(predicate);
+        Query query = em.createQuery(update);
+        query.executeUpdate();
+    }
+        
+    @Override
     public void detectParentOwner(Staff staff, BaseDict parent, BaseDict target){
         if (target instanceof Company){
             staff.setCompany((Company)target);
@@ -154,7 +169,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
             edit(staff);
         }
     }
-
+    
     /* Возвращает список занятых (не вакантных) штатных единиц с сотрудниками и должностями */
     public List<Staff> findActualStaff(){
         em.getEntityManagerFactory().getCache().evict(Staff.class);

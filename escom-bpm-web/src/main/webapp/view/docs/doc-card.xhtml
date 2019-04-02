@@ -144,7 +144,7 @@
             </p:panelGrid>
         </p:tab>
         
-        <p:tab title="#{bundle.Concorded}">
+        <p:tab title="#{bundle.Concorded}" rendered="#{applicationBean.isCanUsesProcess()}">
             <p:accordionPanel>
                 <ui:include src="/view/docs/concorders/concorder-list.xhtml" />
                 <ui:include src="/view/docs/remarks/remarks-list.xhtml" />            

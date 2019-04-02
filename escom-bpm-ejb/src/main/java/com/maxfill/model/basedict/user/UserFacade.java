@@ -228,8 +228,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     public Long findCountActualDetails(UserGroups group){
         UserGroups freshGroup = userGroupsFacade.find(group.getId());
         return freshGroup.getDetailItems().stream().filter(user -> !user.isDeleted()).count();        
-    }
-    
+    }    
     
     /**
      * Отбирает пользователей, у которых не назначена штатная единица 

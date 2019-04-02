@@ -141,11 +141,6 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     @Override
     protected void checkAllowedDeleteItem(Staff staff, Set<String> errors){
         super.checkAllowedDeleteItem(staff, errors);
-         if(!userFacade.findUserByMainStaff(staff).isEmpty()) {
-            Object[] messageParameters = new Object[]{staff.getName()};
-            String error = MessageFormat.format(MsgUtils.getMessageLabel("StaffUsedInUsers"), messageParameters);
-            errors.add(error);
-        }
         if (processFacade.findCountStaffLinks(staff) > 0 ) {
             Object[] messageParameters = new Object[]{staff.getName()};
             String error = MessageFormat.format(getMessageLabel("StaffUsedInProcesses"), messageParameters);
@@ -156,6 +151,14 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
             String error = MessageFormat.format(getMessageLabel("StaffUsedInTasks"), messageParameters);
             errors.add(error);
         }
+    }
+    
+    /**
+     * Действия перед удалением объекта
+     * @param staff
+     */
+    @Override
+    protected void preDeleteItem(Staff staff){        
     }
     
     @Override
