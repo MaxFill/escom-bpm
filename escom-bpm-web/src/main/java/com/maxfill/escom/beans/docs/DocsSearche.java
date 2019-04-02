@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
-/* Расширение поиска Документов  */
+/* Расширение для поиска Документов  */
 public class DocsSearche extends SearcheModel{
     private static final long serialVersionUID = 3953544990596152030L;
     

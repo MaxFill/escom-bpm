@@ -54,6 +54,7 @@ import com.maxfill.model.basedict.doc.numerator.DocNumerator;
 import com.maxfill.model.basedict.process.reports.ProcReport;
 import com.maxfill.model.basedict.process.reports.ProcReportFacade;
 import com.maxfill.services.numerators.NumeratorService;
+import com.maxfill.utils.EscomUtils;
 import org.primefaces.PrimeFaces;
 
 /**
@@ -233,6 +234,17 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     public void onGetDocOpenURL(Doc doc){
         docURL = sessionBean.doGetItemURL(doc, "/docs/doc-card.xhtml");
     }   
+    
+    @Override
+    public String getBarCode(){
+        String barCode = getEditedItem().getBarCode();
+        if (StringUtils.isBlank(barCode)){            
+            barCode = EscomUtils.getBarCode();
+            getEditedItem().setBarCode(barCode);
+            onItemChange();
+        }
+        return barCode;
+    }
     
     /* *** СООБЩЕНИЯ *** */
     

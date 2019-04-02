@@ -154,7 +154,6 @@
                                                 actionListener="#{_bean.onMoveCheckedContentToTrash()}"
                                                 onstart="PF('statusDialog').show();"
                                                 oncomplete="PF('statusDialog').hide(); initDND();">
-                                        <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
                                     </p:menuitem>
                                     <p:separator />
                                     <ui:insert name="addMenuActions" />
@@ -217,6 +216,7 @@
                     </p:commandButton>                      
                     
                     <ui:include src="/view/common/exeption-handler.xhtml"/> 
+                    
                     <p:remoteCommand name="afterFormLoad" onstart="getOS();" actionListener="#{_bean.onAfterFormLoad()}" autoRun="true"/>
                     <p:remoteCommand name="setVersionOS" actionListener="#{_bean.setVersionOS()}" />
                 </h:form>

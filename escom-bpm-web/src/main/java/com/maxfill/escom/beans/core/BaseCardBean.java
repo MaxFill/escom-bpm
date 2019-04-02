@@ -335,7 +335,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     @Override
     protected Map<String, Object> prepareReportParams(){
         Map<String, Object> parameters = new HashMap<>();        
-        parameters.put("BARCODE", getBarCode(editedItem));
+        parameters.put("BARCODE", getBarCode());
         parameters.put("USER_LOGIN", getCurrentUser().getLogin());
         String key = getMetadatesObj().getBundleName();
         parameters.put("REPORT_TITLE", MsgUtils.getBandleLabel(key));
@@ -571,10 +571,13 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         return MsgUtils.getBandleLabel("Rights");
     }
 
-    public String getBarCode(T item){
-        Integer serverId = conf.getServerId();
-        String barcode = EscomUtils.getBarCode(editedItem, getMetadatesObj(), serverId); 
-        return barcode;
+    /**
+     * Формирование штрих-кода 
+     * @param item
+     * @return 
+     */
+    public String getBarCode(){
+        return EscomUtils.getBarCode(editedItem.getId());         
     }
     
     /**

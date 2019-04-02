@@ -191,4 +191,17 @@
         </addColumn>
     </changeSet> 
     
+    <changeSet id="barcode_add_documents" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="docs" columnName="BarCode" />
+            </not>
+        </preConditions>
+        <addColumn tableName="docs">
+            <column name="BarCode" type="varchar(16)" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog> 

@@ -75,6 +75,9 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     @Column(name = "RoleJson", length = 2048)
     private String roleJson;
     
+    @Column(name = "BarCode", length = 16)
+    private String barCode;
+    
     @Column(name = "DateDoc")
     @Temporal(TemporalType.TIMESTAMP)
     private Date itemDate;
@@ -127,6 +130,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     private Doc mainDoc;     
     
     public Doc() {
+        
     }
     
     @Override
@@ -199,6 +203,13 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     @Override
     public void setDetailItems(List<Remark> detailItems) {
         this.detailItems = detailItems;
+    }
+
+    public String getBarCode() {
+        return barCode;
+    }
+    public void setBarCode(String barCode) {
+        this.barCode = barCode;
     }
         
     @Override

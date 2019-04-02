@@ -68,11 +68,6 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     protected void checkAllowedDeleteItem(Folder folder, Set<String> errors){
         super.checkAllowedDeleteItem(folder, errors);
         checkSystemFolder(folder, errors);
-        if (!userFacade.findUsersByInbox(folder).isEmpty()){
-            Object[] messageParameters = new Object[]{folder.getName()};
-            String error = MessageFormat.format(MsgUtils.getMessageLabel("FolderUsedInUsers"), messageParameters);
-            errors.add(error);
-        }
     }
 
     /**

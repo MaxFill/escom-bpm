@@ -31,7 +31,24 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
     public FoldersFacade() {
         super(Folder.class, FolderLog.class, FolderStates.class);
     }    
-      
+   
+    /**
+     * Действия перед фактическим удалением папки
+     * @param folder 
+     */
+    @Override
+    protected void beforeRemoveItem(Folder folder){ 
+        CriteriaBuilder builder = em.getCriteriaBuilder(); 
+        CriteriaUpdate<User> update = builder.createCriteriaUpdate(User.class);    
+        Root root = update.from(User.class);
+        Expression<Folder> nullFolder = builder.nullLiteral(itemClass);
+        update.set(User_.inbox, nullFolder);
+        Predicate predicate = builder.equal(root.get(User_.inbox), folder);
+        update.where(predicate);
+        Query query = em.createQuery(update);
+        query.executeUpdate();
+    }
+    
     @Override
     protected void detectParentOwner(Folder item, BaseDict parent, BaseDict owner){
         item.setOwner(null);

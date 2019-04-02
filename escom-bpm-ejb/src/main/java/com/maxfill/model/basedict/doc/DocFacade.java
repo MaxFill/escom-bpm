@@ -46,6 +46,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import com.maxfill.model.basedict.doc.numerator.DocNumerator;
 import com.maxfill.model.core.messages.UserMessagesFacade;
+import com.maxfill.utils.EscomUtils;
 
 @Stateless
 public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocStates> {
@@ -66,25 +67,101 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     }
 
     @Override
+    public void edit(Doc doc) {
+        super.edit(doc);
+        searcheService.updateFullTextIndex(doc);
+    }
+
+    /**
+     * Создание документа
+     * @param doc 
+     */
+    @Override
+    public void create(Doc doc) {        
+        super.create(doc);
+        searcheService.updateFullTextIndex(doc);
+    }
+
+    @Override
+    public void setSpecAtrForNewItem(Doc doc, Map<String, Object> params) {
+        Folder folder = doc.getOwner();
+        doSetDefaultDocType(doc, folder);
+        doSetDefaultCompany(doc, folder);
+        doSetDefaultPartner(doc, folder);           
+        doc.setItemDate(new Date());
+        
+        doc.setBarCode(EscomUtils.getBarCode());
+        
+        DocType docType = doc.getDocType();
+        if (docType != null && docType.getNumerator() != null && DictNumerator.TYPE_AUTO.equals(docType.getNumerator().getTypeCode())){ 
+            docNumeratorService.registratedDoc(doc, new HashSet<>());
+        }
+        /*
+        if (doc.getOwner().getId() == null) { 
+            doc.setOwner(null);
+        }
+        */
+        if (params != null && !params.isEmpty()) {
+            Attaches attache = (Attaches) params.get("attache");
+            if (attache != null) {
+                Integer version = doc.getNextVersionNumber();
+                attache.setNumber(version);
+                attache.setDoc(doc);
+                attache.setCurrent(Boolean.TRUE);
+                String fileName = attache.getName();
+                doc.setName(fileName);
+                doc.getAttachesList().add(attache);                
+            }
+        }
+        super.setSpecAtrForNewItem(doc, params);
+    }
+
+    private void doSetDefaultPartner(Doc doc, Folder folder){
+        if (doc.getPartner() == null && folder != null){
+            if (folder.isInheritPartner()){
+                doSetDefaultPartner(doc, folder.getParent());
+            } else {
+                doc.setPartner(folder.getPartnerDefault());
+            }             
+        }
+    }
+
+    private void doSetDefaultCompany(Doc doc, Folder folder){
+        if (doc.getCompany() == null && folder != null){
+            if (folder.isInheritCompany()){
+                doSetDefaultCompany(doc, folder.getParent());
+            } else {
+                doc.setCompany(folder.getCompanyDefault());
+            }
+        }
+    }
+    
+    private void doSetDefaultDocType(Doc doc, Folder folder){
+        if (doc.getDocType() == null && folder != null){
+            if (folder.isInheritDocType()){
+                doSetDefaultDocType(doc, folder.getParent());
+            } else {
+                doc.setDocType(folder.getDocTypeDefault()); 
+            }
+        }
+    }
+    
+    /* Удаление документа  */
+    @Override
+    public void remove(Doc doc){
+        searcheService.deleteFullTextIndex(doc);
+        attacheService.deleteAttaches(doc.getAttachesList());
+        messagesFacade.removeMessageByDoc(doc);        
+        super.remove(doc);
+    }  
+    
+    @Override
     protected void dublicateCheckAddCriteria(CriteriaBuilder builder, Root<Doc> root, List<Predicate> criteries, Doc doc){
         if (doc.getDocType() != null){
             criteries.add(builder.equal(root.get("docType"), doc.getDocType()));
         }
         super.dublicateCheckAddCriteria(builder, root, criteries, doc);
-    }        
-    
-     /* Дополнения при выполнении поиска через форму поиска */
-    @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams){
-        if (addParams.containsKey("docTypes")){
-            List<Integer> docTypeIds = (List<Integer>) addParams.get("docTypes");
-            if (!docTypeIds.isEmpty()) { 
-                Join join = root.join("docType");
-                Predicate predicate = join.get("id").in(docTypeIds);
-                predicates.add(predicate);
-            } 
-        }
-    }
+    }            
     
     /**
      * Переопределяет доступ к методу, т.к. основной private
@@ -138,11 +215,6 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         cq.select(c).where(builder.and(crit1, crit2));
         Query q = em.createQuery(cq);       
         return q.getResultList();   
-    }
-    
-    /* Возвращает список связанных документов */
-    public List<Doc> findLinkedDocs(Doc doc){
-        return find(doc.getId()).getDocsLinks();
     }
     
     /* Подсчёт кол-ва документов по типам */
@@ -252,89 +324,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
             }
         }
         return getDefaultRights(item);
-    }
-
-    @Override
-    public void edit(Doc doc) {
-        super.edit(doc);
-        searcheService.updateFullTextIndex(doc);
-    }
-
-    @Override
-    public void create(Doc doc) {
-        super.create(doc);        
-        searcheService.updateFullTextIndex(doc);
-    }
-
-    /* Удаление документа  */
-    @Override
-    public void remove(Doc doc){
-        searcheService.deleteFullTextIndex(doc);
-        attacheService.deleteAttaches(doc.getAttachesList());
-        messagesFacade.removeMessageByDoc(doc);        
-        super.remove(doc);
-    }  
-    
-    @Override
-    public void setSpecAtrForNewItem(Doc doc, Map<String, Object> params) {
-        Folder folder = doc.getOwner();
-        doSetDefaultDocType(doc, folder);
-        doSetDefaultCompany(doc, folder);
-        doSetDefaultPartner(doc, folder);           
-        doc.setItemDate(new Date());
-        DocType docType = doc.getDocType();
-        if (docType != null && docType.getNumerator() != null && DictNumerator.TYPE_AUTO.equals(docType.getNumerator().getTypeCode())){ 
-            docNumeratorService.registratedDoc(doc, new HashSet<>());
-        }
-        /*
-        if (doc.getOwner().getId() == null) { 
-            doc.setOwner(null);
-        }
-        */
-        if (params != null && !params.isEmpty()) {
-            Attaches attache = (Attaches) params.get("attache");
-            if (attache != null) {
-                Integer version = doc.getNextVersionNumber();
-                attache.setNumber(version);
-                attache.setDoc(doc);
-                attache.setCurrent(Boolean.TRUE);
-                String fileName = attache.getName();
-                doc.setName(fileName);
-                doc.getAttachesList().add(attache);                
-            }
-        }
-        super.setSpecAtrForNewItem(doc, params);
-    }
-
-    private void doSetDefaultPartner(Doc doc, Folder folder){
-        if (doc.getPartner() == null && folder != null){
-            if (folder.isInheritPartner()){
-                doSetDefaultPartner(doc, folder.getParent());
-            } else {
-                doc.setPartner(folder.getPartnerDefault());
-            }             
-        }
-    }
-
-    private void doSetDefaultCompany(Doc doc, Folder folder){
-        if (doc.getCompany() == null && folder != null){
-            if (folder.isInheritCompany()){
-                doSetDefaultCompany(doc, folder.getParent());
-            } else {
-                doc.setCompany(folder.getCompanyDefault());
-            }
-        }
-    }
-    
-    private void doSetDefaultDocType(Doc doc, Folder folder){
-        if (doc.getDocType() == null && folder != null){
-            if (folder.isInheritDocType()){
-                doSetDefaultDocType(doc, folder.getParent());
-            } else {
-                doc.setDocType(folder.getDocTypeDefault()); 
-            }
-        }
-    }
+    }    
     
     /**
      * Cоздание документа в папке пользователя вызов из сервлета!
@@ -510,5 +500,41 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     @Override
     protected String getItemFormPath(){
         return "/docs/doc-explorer.xhtml";
-    }    
+    }   
+    
+    /* ПОИСК ДОКУМЕНТОВ */
+    
+    /* Возвращает список связанных документов */
+    public List<Doc> findLinkedDocs(Doc doc){
+        return find(doc.getId()).getDocsLinks();
+    }
+    
+    /* Дополнения при выполнении поиска через форму поиска */
+    @Override
+    protected void addLikePredicates(Root root, List<Predicate> predicates,  CriteriaBuilder cb, Map<String, Object> paramLIKE){
+        String param = (String) paramLIKE.get("regNumber");
+        if (org.apache.commons.lang.StringUtils.isNotBlank(param)) {
+            predicates.add(
+                    cb.or(
+                            cb.like(root.<String>get("regNumber"), param),
+                            cb.like(root.<String>get("barCode"), param)
+                    )
+            );
+            paramLIKE.remove("regNumber");
+        }
+        super.addLikePredicates(root, predicates, cb, paramLIKE);
+    }
+    
+    /* Дополнения при выполнении поиска через форму поиска */
+    @Override
+    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams){
+        if (addParams.containsKey("docTypes")){
+            List<Integer> docTypeIds = (List<Integer>) addParams.get("docTypes");
+            if (!docTypeIds.isEmpty()) { 
+                Join join = root.join("docType");
+                Predicate predicate = join.get("id").in(docTypeIds);
+                predicates.add(predicate);
+            } 
+        }
+    }
 }

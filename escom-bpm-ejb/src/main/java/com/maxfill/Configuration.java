@@ -54,8 +54,8 @@ public class Configuration {
     private String smsPwl;
     private String smsSender;
     private String smsCommand;
-
-    private Integer serverId;
+    private String serverId;
+    
     private Integer maxFileSize;
     private Integer diskQuote = 1000;
     private Integer maxResultCount;
@@ -84,7 +84,7 @@ public class Configuration {
             defaultIMAPPort = (String) properties.get("DEFAULT_IMAP_PORT");
             useMailSSLConnect = Boolean.valueOf((String) properties.get("MAIL_SSL_CONNECT"));
             ldapServer = (String) properties.get("LDAP_SERVER");
-            serverId = Integer.valueOf((String) properties.get("SERVER_ID"));
+            serverId = (String) properties.get("SERVER_ID");
             tempFolder = (String) properties.get("TEMP_FOLDER");
             jasperReports = (String) properties.get("JASPER_REPORTS");
             convertorPDF = (String) properties.get("CONVERTOR_TO_PDF");
@@ -153,7 +153,7 @@ public class Configuration {
     public String getLdapServer() {
         return ldapServer;
     }
-    public Integer getServerId() {
+    public String getServerId() {
         return serverId;
     }
     public String getTempFolder() {

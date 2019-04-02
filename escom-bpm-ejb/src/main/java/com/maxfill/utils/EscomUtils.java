@@ -9,6 +9,8 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.*;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -108,6 +110,7 @@ public final class EscomUtils {
     /* Проверка корректности ИНН */
     private static final Pattern INN_PATTER = Pattern.compile("\\d{10}|\\d{12}");
     private static final int[] CHECK_ARR = new int[] {3,7,2,4,10,3,5,9,4,6,8};
+    
     public static boolean isValidINN(String inn) {
         inn = inn.trim();
         if (!INN_PATTER.matcher(inn).matches()) {
@@ -148,19 +151,36 @@ public final class EscomUtils {
     
     /* Формирует уникальный номер GUID */
     public static String generateGUID() {
-        UUID uuid = UUID.randomUUID();
-        String randomUUID = uuid.toString();
-        return randomUUID;
+        return UUID.randomUUID().toString();        
     }
     
-    /* формирование штрихкода */
-    public static String getBarCode(BaseDict item, Metadates obj, Integer serverId){
-        final int totalLenght = 12;        
-        String first = serverId.toString() + obj.getId().toString();
-        String id = item.getId().toString();
-        Integer lenDigit = first.length() + id.length();
-        Integer countZero = totalLenght - lenDigit;
-        return first + StringUtils.leftPad(id, countZero, "0");
+    /**
+     * Формирование штрихкода 
+     * @param id
+     * @return 
+     */
+    public static String getBarCode(Integer id){
+        if (id == null) return "";        
+        String itemId = Long.toString(id);                
+        return StringUtils.rightPad(itemId, 10, "0");
+    }    
+    
+    public static String getBarCode(){
+        return getBarCode(generateUniqueId());
+    }
+    
+    public static Integer generateUniqueId(){
+        int val = -1;
+        do {
+            final UUID uid = UUID.randomUUID();
+            final ByteBuffer buffer = ByteBuffer.wrap(new byte[16]);
+            buffer.putLong(uid.getLeastSignificantBits());
+            buffer.putLong(uid.getMostSignificantBits());
+            final BigInteger bi = new BigInteger(buffer.array());
+            val = bi.intValue();
+        } 
+        while (val < 0);
+        return val;
     }
     
     /* Копирует строку в буфер */
