@@ -63,7 +63,7 @@
                             </p:selectBooleanCheckbox>
                         </h:panelGrid>
                         
-                        <h:panelGrid columns="1" styleClass="ui-grid-col-12" >
+                        <h:panelGrid columns="1" styleClass="ui-grid-col-12" rendered="#{!empty(_bean.getBarCode())}">
                             <p:outputLabel value="#{bundle.BarCode}:"/>                            
                             <p:commandLink action="#{_bean.onPreViewBarcode()}" styleClass="ui-grid-col-12" >
                                 <p:barcode value="#{_bean.getBarCode()}" type="codabar" styleClass="ui-grid-col-12"/>

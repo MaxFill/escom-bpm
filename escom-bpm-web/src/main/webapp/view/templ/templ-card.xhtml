@@ -50,6 +50,7 @@
                                             disabled="#{_bean.editedItem.id == null}"
                                             actionListener="#{_bean.onPreViewItemCard()}"/>
                                 <p:menuitem icon="ui-icon-print" value="#{bundle.PrintBarCode}"
+                                            disabled="#{empty(_bean.getBarCode())}"
                                             actionListener="#{_bean.onPreViewBarcode()}"/>
                                 <ui:insert name="menuExtReports" />
                             </p:menuButton>

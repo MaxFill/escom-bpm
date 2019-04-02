@@ -235,7 +235,10 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
         docURL = sessionBean.doGetItemURL(doc, "/docs/doc-card.xhtml");
     }   
     
-    @Override
+    /**
+     * Формирование штрих-кода документа
+     * @return 
+     */
     public String getBarCode(){
         String barCode = getEditedItem().getBarCode();
         if (StringUtils.isBlank(barCode)){            
