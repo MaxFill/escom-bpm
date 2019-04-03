@@ -1,7 +1,5 @@
 package com.maxfill.utils;
 
-import com.maxfill.model.basedict.BaseDict;
-import com.maxfill.model.core.metadates.Metadates;
 import com.maxfill.services.update.ReleaseInfo;
 import com.maxfill.services.update.ReleaseInfo_Service;
 import org.apache.commons.lang.StringUtils;
@@ -16,9 +14,11 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -45,6 +45,19 @@ public final class EscomUtils {
         return result;
     }
 
+    /**
+     * Возвращает список дубликатов
+     * @param list 
+     * @return  
+     */
+    public static List<?> findDublicate(List<?> list){        
+        Map<Object, Long> countMap = list.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        return countMap.entrySet().stream()
+          .filter(e -> e.getValue() > 1L)
+          .map(e -> e.getKey())
+          .collect(Collectors.toList());
+    }
+      
     /* Преобразует List в строку с разделителем запятая */
     public static String listToString(List<String> ids){
         return StringUtils.join(ids, ",");
