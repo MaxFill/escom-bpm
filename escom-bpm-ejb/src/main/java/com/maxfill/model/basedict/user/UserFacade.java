@@ -1,6 +1,7 @@
 package com.maxfill.model.basedict.user;
 
 import com.google.gson.Gson;
+import com.maxfill.Configuration;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.basedict.company.CompanyFacade;
 import com.maxfill.model.basedict.department.DepartmentFacade;
@@ -418,7 +419,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     /* Проверка JWT token */
     public User tokenCorrect(String token){
         try {
-            Key key = configuration.getSignKey();
+            Key key = Configuration.SIGN_KEY;
             /*
              info: ключ меняется автоматически при перезапуске сервера,
              при этом все ранее выданные токены становятся недействительными!
@@ -459,7 +460,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         tokenMap.put("token", "");
 
         Date expirationDate = DateUtils.addMounth(new Date(), 1);
-        Key key = configuration.getSignKey();
+        Key key = Configuration.SIGN_KEY;
         String jwt = Jwts.builder()
                 .setId(user.getId().toString())
                 .setIssuer("http://localhost/")

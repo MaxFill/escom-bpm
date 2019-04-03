@@ -1,8 +1,6 @@
 package com.maxfill;
 
 import io.jsonwebtoken.impl.crypto.MacProvider;
-
-import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import java.io.File;
@@ -20,98 +18,103 @@ import java.util.logging.Logger;
 @LocalBean
 public class Configuration {
     private static final Logger LOGGER = Logger.getLogger(Configuration.class.getName());
-    private static AtomicInteger smsMaxCount;
+    
+    //ToDo этот параметр вероятно нужно будет удалить ...
+    private static AtomicInteger smsMaxCount; //максимальное число sms, которое можно отправить (для демо версии актуален)
+    public static final Key SIGN_KEY = MacProvider.generateKey();    
 
 /*
     @Resource(mappedName="java:/jcr/"+REPO_NAME)
     private javax.jcr.Repository repository;
 */
-    private String serverAppURL;
-    private String serverOS;
-    private Locale serverLocale;
-    private String serverURL;
-    private String serverPath;
-    private String uploadPath;
-    private String encoding;
-    private String defaultSenderEmail;
-    private String defaultSmtpServer;
-    private String defaultImapServer;
-    private String defaultSmtpPort;
-    private String defaultIMAPPort;
-    private String ldapServer;
-    private String tempFolder;
-    private String jasperReports;
-    private String convertorPDF;
-    private String convertorTXT;
-    private String pdfEncoding;
-    private String pdfFont;
-    private String fullSearcheConnect;
-
-    private String smsHostGate;
-    private String smsHostProtocol;
-    private Integer smsHostPort;
-    private String smsLogin;
-    private String smsPwl;
-    private String smsSender;
-    private String smsCommand;
-    private String serverId;
+    private static String serverAppURL;
+    private static String serverOS;
+    private static Locale serverLocale;
+    private static String serverURL;
+    private static String serverPath;
+    private static String uploadPath;
+    private static String encoding;
+    private static String defaultSenderEmail;
+    private static String defaultSmtpServer;
+    private static String defaultImapServer;
+    private static String defaultSmtpPort;
+    private static String defaultIMAPPort;
+    private static String ldapServer;
+    private static String tempFolder;
+    private static String jasperReports;
+    private static String convertorPDF;
+    private static String convertorTXT;
+    private static String pdfEncoding;
+    private static String pdfFont;
+    private static String fullSearcheConnect;
+    private static String smsHostGate;   
+    private static String smsHostProtocol;
+    private static Integer smsHostPort;
+    private static String smsLogin;
+    private static String smsPwl;
+    private static String smsSender;
+    private static String smsCommand;   
+    private static Integer maxFileSize;
+    private static Integer diskQuote;
+    private static Integer maxResultCount;            
+    private static Boolean useMailSSLConnect;
     
-    private Integer maxFileSize;
-    private Integer diskQuote = 1000;
-    private Integer maxResultCount;
-    
-    private Key signKey;
-    private Boolean useMailSSLConnect;
-    
-    @PostConstruct
-    private void init() {
+    static {         
         String propertyFile = System.getProperty("escom.properties");
         File file = new File(propertyFile);
-        Properties properties = new Properties();
-
+        Properties props = new Properties();
         try {
-            properties.load(new FileInputStream(file));
-            serverOS = (String) properties.get("SERVER_OS");
-            serverURL = (String) properties.get("SERVER_URL");
+            LOGGER.log(Level.INFO, "ESCOM WEB APP server start load configuration from escom.properties"); 
+            props.load(new FileInputStream(file)); 
+            smsHostGate = loadParam(props, "SMS_HOST_GATE");     
+            smsHostProtocol = loadParam(props,"SMS_HOST_PROTOCOL");
+            smsHostPort = Integer.parseInt(loadParam(props, "SMS_HOST_PORT"));
+            smsLogin = loadParam(props, "SMS_LOGIN");
+            smsPwl = loadParam(props, "SMS_PWL");
+            smsCommand = loadParam(props, "SMS_COMMAND");
+            smsSender = loadParam(props, "SMS_SENDER");
+            smsMaxCount = new AtomicInteger(Integer.parseInt(loadParam(props, "SMS_MAX_COUNT")));
+            fullSearcheConnect = loadParam(props, "FULL_SEARCHE_CONNECT_URL");        
+            serverOS = loadParam(props,"SERVER_OS");
+            serverURL = loadParam(props,"SERVER_URL");            
             serverAppURL = serverURL + "escom-bpm-web/faces/view";
-            serverPath = (String) properties.get("SERVER_PATH");
-            uploadPath = (String) properties.get("UPLOAD_PATH");
-            encoding = (String) properties.get("ENCODING");
-            defaultSenderEmail = (String) properties.get("DEFAULT_EMAIL_SENDER");
-            defaultImapServer = (String) properties.get("DEFAULT_IMAP_SERVER");
-            defaultSmtpServer = (String) properties.get("DEFAULT_SMTP_SERVER");
-            defaultSmtpPort = (String) properties.get("DEFAULT_SMTP_PORT");
-            defaultIMAPPort = (String) properties.get("DEFAULT_IMAP_PORT");
-            useMailSSLConnect = Boolean.valueOf((String) properties.get("MAIL_SSL_CONNECT"));
-            ldapServer = (String) properties.get("LDAP_SERVER");
-            serverId = (String) properties.get("SERVER_ID");
-            tempFolder = (String) properties.get("TEMP_FOLDER");
-            jasperReports = (String) properties.get("JASPER_REPORTS");
-            convertorPDF = (String) properties.get("CONVERTOR_TO_PDF");
-            convertorTXT = (String) properties.get("CONVERTOR_TO_TXT");
-            pdfEncoding = (String) properties.get("DEFAULT_PDF_ENCODING");
-            pdfFont = (String) properties.get("DEFAULT_PDF_FONT");
-            maxFileSize = Integer.valueOf((String) properties.get("MAX_UPLOAD_SIZE"));
-            maxResultCount = Integer.valueOf((String) properties.get("MAX_QUERY_RESULT_COUNT"));
-            smsHostGate = (String) properties.get("SMS_HOST_GATE");
-            smsHostProtocol = (String) properties.get("SMS_HOST_PROTOCOL");
-            smsHostPort = Integer.valueOf((String) properties.get("SMS_HOST_PORT"));
-            smsLogin = (String) properties.get("SMS_LOGIN");
-            smsPwl = (String) properties.get("SMS_PWL");
-            smsCommand = (String) properties.get("SMS_COMMAND");
-            smsSender = (String) properties.get("SMS_SENDER");
-            Integer smsCount = Integer.valueOf((String) properties.get("SMS_MAX_COUNT"));
-            smsMaxCount = new AtomicInteger(smsCount);
-            initServerLocale((String) properties.get("SERVER_LOCALE"));
-            signKey = MacProvider.generateKey();
-            fullSearcheConnect = (String) properties.get("FULL_SEARCHE_CONNECT_URL");
-            String dqoute = (String) properties.get("DISK_SIZE");
-            diskQuote = Integer.parseInt(dqoute); 
+            serverPath = loadParam(props,"SERVER_PATH");            
+            uploadPath = loadParam(props,"UPLOAD_PATH");            
+            encoding = loadParam(props,"ENCODING");            
+            defaultSenderEmail = loadParam(props,"DEFAULT_EMAIL_SENDER");            
+            defaultImapServer = loadParam(props,"DEFAULT_IMAP_SERVER");            
+            defaultSmtpServer = loadParam(props,"DEFAULT_SMTP_SERVER");            
+            defaultSmtpPort = loadParam(props,"DEFAULT_SMTP_PORT");            
+            defaultIMAPPort = loadParam(props,"DEFAULT_IMAP_PORT");            
+            useMailSSLConnect = Boolean.valueOf(loadParam(props,"MAIL_SSL_CONNECT"));            
+            ldapServer = loadParam(props,"LDAP_SERVER");            
+            tempFolder = loadParam(props,"TEMP_FOLDER");
+            jasperReports = loadParam(props,"JASPER_REPORTS");            
+            convertorPDF = loadParam(props,"CONVERTOR_TO_PDF");            
+            convertorTXT = loadParam(props,"CONVERTOR_TO_TXT");            
+            pdfEncoding = loadParam(props,"DEFAULT_PDF_ENCODING");            
+            pdfFont = loadParam(props,"DEFAULT_PDF_FONT");
+            maxFileSize = Integer.parseInt(loadParam(props,"MAX_UPLOAD_SIZE")); 
+            maxResultCount = Integer.parseInt(loadParam(props,"MAX_QUERY_RESULT_COUNT"));
+            diskQuote = Integer.parseInt(loadParam(props,"DISK_SIZE"));
+            serverLocale = new Locale(loadParam(props,"SERVER_LOCALE"));
+            LOGGER.log(Level.INFO, "ESCOM WEB APP server load configuration successfully!"); 
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "An error occurred while loading the configuration escom.properties!", ex);
+            throw new RuntimeException();
         }
     }
-
+    
+    private static String loadParam(Properties properties, String paramName){        
+        if (properties.containsKey(paramName)){
+            LOGGER.log(Level.INFO, "Load param [{0}] ... ok!", paramName);
+            return (String)properties.get(paramName);
+        } else {
+            LOGGER.log(Level.SEVERE, "ERROR! Param [{0}] not found!", paramName);
+            throw new RuntimeException();
+        }        
+    }    
+    
     /* GETS & SETS */
 
     public Integer getDiskQuote() {
@@ -153,9 +156,6 @@ public class Configuration {
     public String getLdapServer() {
         return ldapServer;
     }
-    public String getServerId() {
-        return serverId;
-    }
     public String getTempFolder() {
         return tempFolder;
     }  
@@ -173,9 +173,6 @@ public class Configuration {
     }
     public String getDefaultSmtpPort() {
         return defaultSmtpPort;
-    }
-    public Key getSignKey() {
-        return signKey;
     }
     public Boolean getUseMailSSLConnect() {
         return useMailSSLConnect;
@@ -218,20 +215,9 @@ public class Configuration {
     public Integer getSmsMaxCount() {
         return smsMaxCount.get();
     }
-/*
-    public Repository getRepository() {
-        return repository;
-    }
-*/ 
-    private void initServerLocale(String nameLocale){
-        serverLocale = new Locale(nameLocale);
-    }
 
     public String getServerAppURL() {
         return serverAppURL;
-    }
-    public void setServerAppURL(String serverAppURL) {
-        this.serverAppURL = serverAppURL;
     }
     
 }
