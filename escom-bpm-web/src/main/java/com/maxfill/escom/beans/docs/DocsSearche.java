@@ -5,6 +5,7 @@ import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.company.Company;
 import com.maxfill.model.basedict.docType.DocType;
 import com.maxfill.model.basedict.partner.Partner;
+import com.maxfill.utils.DateUtils;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -12,14 +13,15 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 /* Расширение для поиска Документов  */
-public class DocsSearche extends SearcheModel{
+public final class DocsSearche extends SearcheModel{
     private static final long serialVersionUID = 3953544990596152030L;
     
     private String numberSearche;  
 
+    private String dateDocPeriod;
     private Date dateDocStart;
     private Date dateDocEnd;
-    private boolean dateDocSearche = false;
+    
     private List<DocType> docTypes;
     private Partner partnerSearche;
     private Company companySearche;
@@ -32,7 +34,7 @@ public class DocsSearche extends SearcheModel{
         if (StringUtils.isNotBlank(numberSearche)){
             paramLIKE.put("regNumber", numberSearche);
         }
-        if (dateDocSearche){
+        if (dateDocPeriod != null){
             Date[] dateArray = new Date[2];
             dateArray[0] = dateDocStart;
             dateArray[1] = dateDocEnd;
@@ -47,7 +49,15 @@ public class DocsSearche extends SearcheModel{
         }  
         
     }        
-       
+      
+    public void changeDateDocument(String period){
+        dateDocPeriod = period;  
+        if (dateDocPeriod != null){
+            dateDocStart = DateUtils.periodStartDate(dateDocPeriod, dateDocStart);
+            dateDocEnd = DateUtils.periodEndDate(dateDocPeriod, dateDocEnd);
+        }
+    }
+    
     /* GETS & SETS */
 
     public Company getCompanySearche() {
@@ -76,14 +86,7 @@ public class DocsSearche extends SearcheModel{
     }
     public void setDateDocEnd(Date dateDocEnd) {
         this.dateDocEnd = dateDocEnd;
-    }
-    
-    public boolean isDateDocSearche() {
-        return dateDocSearche;
-    }
-    public void setDateDocSearche(boolean dateDocSearche) {
-        this.dateDocSearche = dateDocSearche;
-    }
+    }    
     
     public String getNumberSearche() {
         return numberSearche;
@@ -97,6 +100,13 @@ public class DocsSearche extends SearcheModel{
     }
     public void setPartnerSearche(Partner partnerSearche) {
         this.partnerSearche = partnerSearche;
+    }    
+
+    public String getDateDocPeriod() {
+        return dateDocPeriod;
+    }
+    public void setDateDocPeriod(String dateDocPeriod) {
+        this.dateDocPeriod = dateDocPeriod;
     }    
     
 }

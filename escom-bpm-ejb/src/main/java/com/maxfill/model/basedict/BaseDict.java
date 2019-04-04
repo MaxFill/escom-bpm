@@ -208,6 +208,14 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         return item;
     }
     
+    /**
+     * Возвращает короткое имя объекта
+     * @return 
+     */
+    public String getShortName(){
+        return getNameEndElipse();
+    }
+    
     /* Формирует строку ограниченной длинны из названия обекта, заканчивающуюся точками */
     public String getNameEndElipse(){
         return StringUtils.abbreviate(getName(), SysParams.LENGHT_NAME_ELIPSE);        

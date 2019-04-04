@@ -3,6 +3,7 @@ package com.maxfill.escom.beans.explorer;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.core.states.State;
 import com.maxfill.model.basedict.user.User;
+import com.maxfill.utils.DateUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,14 +20,13 @@ public class SearcheModel implements Serializable {
     private boolean onlyActualItem = true;  //признак поиска только актуальных объектов
     private boolean searcheInGroups;        //признак поиска с учётом групп
     
+    private String dateCreatePeriod;
     private Date dateCreateStart;
     private Date dateCreateEnd;
-    
-    private boolean dateCreateSearche;
-    private boolean dateChangeSearche;
-    
+        
     private boolean fullTextSearche = true;
     
+    private String dateChangePeriod;
     private Date dateChangeStart;
     private Date dateChangeEnd;
     
@@ -98,6 +98,22 @@ public class SearcheModel implements Serializable {
     /* Добавление в параметры поискового запроса специфичных полей и условий */
     protected void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<BaseDict> searcheGroups, Map<String, Object> addParams){};
     
+    public void changeDateChange(String period){
+        dateChangePeriod = period;  
+        if (dateChangePeriod != null){
+            dateChangeStart = DateUtils.periodStartDate(dateChangePeriod, dateChangeStart);
+            dateChangeEnd = DateUtils.periodEndDate(dateChangePeriod, dateChangeEnd);
+        }
+    }
+     
+    public void changeDateCreate(String period){
+        dateCreatePeriod = period;  
+        if (dateCreatePeriod != null){
+            dateCreateStart = DateUtils.periodStartDate(dateCreatePeriod, dateCreateStart);
+            dateCreateEnd = DateUtils.periodEndDate(dateCreatePeriod, dateCreateEnd);
+        }
+    }
+        
     public boolean isFullTextSearche() {
         return fullTextSearche;
     }
@@ -176,18 +192,18 @@ public class SearcheModel implements Serializable {
         this.dateChangeEnd = dateChangeEnd;
     }
 
-    public boolean isDateCreateSearche() {
-        return dateCreateSearche;
+    public String getDateCreatePeriod() {
+        return dateCreatePeriod;
     }
-    public void setDateCreateSearche(boolean dateCreateSearche) {
-        this.dateCreateSearche = dateCreateSearche;
+    public void setDateCreatePeriod(String dateCreatePeriod) {
+        this.dateCreatePeriod = dateCreatePeriod;
     }
 
-    public boolean isDateChangeSearche() {
-        return dateChangeSearche;
+    public String getDateChangePeriod() {
+        return dateChangePeriod;
     }
-    public void setDateChangeSearche(boolean dateChangeSearche) {
-        this.dateChangeSearche = dateChangeSearche;
+    public void setDateChangePeriod(String dateChangePeriod) {
+        this.dateChangePeriod = dateChangePeriod;
     }
     
 }

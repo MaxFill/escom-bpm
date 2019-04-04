@@ -69,6 +69,13 @@ body{
     font-size: 90% !important;
 }
 
+.col-padding{
+    padding-left: 0px !important;
+    padding-bottom: 2px !important;
+    padding-top: 2px !important;
+    padding-right: 0px !important;
+}
+
 .warning-msg{
     float: right !important;
     text-align: right !important;
@@ -87,16 +94,6 @@ body{
 .notifBar{
     opacity: 0.9;
     background-color: thistle;
-}
-
-.widthMin100{
-    width: 100% !important;    
-    min-width: 150px !important; 
-}
-
-.widthMin95{
-    width: 95% !important;    
-    min-width: 150px !important; 
 }
 
 .widthFix250{
@@ -166,12 +163,6 @@ body{
     background-image: url('../resources/icon/importance-16.png') !important;
 }
 
-.bt_action{
-        width: 100% !important;
-        max-width: 600px !important;
-        min-width: 140px !important;
-}
-
 .btnClear{
     font-size: 90%;
 }
@@ -185,35 +176,6 @@ body{
     background-color: aquamarine;
 }
 
-.col10r{
-        width:5% !important; 
-        text-align: right !important;
-}
-.col40r{
-        width:40% !important; 
-        text-align: right !important;
-}
-
-.colAuto{width:auto !important; float: left !important;}
-.col100{width:100% !important; float: left !important;}
-.col15{
-        width:15% !important; 
-        min-width: 110px !important;
-        float: left !important;
-}
-.col20{width:20% !important;}
-.col30{width:30% !important; float: left !important;}
-.col40{width:40% !important; float: left !important;}
-.col50{width:50% !important; float: left !important;}
-.col60{
-        width:60% !important; 
-        min-width: 320px !important;
-        float: left !important;}
-.col70{width:70% !important; float: left !important;}
-.col80{width:80% !important; float: left !important;}
-.col90{width:90% !important; float: left !important;}
-.colFix300{width: 300px !important;}
-
 .top-alignment {
     vertical-align: top;
     text-align: right;
@@ -222,18 +184,23 @@ body{
 
 .right-aligment {
     text-align: right !important;
+    padding-right: 5px !important;
+    padding-top: 5px !important;
 }
 
-.panelLogin{
-    margin: auto;
-    margin-top: 60px !important;
-    max-width: 700px;
-    min-width: 600px;
+.left-aligment {
+    text-align: left !important;
+    vertical-align: top !important;
+}
+
+.center-alignment-top {
+    vertical-align: top !important;
+    text-align: center !important;
 }
 
 .center-alignment {
-    vertical-align: central;
-    text-align: center;
+    vertical-align: central !important;
+    text-align: center !important;
 }
 
 .ui-messages-error ui-corner-all{
@@ -242,12 +209,7 @@ body{
 .ui-panelgrid-content {
     border: none !important;
 }
-.col-padding{
-    padding-left: 0px !important;
-    padding-bottom: 2px !important;
-    padding-top: 2px !important;
-    padding-right: 0px !important;
-}
+
 
 .col-grid-expl{
     padding-left: 1.5px !important;
@@ -266,9 +228,11 @@ body{
     padding-top: 2px !important;
     padding-right: 0px !important;
 }
+
 .pull-right{
   float: right !important;
 }
+
 .pull-left{
   float: left !important;
 }
@@ -315,5 +279,12 @@ body{
 
 .calendar{
   width:150px !important;
+}
+
+.panelLogin{
+    margin: auto;
+    margin-top: 60px !important;
+    max-width: 700px;
+    min-width: 600px;
 }
 

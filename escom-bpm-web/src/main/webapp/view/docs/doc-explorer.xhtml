@@ -16,7 +16,6 @@
     <ui:param name="_explorerHeader" value="#{_bean.getLabelFromBundle('DocsExplorer')}"/>
 
     <ui:param name="_showAuthor"       value="#{true}"/>
-    <ui:param name="_showDateCreate"   value="#{false}"/>
     <ui:param name="_showDateChange"   value="#{false}"/>    
     <ui:param name="_showUploadPanel"  value="#{_bean.selectorViewMode ? false : true}"/>
     <ui:param name="_showCompany"      value="#{true}"/>
@@ -26,27 +25,12 @@
     <ui:param name="_updates"          value="" />
     
     <!-- специфичные поля поиска -->
-    <ui:define name="searche"> 
-        <p:outputLabel value="#{bundle.Company}:" indicateRequired="true"/>
-        <p:selectOneMenu value="#{_bean.model.companySearche}" filter="true" converter="companyConvertor"                         
-                        widgetVar="companySearche"
-                        styleClass="ui-grid-col-12">
-                <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
-                <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
-        </p:selectOneMenu> 
-        
+    <ui:define name="searche_col1">
+        <p:spacer/>
         <p:selectBooleanCheckbox itemLabel="#{bundle.FullTextSearche}" widgetVar="cbFullSearche" rendered="#{_bean.isFullSearche()}"
                                  title="#{bundle.FullTextSearcheMode}"
                                  value="#{_bean.model.fullTextSearche}">
         </p:selectBooleanCheckbox>
-        
-        <p:outputLabel value="#{bundle.DocTypes}:"/>
-        <p:selectCheckboxMenu value="#{_bean.model.docTypes}" 
-                              widgetVar="cbmDocType" multiple="true"
-                              converter="docsTypesConvertor"
-                              filter="true" filterMatchMode="startsWith" styleClass="ui-grid-col-12">
-            <f:selectItems value="#{docTypeBean.findAll()}" var="item" itemLabel="#{item.getName()}" itemValue="#{item}"/>
-        </p:selectCheckboxMenu>
         
         <p:outputLabel value="#{bundle.Number}:"/>
         <h:panelGroup styleClass="ui-grid-col-12">
@@ -59,46 +43,61 @@
                 <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('docNumberSearche').jq.val('');"/>
             </div>
         </h:panelGroup>
-        
-        <p:selectBooleanCheckbox itemLabel="#{bundle.DateDoc}" widgetVar="cbDateDoc"
-                                 title="#{bundle.SearcheDateDoc}" 
-                                 value="#{_bean.model.dateDocSearche}">
-            <p:ajax event="change" update="pnDateDocSearche"/>
-        </p:selectBooleanCheckbox>   
-        
-        <h:panelGroup id="pnDateDocSearche" styleClass="ui-grid-col-12"> 
-            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-1, ui-grid-col-11" rendered="#{_bean.model.dateDocSearche}" styleClass="ui-grid-col-12">
-                <p:outputLabel value="#{bundle.With}:"/>
-                <p:calendar value="#{_bean.model.dateDocStart}" id="dateDocStart" inputStyle="width: 145px;"
-                            widgetVar="dateDocStartSearche"
-                            navigator="true" yearRange="c-120:c+20"
-                            locale="#{sessionBean.locale}"
-                            required="#{_bean.model.dateDocSearche and param['isRequired'] == 'true'}"
-                            requiredMessage="#{bundle.Field} [#{bundle.DateDoc}: #{bundle.With}] #{bundle.MustBeFilled}"
-                            disabled="#{!_bean.model.dateDocSearche}">
-                </p:calendar>
-            </p:panelGrid>
-            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-1, ui-grid-col-1" rendered="#{_bean.model.dateDocSearche}" styleClass="ui-grid-col-12">
-                <p:outputLabel value="#{bundle.At}:" />
-                <p:calendar value="#{_bean.model.dateDocEnd}" id="dateDocEnd" inputStyle="width: 145px;"
-                            widgetVar="dateDocEndSearche"
-                            navigator="true" yearRange="c-120:c+20"
-                            locale="#{sessionBean.locale}"
-                            required="#{_bean.model.dateDocSearche and param['isRequired'] == 'true'}"
-                            requiredMessage="#{bundle.Field} [#{bundle.DateDoc}: #{bundle.At}] #{bundle.MustBeFilled}"
-                            disabled="#{!_bean.model.dateDocSearche}">
-                </p:calendar>
-            </p:panelGrid>
+    </ui:define>
+    
+    <ui:define name="searche"> 
+        <p:outputLabel value="#{bundle.Company}:"/>
+        <h:panelGroup styleClass="ui-grid-col-12">
+            <div class="ui-inputgroup">
+            <p:selectOneMenu value="#{_bean.model.companySearche}" filter="true" converter="companyConvertor"                         
+                            widgetVar="companySearche"
+                            styleClass="ui-grid-col-12">
+                    <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
+                    <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
+            </p:selectOneMenu> 
+            <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('companySearche').selectValue();"/>
+            </div>
         </h:panelGroup>
         
+        <p:outputLabel value="#{bundle.DocTypes}:"/>
+        <h:panelGroup styleClass="ui-grid-col-12">
+            <div class="ui-inputgroup">
+            <p:selectCheckboxMenu value="#{_bean.model.docTypes}" 
+                                  widgetVar="cbmDocType" multiple="true"
+                                  converter="docsTypesConvertor"
+                                  filter="true" filterMatchMode="startsWith" styleClass="ui-grid-col-12">
+                <f:selectItems value="#{docTypeBean.findAll()}" var="item" itemLabel="#{item.getShortName()}" itemValue="#{item}"/>
+            </p:selectCheckboxMenu>
+            <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('cbmDocType').show(); PF('cbmDocType').uncheckAll(); PF('cbmDocType').hide();"/>
+            </div>
+        </h:panelGroup>
+        
+        <p:outputLabel value="#{bundle.DateDoc}:"/> 
+        <ui:include src="/view/common/period-select.xhtml" >
+            <ui:param name="_itemValue" value="#{_bean.model.dateDocPeriod}"/>
+            <ui:param name="_beginDate" value="#{_bean.model.dateDocStart}"/>
+            <ui:param name="_endDate" value="#{_bean.model.dateDocEnd}"/>
+            <ui:param name="_titleItem" value=""/>
+            <ui:param name="_required" value="false" />
+            <ui:param name="_disabled" value="false"/>
+            <ui:param name="_itemPanel" value="dateDocumentPanel"/>
+            <ui:param name="_actionSelect" value="onChangeDateDocument"/>
+            <ui:param name="_update" value=""/>
+        </ui:include>
+        
         <p:outputLabel value="#{bundle.Partner}:" rendered="#{applicationBean.isCanUsesPartners()}"/>
-        <p:selectOneMenu value="#{_bean.model.partnerSearche}" filter="true" converter="partnersConvertor" 
-                        rendered="#{applicationBean.isCanUsesPartners()}"
-                        widgetVar="partnerSearche"
-                        styleClass="ui-grid-col-12">
-                <f:selectItems value="#{partnersBean.findAll()}" var="partner" itemValue="#{partner}" itemLabel="#{partner.nameEndElipse}" />
-                <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}"/>
-        </p:selectOneMenu>  
+        <h:panelGroup styleClass="ui-grid-col-12">
+            <div class="ui-inputgroup">
+            <p:selectOneMenu value="#{_bean.model.partnerSearche}" filter="true" converter="partnersConvertor" 
+                            rendered="#{applicationBean.isCanUsesPartners()}"
+                            widgetVar="partnerSearche"
+                            styleClass="ui-grid-col-12">
+                    <f:selectItems value="#{partnersBean.findAll()}" var="partner" itemValue="#{partner}" itemLabel="#{partner.nameEndElipse}" />
+                    <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}"/>
+            </p:selectOneMenu>  
+            <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('partnerSearche').selectValue();"/>
+            </div>
+        </h:panelGroup>
     </ui:define>
     
     <!-- специфичные пункты в меню тулбара обозревателя -->
@@ -251,7 +250,7 @@
     </ui:define>
     
     <ui:define name="centerFormFooter">
-        <h:panelGrid columns="1" rendered="#{_bean.isNowShowTree()}" styleClass="ui-grid-col-12">
+        <h:panelGrid columns="1" rendered="#{_bean.isNowShowTree()}" columnClasses="without-spaces" styleClass="without-spaces">
             <p:fileUpload id="fileUpload" style="font-size: small;"                                       
                         styleClass="ui-grid-col-12"
                         allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"

@@ -2,8 +2,9 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://java.sun.com/jsf/core"    
                 xmlns:h="http://java.sun.com/jsf/html" 
+                xmlns:pe="http://primefaces.org/ui/extensions"
                 xmlns:p="http://primefaces.org/ui">
-           
+    
     <p:dataTable id="tblDetail" value="#{_bean.lazyDataModel}" var="item" lazy="true" widgetVar="tblDetail"
                  emptyMessage="#{bundle.EmptyTable}"
                  paginator="true" paginatorPosition="bottom" first="#{_bean.currentPage}" 
@@ -74,8 +75,7 @@
             </h:outputLabel>
         </p:column>
 
-        <p:column id="colDateCreate" headerText="#{bundle.DateCreate}" width="75"
-                  rendered="#{_showDateCreate}"                                    
+        <p:column id="colDateCreate" headerText="#{bundle.DateCreate}" width="75"                                    
                   visible="#{_detailBean.isVisibleColumn('colDateCreate')}"
                   sortBy="#{item.dateCreate}">
             <h:outputLabel value="#{item.dateCreate}">

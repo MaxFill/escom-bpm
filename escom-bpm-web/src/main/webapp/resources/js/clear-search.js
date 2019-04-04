@@ -1,42 +1,25 @@
 function clearSearche() {
-    var elements = document.getElementsByClassName('clear');
+    var elements = document.getElementsByClassName('btnClear');
     for (var i = 0; i < elements.length; i++) {
-        elements[i].click();
+        //console.log("element " + i);
+        var btn = elements[i];
+        btn.click();
     }
-    var dateCreateStartSearche = PF('dateCreateStartSearche');
-    if (dateCreateStartSearche){
-        PF('dateCreateStartSearche').setDate();
-    }
-    var dateCreateEndSearche = PF('dateCreateEndSearche');
-    if (dateCreateEndSearche){
-        PF('dateCreateEndSearche').setDate();
-    }
-    var dateChangeStartSearche = PF('dateChangeStartSearche');
-    if (dateChangeStartSearche){
-        PF('dateChangeStartSearche').setDate();
-    }
+        
+    /*
     var dateChangeEndSearche = PF('dateChangeEndSearche');
     if (dateChangeEndSearche){
         PF('dateChangeEndSearche').setDate();
-    }
-    PF('cbDateCreate').uncheck();
-    PF('cbDateChange').uncheck();
-    var dateDoc = PF('cbDateDoc');
-    if (dateDoc){
-        var dateDocStartSearche = PF('dateDocStartSearche');
-        if (dateDocStartSearche){
-            PF('dateDocStartSearche').setDate();
-        };
-        var dateDocEndSearche = PF('dateDocEndSearche');
-        if (dateDocEndSearche){
-            PF('dateDocEndSearche').setDate();
-        }
-        PF('cbDateDoc').uncheck();
-        PF('cbFullSearche').uncheck();
-        PF('cbmDocType').show();
-        PF('cbmDocType').uncheckAll();
-        PF('cbmDocType').hide();
-        PF('docNumberSearche').jq.val("");
-        PF('partnerSearche').selectValue();
-    }
+    }           
+    */
+
+    //PF('authorSearche').selectValue();
+    //PF('cbmDocType').show();
+    //PF('cbmDocType').uncheckAll();
+    //PF('cbmDocType').hide();
+    //PF('docNumberSearche').jq.val("");
+    //PF('searchName').jq.val("");
+    //PF('partnerSearche').selectValue();
+    //PF('cbDateChange').selectValue();
+    //PF('cbDateCreate').uncheck(); 
 };

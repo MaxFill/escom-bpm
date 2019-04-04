@@ -18,7 +18,6 @@
     <ui:param name="_explorerHeader" value="#{_bean.getLabelFromBundle('OrgStructureExplorer')}"/>
     <ui:param name="_lbGroupName"    value="#{bundle.Structure}" />
     <ui:param name="_showAuthor"     value="#{false}"/>
-    <ui:param name="_showDateCreate" value="#{false}"/>
     <ui:param name="_showDateChange" value="#{true}"/>
     <ui:param name="_showCompany"    value="#{true}"/>
     
@@ -75,14 +74,6 @@
                 <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchSecondName').jq.val('');"/>
             </div>
         </h:panelGroup>
-    </ui:define>
-    
-    <ui:define name="centerFormFooter">
-        <h:panelGroup rendered="#{!_bean.isTrashSelected()}">
-            <p:panel styleClass="ui-grid-col-12" rendered="#{_bean.treeSelectedNode == null}">
-                <p:outputLabel value="#{''.concat(bundle.OrganizationOrDivisionNotSelected).concat('. ').concat(bundle.ForCreateObjectNeedSelectGroup)}"/>
-            </p:panel>
-        </h:panelGroup>        
     </ui:define>
     
 </ui:composition>

@@ -1,0 +1,111 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"    
+                xmlns:h="http://java.sun.com/jsf/html" 
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:p="http://primefaces.org/ui">         
+    
+    <p:accordionPanel id="serchePanel" activeIndex="1" cache="true">
+        <p:tab title="#{bundle.Searche}"  >
+            <p:panelGrid columns="3" layout="grid" columnClasses="ui-grid-col-4" styleClass="ui-grid-col-12 without-spaces">        
+                <h:panelGrid columns="2" columnClasses="ui-grid-col-4 right-aligment, ui-grid-col-8" styleClass="ui-grid-col-12">
+                    <p:spacer/>
+                    <p:selectBooleanCheckbox itemLabel="#{bundle.SearcheOnlyActualItems}" 
+                                            title="#{bundle.SearcheOnlyActualItemsComments}" 
+                                            value="#{_bean.model.onlyActualItem}">
+                    </p:selectBooleanCheckbox> 
+
+                    <p:outputLabel value="#{bundle.Name}:"/>
+                    <h:panelGroup styleClass="ui-grid-col-12">
+                        <div class="ui-inputgroup">
+                            <p:inputText id="nameSearche" widgetVar="searchName" title="#{bundle.KeyWordSearche}"
+                                         value="#{_bean.model.nameSearche}"
+                                         styleClass="ui-grid-col-12"
+                                         placeholder="#{bundle.InputCreteriaForSearche}"
+                                         onkeypress="keyPress();">
+                            </p:inputText>
+                            <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchName').jq.val('');"/>
+                        </div>
+                    </h:panelGroup>
+
+                    <ui:insert name="searche_col1"/>
+
+                    <p:outputLabel value="#{bundle.Owner}:"/>
+                    <h:panelGroup styleClass="ui-grid-col-12">
+                        <div class="ui-inputgroup">
+                            <p:selectOneMenu value="#{_bean.model.authorSearche}" filter="true" converter="usersConvertor"
+                                             widgetVar="authorSearche"
+                                             styleClass="ui-grid-col-12">
+                                <f:selectItems value="#{userBean.findAll()}" var="user" itemValue="#{user}" itemLabel="#{user.shortFIO}" />
+                                <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}"/>
+                            </p:selectOneMenu>
+                            <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('authorSearche').selectValue();"/>
+                        </div>
+                    </h:panelGroup>
+
+                </h:panelGrid>
+
+                <h:panelGrid columns="2" columnClasses="ui-grid-col-4 right-aligment, ui-grid-col-8" styleClass="ui-grid-col-12 ">
+                    <ui:insert name="searche"/>
+                </h:panelGrid>
+
+                <h:panelGrid columns="2" columnClasses="ui-grid-col-4 right-aligment, ui-grid-col-8" styleClass="ui-grid-col-12">                                
+                    <p:outputLabel value="#{bundle.States}:"/>
+                    <p:selectManyMenu id="stateChecks" value="#{_bean.model.stateSearche}" showCheckbox="true"
+                                      widgetVar="stateSearche" var="s"
+                                      label="#{bundle.Select}" converter="stateConvertor"
+                                      styleClass="ui-grid-col-12">
+                        <f:selectItems value="#{_searcheBean.metadatesObj.statesList}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}"/>
+                        <p:column>
+                            <h:outputText value="#{stateBean.getBundleName(s)}" />
+                        </p:column>
+                    </p:selectManyMenu>
+
+                    <p:outputLabel value="#{bundle.DateCreate}:"/>                
+                    <ui:include src="/view/common/period-select.xhtml" >
+                        <ui:param name="_itemValue" value="#{_bean.model.dateCreatePeriod}"/>
+                        <ui:param name="_beginDate" value="#{_bean.model.dateCreateStart}"/>
+                        <ui:param name="_endDate" value="#{_bean.model.dateCreateEnd}"/>
+                        <ui:param name="_titleItem" value=""/>
+                        <ui:param name="_required" value="false" />
+                        <ui:param name="_disabled" value="false"/>
+                        <ui:param name="_itemPanel" value="dateCreatePanel"/>                    
+                        <ui:param name="_actionSelect" value="onChangeDateCreate"/>                    
+                        <ui:param name="_update" value=""/>
+                    </ui:include>
+
+                    <p:outputLabel value="#{bundle.DateChange}:"/>                                
+                    <ui:include src="/view/common/period-select.xhtml" >
+                        <ui:param name="_itemValue" value="#{_bean.model.dateChangePeriod}"/>
+                        <ui:param name="_beginDate" value="#{_bean.model.dateChangeStart}"/>
+                        <ui:param name="_endDate" value="#{_bean.model.dateChangeEnd}"/>
+                        <ui:param name="_titleItem" value=""/>
+                        <ui:param name="_required" value="false" />
+                        <ui:param name="_disabled" value="false"/>
+                        <ui:param name="_itemPanel" value="dateChangePanel"/>                    
+                        <ui:param name="_actionSelect" value="onChangeDateChange"/>                    
+                        <ui:param name="_update" value=""/>
+                    </ui:include>                
+
+                </h:panelGrid>
+
+                <h:panelGrid columns="2" styleClass="without-spaces">
+                    <p:commandButton id="searcheBtn" value="#{bundle.Find}" title="#{bundle.MakeSearche}" 
+                                     icon="ui-icon-search"                              
+                                     actionListener="#{_bean.onSearcheItem}"
+                                     update="mainFRM:tblDetail"
+                                     onstart="PF('statusDialog').show()"
+                                     oncomplete="PF('statusDialog').hide(); initDND();">
+                        <f:param name="isRequired" value="true"/>
+                    </p:commandButton>
+                    <p:commandButton icon="ui-icon-closethick" value="#{bundle.Reset}" title="#{bundle.ResetSearcheCriteria}" 
+                                     update="mainFRM:tblDetail" 
+                                     oncomplete="clearSearche(); initDND();"
+                                     actionListener="#{_bean.onClearSearche()}">                    
+                    </p:commandButton>
+                </h:panelGrid>
+            </p:panelGrid>
+        </p:tab>
+    </p:accordionPanel>
+    
+</ui:composition>

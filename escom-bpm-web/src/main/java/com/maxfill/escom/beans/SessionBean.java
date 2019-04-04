@@ -47,7 +47,6 @@ import com.maxfill.utils.Tuple;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.themeswitcher.ThemeSwitcher;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DashboardColumn;
 import org.primefaces.model.DashboardModel;
@@ -122,13 +121,13 @@ public class SessionBean implements Serializable{
         new ArrayList<SelectItem>() {
             private static final long serialVersionUID = 3109256773218160485L;
             {
-                add(new SelectItem(null, MsgUtils.getBandleLabel("EmptySelData")));
                 add(new SelectItem("today", MsgUtils.getBandleLabel("Today")));
                 add(new SelectItem("curWeek", MsgUtils.getBandleLabel("CurrentWeek")));
                 add(new SelectItem("сurMonth", MsgUtils.getBandleLabel("CurrentMonth")));
                 add(new SelectItem("curQuarter", MsgUtils.getBandleLabel("CurrentQuarter")));
                 add(new SelectItem("curYear", MsgUtils.getBandleLabel("CurrentYear")));
                 add(new SelectItem("period", MsgUtils.getBandleLabel("Period")));
+                add(new SelectItem(null, MsgUtils.getBandleLabel("EmptySelData")));
             }
         });
     
@@ -478,8 +477,7 @@ public class SessionBean implements Serializable{
             notifMessages.add(new NotifMsg(msg, url, urlCaption));
         }
         if (!notifMessages.isEmpty()){
-            RequestContext context = RequestContext.getCurrentInstance();
-            context.execute("PF('notifBar').show();");
+            PrimeFaces.current().executeScript("PF('notifBar').show();");            
         }
         canShowNotifBar = false;
         //ToDo вызов проверки сообщений нужно отсюда убрать!

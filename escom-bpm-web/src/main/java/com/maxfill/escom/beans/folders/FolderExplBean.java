@@ -1,9 +1,9 @@
 package com.maxfill.escom.beans.folders;
 
 import com.maxfill.dictionary.DictDetailSource;
-import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictStates;
+import com.maxfill.escom.beans.docs.DocsSearche;
 import com.maxfill.escom.beans.explorer.ExplorerTreeBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.escom.beans.processes.types.ProcessTypesBean;
@@ -17,7 +17,6 @@ import com.maxfill.model.basedict.filter.Filter;
 import com.maxfill.model.basedict.folder.Folder;
 import com.maxfill.model.basedict.processType.ProcessType;
 import com.maxfill.model.basedict.process.ProcessFacade;
-import com.maxfill.model.basedict.user.User;
 import com.maxfill.utils.ItemUtils;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -30,6 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
@@ -287,7 +287,19 @@ public class FolderExplBean extends ExplorerTreeBean{
         return StringUtils.isNotBlank(conf.getFullSearcheConnect());
     }
     
+    /* ПОИСК */
+    
+    /* Обработка события изменения поля DateCreate */
+    public void onChangeDateDocument(ValueChangeEvent event){ 
+        getModel().changeDateDocument((String) event.getNewValue());          
+    }
+    
     /* GETS & SETS */
+
+    @Override
+    public DocsSearche getModel() {
+        return (DocsSearche)super.getModel(); 
+    }    
     
     @Override
     public String getFormHeader() {

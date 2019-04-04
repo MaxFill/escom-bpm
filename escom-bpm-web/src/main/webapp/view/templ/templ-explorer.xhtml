@@ -9,7 +9,6 @@
     <ui:param name="_searcheBean" value="#{_searcheBean == null ? _detailBean : _searcheBean}" />
     <ui:param name="_lbGroupName" value="#{_lbGroupName != null ? _lbGroupName : bundle.Sections}" />
 
-    <ui:param name="_showDateCreate" value="#{false}"/>
     <ui:param name="_showAuthor"     value="#{false}"/>   
 
     <ui:define name="title">
@@ -38,6 +37,18 @@
             }
         </script> 
 
+        <script type="text/javascript" >
+            function keyPress() {
+                if (event.keyCode === 13) {
+                    var btn = document.getElementById('mainFRM:serchePanel:searcheBtn');
+                    if (btn){
+                        btn.click();
+                    }
+                    return;
+                } 
+            }
+        </script> 
+        
         <pe:layout fullPage="true" style="font-size: 80%;" stateCookie="#{_bean.getSourceBeanId() != null}">            
 
             <pe:layoutPane id="west" position="west" rendered="#{_bean.isWestShow()}" resizable="true" size="20%" >
@@ -46,21 +57,13 @@
                 </h:form>
             </pe:layoutPane>
 
-            <pe:layoutPane id="east" position="east" rendered="#{_bean.isEastShow()}" resizable="true" size="23%">
-                <h:form id="eastFRM" style="font-size: 90%;  height: 100%;" onkeypress="checkEsc();">
-                    <p:focus context="eastFRM" for="eastFRM:nameSearche"/>           
-                    <ui:include src="/view/templ/templ-searche.xhtml">
-                        <ui:param name="_tblUpdate" value="mainFRM #{_updates}"/>
-                    </ui:include>
-                </h:form>
-            </pe:layoutPane>
-
             <pe:layoutPane id="center" position="center" resizable="true" size="56%">
-                <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" > 
+                <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" >                    
                     <p:remoteCommand name="dropToTree"  actionListener="#{_bean.dropToTree}"  oncomplete="initDND()"/>
                     <p:remoteCommand name="dropToTable" actionListener="#{_bean.dropToTable}" oncomplete="initDND()"/>
                     <p:remoteCommand name="dropToNavig" actionListener="#{_bean.dropToNavig}" oncomplete="initDND()"/>
                     <p:remoteCommand name="formSize" immediate="true" actionListener="#{sessionBean.onFormSize()}" />                     
+                    
                     <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
                         <p:toolbar id="explToolBar">
                             <f:facet name="left">                                
@@ -175,17 +178,17 @@
                                 
                             </f:facet>
                         </p:toolbar>  
-
+                        
                         <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-grid-col-12 without-spaces">
                             <p:autoUpdate />
                         </p:messages>
-                        
-                        <ui:include src="/view/templ/navigator.xhtml"/>
-                        <ui:include src="/view/templ/table.xhtml"/>       
 
-                        <f:facet name="footer">
-                            <ui:insert name="centerFormFooter"/>
-                        </f:facet>
+                        <ui:include src="/view/templ/explorer/navigator.xhtml"/>
+                        <ui:include src="/view/templ/explorer/searche.xhtml"/>
+                        <ui:include src="/view/templ/explorer/abcSearche.xhtml"/>                        
+                        <ui:include src="/view/templ/explorer/table.xhtml"/>
+                        <ui:insert name="centerFormFooter"/>   
+
                     </p:panelGrid>                                                    
 
                     <ui:insert name="form_scripts"/>
@@ -229,6 +232,7 @@
 
     <ui:define name="customJavaScript">
         <h:outputScript library="js" name="drag-drop.js" /> 
+        <h:outputScript library="js" name="clear-search.js" />
     </ui:define>        
 
 </ui:composition>

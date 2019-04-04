@@ -1,0 +1,18 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <p:panelGrid id="NavigatorBar" rendered="#{_treeBean != null and _bean.isShowTree()}" styleClass="without-spaces">                                
+        <ui:repeat id="navigator" var="navigator" value="#{_bean.navigator}">
+            
+                <p:commandButton process="@this" styleClass="btnNavigator" value="#{navigator.name}" title="#{navigator.label}"
+                                 icon="ico_folder_open-16"
+                                 actionListener="#{_bean.navigationSetSelected(navigator)}"
+                                 update="westFRM mainFRM:tblDetail #{_updates}"
+                                 oncomplete="initDND();">          
+                </p:commandButton>
+
+        </ui:repeat>
+    </p:panelGrid>
+</ui:composition>

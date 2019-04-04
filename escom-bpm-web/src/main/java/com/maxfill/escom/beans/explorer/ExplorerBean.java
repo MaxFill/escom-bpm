@@ -21,7 +21,6 @@ import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.docs.attaches.AttacheBean;
-import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.facade.BaseLazyFacade;
 import com.maxfill.model.WithDatesPlans;
 import com.maxfill.model.core.metadates.Metadates;
@@ -46,6 +45,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
@@ -1335,6 +1335,9 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         }         
     }    
     
+    /**
+     * Сброс критериев поиска
+     */
     public void onClearSearche(){
         model = searcheBean.initSearcheModel();
     }
@@ -1380,7 +1383,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         //paramIN.put("state", states);
 
         //добавление в запрос даты создания
-        if (model.isDateCreateSearche()) {
+        if (model.getDateCreatePeriod() != null) {
             Date[] dateArray = new Date[2];
             dateArray[0] = model.getDateCreateStart();
             dateArray[1] = model.getDateCreateEnd();
@@ -1388,7 +1391,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         }
 
         //добавление в запрос даты изменения
-        if (model.isDateChangeSearche()) {
+        if (model.getDateChangePeriod() != null) {
             Date[] dateArray = new Date[2];
             dateArray[0] = model.getDateChangeStart();
             dateArray[1] = model.getDateChangeEnd();
@@ -1495,7 +1498,17 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                     }
         });    
     }
-            
+    
+    /* Обработка события изменения поля DateChange */
+    public void onChangeDateChange(ValueChangeEvent event){       
+        model.changeDateChange((String) event.getNewValue());          
+    }
+    
+    /* Обработка события изменения поля DateCreate */
+    public void onChangeDateCreate(ValueChangeEvent event){       
+        model.changeDateCreate((String) event.getNewValue());          
+    }
+    
     /* *** СЕЛЕКТОР *** */
     
     /* СЕЛЕКТОР: определяет режим множественного выбора в селекторе  */
@@ -1975,10 +1988,6 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         return loadItems;
     }
         
-    @Override
-    public boolean isEastShow(){
-        return true;
-    }
     @Override
     public boolean isWestShow(){
         return true;

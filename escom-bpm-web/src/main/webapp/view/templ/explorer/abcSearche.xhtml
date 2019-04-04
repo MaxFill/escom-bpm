@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"    
+                xmlns:h="http://java.sun.com/jsf/html" 
+                xmlns:p="http://primefaces.org/ui">
+    
+<p:panel styleClass="ui-grid-col-12" >
+    <h:panelGrid columns="2">
+        <p:commandButton value="*" title="#{bundle.StartAnyChars}" styleClass="btnABC"
+                     actionListener="#{_bean.onAbcSearche}"
+                     update="mainFRM:tblDetail"
+                     onstart="PF('statusDialog').show()"
+                     oncomplete="PF('statusDialog').hide(); initDND();">
+            <f:attribute name="action" value="#{'*'}" />
+        </p:commandButton>
+        
+        <h:panelGroup styleClass="ui-grid-col-12 without-spaces">    
+            <ui:repeat var="abcEngl" value="#{_bean.model.abcEnglSearche}">
+                <p:commandButton value="#{abcEngl}" styleClass="btnABC"                       
+                                actionListener="#{_bean.onAbcSearche}"
+                                update="mainFRM:tblDetail"
+                                onstart="PF('statusDialog').show()"
+                                oncomplete="PF('statusDialog').hide(); initDND();">
+                    <f:attribute name="action" value="#{abcEngl}" />
+                </p:commandButton>
+            </ui:repeat>
+        </h:panelGroup>
+    
+        <p:spacer />
+        <h:panelGroup styleClass="ui-grid-col-12 without-spaces">
+            <ui:repeat var="abcLocal" value="#{_bean.model.abcLocalSearche}">
+                <p:commandButton value="#{abcLocal}" styleClass="btnABC"
+                                 actionListener="#{_bean.onAbcSearche}"
+                                 update="mainFRM:tblDetail"
+                                 onstart="PF('statusDialog').show()"
+                                 oncomplete="PF('statusDialog').hide(); initDND();">
+                    <f:attribute name="action" value="#{abcLocal}" />
+                </p:commandButton>
+            </ui:repeat>
+
+            <p:commandButton value="0-9" title="#{bundle.StartDigital}" style="font-size: 90%;"
+                             actionListener="#{_bean.onAbcSearche}"
+                             update="mainFRM:tblDetail"
+                             onstart="PF('statusDialog').show()"
+                             oncomplete="PF('statusDialog').hide(); initDND();">
+                <f:attribute name="action" value="#{'[0-9]'}" />
+            </p:commandButton>  
+        </h:panelGroup>  
+    </h:panelGrid>
+</p:panel>
+</ui:composition>
