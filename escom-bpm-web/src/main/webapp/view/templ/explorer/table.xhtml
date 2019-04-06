@@ -48,7 +48,7 @@
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}" 
                            rendered="#{_bean.isItemTreeType(item)}"
                            actionListener="#{_bean.onLoadGroupContent(item)}"
-                           update="mainFRM westFRM #{_updates}" 
+                           update="westFRM #{_updates}" 
                            oncomplete="initDND()"/>
             <h:outputLabel value="#{item.nameEndElipse}" title="#{item.name}"
                            rendered="#{!_bean.isItemTreeType(item) and item.getClass().getSimpleName() != 'Doc'}">
@@ -100,13 +100,13 @@
                                      actionListener="#{_bean.onEditDetailItem(item)}" 
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide();">
-                        <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseForm}" update="mainFRM" oncomplete="initDND()"/>
+                        <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseForm}" update="#{_updates}" oncomplete="initDND();"/>
                     </p:commandButton>
                     <p:commandButton title="#{bundle.View}" icon="ui-icon-search"
                                      actionListener="#{_bean.onViewDetailItem(item)}"
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide();">
-                        <p:ajax event="dialogReturn" update="mainFRM" oncomplete="initDND();"/>
+                        <p:ajax event="dialogReturn" update="#{_updates}" oncomplete="initDND();"/>
                     </p:commandButton>
                 </div>
             </h:panelGroup>
@@ -117,7 +117,7 @@
                                      actionListener="#{_bean.onEditDetailItem(item)}" 
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide();">
-                        <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseForm}" update="mainFRM" oncomplete="initDND()"/>
+                        <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseForm}" update="#{_updates}" oncomplete="initDND();"/>
                     </p:commandButton>
 
                     <p:menuButton >
@@ -135,7 +135,7 @@
                         <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"
                                     disabled="#{item.id == 0}"                                    
                                     actionListener="#{_bean.onMoveContentToTrash(item)}"
-                                    oncomplete="initDND()">
+                                    oncomplete="initDND();">
                         </p:menuitem>
 
                         <p:separator/>
@@ -145,7 +145,7 @@
                         <p:menuitem icon="ui-icon-scissors" value="#{bundle.DeleteFromFavorites}" 
                                     rendered="#{_bean.isFavoriteSelected()}"
                                     actionListener="#{_bean.onDelContentFromFavorites(item)}"
-                                    update="mainFRM"
+                                    update="#{_updates}"
                                     oncomplete="initDND()"/>
                         <p:separator/>
                         <p:menuitem icon="ui-icon-key" value="#{bundle.Administation}"
@@ -159,14 +159,14 @@
                 <div class="ui-inputgroup">
                     <p:commandButton title="#{bundle.Delete}" icon="ui-icon-closethick"
                                      disabled="#{!sessionBean.userAdmin}"
-                                     update="mainFRM westFRM"
+                                     update="#{_updates} westFRM"
                                      actionListener="#{_bean.onDeleteContentFromTrash(item)}"
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide(); initDND()">
                         <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.OperationIsNotReversible}" icon="ui-icon-alert" />
                     </p:commandButton>
                     <p:commandButton title="#{bundle.Restore}" icon="ui-icon-arrowreturnthick-1-w"                            
-                                     update="mainFRM westFRM"
+                                     update="#{_updates} westFRM"
                                      actionListener="#{_bean.onRestoreContentFromTrash(item)}"
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide(); initDND()">

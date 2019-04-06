@@ -7,9 +7,12 @@ import com.maxfill.model.basedict.doc.DocFacade;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
+import com.maxfill.escom.beans.companies.CompanyBean;
 import com.maxfill.escom.beans.docs.attaches.AttacheBean;
+import com.maxfill.escom.beans.docs.docsTypes.DocTypeBean;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.folders.FoldersBean;
+import com.maxfill.escom.beans.partners.PartnersBean;
 import static com.maxfill.escom.utils.MsgUtils.getBandleLabel;
 import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
 import com.maxfill.escom.utils.EscomFileUtils;
@@ -42,6 +45,10 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.UploadedFile;
 
+/**
+ * Сессионный контролер для сущности "Документы"
+ * @author maksim
+ */
 @Named
 @SessionScoped
 public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
@@ -52,7 +59,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     @Inject
     private FoldersBean ownerBean;
     @Inject
-    private AttacheBean attacheBean; 
+    private AttacheBean attacheBean;
+    
     @EJB
     private AttacheFacade attacheFacade;
     @EJB

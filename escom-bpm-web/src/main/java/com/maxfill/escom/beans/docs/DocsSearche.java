@@ -1,7 +1,6 @@
 package com.maxfill.escom.beans.docs;
 
 import com.maxfill.escom.beans.explorer.SearcheModel;
-import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.company.Company;
 import com.maxfill.model.basedict.docType.DocType;
 import com.maxfill.model.basedict.partner.Partner;
@@ -22,12 +21,16 @@ public final class DocsSearche extends SearcheModel{
     private Date dateDocStart;
     private Date dateDocEnd;
     
-    private List<DocType> docTypes;
+    private List<DocType> selectedDocTypes; //выбранные виды документов
     private Partner partnerSearche;
     private Company companySearche;
        
+    private List<Partner> partners = null; //список контрагентов критериев поиска
+    private List<DocType> docTypes = null; //список видов документов критериев поиска
+    private List<Company> companies = null; //список компаний критериев поиска
+    
     @Override
-    public void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<BaseDict> searcheGroups, Map<String, Object> addParams){
+    public void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams){
         if (companySearche != null){
             paramEQ.put("company", companySearche);
         }
@@ -40,8 +43,8 @@ public final class DocsSearche extends SearcheModel{
             dateArray[1] = dateDocEnd;
             paramDATE.put("itemDate", dateArray);
         }
-        if (!docTypes.isEmpty()){
-            List<Integer> docTypeIds = docTypes.stream().map(item -> item.getId()).collect(Collectors.toList());
+        if (!selectedDocTypes.isEmpty()){
+            List<Integer> docTypeIds = selectedDocTypes.stream().map(item -> item.getId()).collect(Collectors.toList());
             addParams.put("docTypes", docTypeIds);
         }
         if (partnerSearche != null){
@@ -66,13 +69,13 @@ public final class DocsSearche extends SearcheModel{
     public void setCompanySearche(Company companySearche) {
         this.companySearche = companySearche;
     }
-        
-    public List<DocType> getDocTypes() {
-        return docTypes;
+
+    public List<DocType> getSelectedDocTypes() {
+        return selectedDocTypes;
     }
-    public void setDocTypes(List<DocType> docTypes) {
-        this.docTypes = docTypes;
-    }
+    public void setSelectedDocTypes(List<DocType> selectedDocTypes) {
+        this.selectedDocTypes = selectedDocTypes;
+    }        
         
     public Date getDateDocStart() {
         return dateDocStart;
@@ -107,6 +110,26 @@ public final class DocsSearche extends SearcheModel{
     }
     public void setDateDocPeriod(String dateDocPeriod) {
         this.dateDocPeriod = dateDocPeriod;
-    }    
-    
+    }        
+
+    public List<Partner> getPartners() {
+        if (partners == null){
+            partners = explBean.getPartnerBean().findAll();
+        }
+        return partners;
+    }
+
+    public List<DocType> getDocTypes() {
+        if (docTypes == null){
+            docTypes = explBean.getDocTypeBean().findAll();
+        }
+        return docTypes;
+    }
+
+    public List<Company> getCompanies() {
+        if (companies == null){
+            companies = explBean.getCompanyBean().findAll();
+        }
+        return companies;
+    }
 }

@@ -6,9 +6,7 @@
 package com.maxfill.escom.beans.staffs;
 
 import com.maxfill.escom.beans.explorer.SearcheModel;
-import com.maxfill.model.basedict.BaseDict;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /* Расширение поиска Штатных единиц */
@@ -18,9 +16,9 @@ public class StaffsSearche extends SearcheModel{
     
     private String postSearche;
     private String secondNameSearche;
-    
+        
     @Override
-    public void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<BaseDict> searcheGroups, Map<String, Object> addParams){
+    public void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams){
         if (postSearche != null){
             addParams.put("postName", postSearche);
         }

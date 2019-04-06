@@ -12,7 +12,7 @@
                 <p:commandButton icon="ui-icon-refresh" title="#{bundle.Refresh}"
                                  style="font-size: 90%;"
                                  actionListener="#{_bean.onReloadTreeItems()}"
-                                 update="westFRM mainFRM"
+                                 update="westFRM #{_updates}"
                                  onstart="PF('statusDialog').show()"
                                  oncomplete="PF('statusDialog').hide(); initDND()"/>                        
                     <p:inputText value="#{_bean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}" id="nameSearche"
@@ -22,7 +22,7 @@
                     </p:inputText>
                     <p:commandButton id="btnTreeSearche" title="#{bundle.Searche}" icon="ui-icon-search"
                                      disabled="#{!_bean.isShowTree()}"
-                                     update="westFRM mainFRM #{_updates}"
+                                     update="westFRM #{_updates}"
                                      actionListener="#{_bean.onSearcheInTree()}" style="font-size: 90%;" 
                                      oncomplete="initDND()">
                     </p:commandButton>

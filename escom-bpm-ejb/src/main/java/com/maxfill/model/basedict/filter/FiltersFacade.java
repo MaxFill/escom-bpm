@@ -46,7 +46,7 @@ public class FiltersFacade extends BaseDictFacade<Filter, Filter, FilterLog, Fil
     
     /* К фильтрам пока права не настроены, поэтому всегда true */
     @Override
-    protected Boolean preloadCheckRightView(BaseDict item, User user) {    
+    public Boolean preloadCheckRightView(BaseDict item, User user) {    
         return Boolean.TRUE;
     }
 }

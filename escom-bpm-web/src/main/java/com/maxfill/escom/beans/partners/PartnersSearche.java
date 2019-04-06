@@ -6,9 +6,8 @@
 package com.maxfill.escom.beans.partners;
 
 import com.maxfill.escom.beans.explorer.SearcheModel;
-import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.user.User;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
@@ -20,9 +19,9 @@ public class PartnersSearche extends SearcheModel{
     private String codeSearche;
     private String inn;
     private String kpp;
-    
+        
     @Override
-    public void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<BaseDict> searcheGroups, Map<String, Object> addParams){        
+    public void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams){        
         if (StringUtils.isNotBlank(codeSearche)){
             paramLIKE.put("codeSearche", codeSearche); 
         }  

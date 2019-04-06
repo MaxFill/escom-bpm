@@ -609,12 +609,13 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     
     /* ПОИСК: Выполняет инициализацию модели данных поиска */
     public SearcheModel initSearcheModel(){
-        return new SearcheModel();
+        return new SearcheModel();        
     }
     
     /* ПОИСК: Выполняет поиск объектов */
-    public List<T> doSearche(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams, int first, int pageSize){
-       return getLazyFacade().getByParameters(states, paramEQ, paramLIKE, paramIN, paramDATE, addParams, first, pageSize, getCurrentUser());        
+    public List<T> doSearche(BaseDict ownerItem, List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams, int first, int pageSize){
+       return getLazyFacade().
+               findItemsByParams(ownerItem, states, paramEQ, paramLIKE, paramIN, paramDATE, addParams, first, pageSize, getCurrentUser());        
     }
     
     /* СЛУЖЕБНЫЕ МЕТОДЫ  */

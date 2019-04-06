@@ -115,7 +115,7 @@ public class FolderExplBean extends ExplorerTreeBean{
         setSource(DictDetailSource.PROCESS_SOURCE);
         refreshLazyData();
         makeNavigator(currentItem);
-        setCurrentViewModeDetail();
+        setCurrentViewModeAsDetail();
                
         if ("ui-icon-folder-collapsed".equals(currentItem.getIconTree())){
             processTypesBean.loadChilds(currentItem, procSelectedNode);

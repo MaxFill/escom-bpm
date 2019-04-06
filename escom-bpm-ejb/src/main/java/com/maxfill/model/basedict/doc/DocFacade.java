@@ -162,18 +162,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         }
         super.dublicateCheckAddCriteria(builder, root, criteries, doc);
     }            
-    
-    /**
-     * Переопределяет доступ к методу, т.к. основной private
-     * @param item
-     * @param user
-     * @return 
-     */
-    @Override
-    public Boolean preloadCheckRightView(BaseDict item, User user) {
-        return super.preloadCheckRightView(item, user);
-    }
-        
+            
     /* Возвращает документы, заблокированные пользователем */
     @Override
     public List<Doc> loadLockDocuments(User currentUser){

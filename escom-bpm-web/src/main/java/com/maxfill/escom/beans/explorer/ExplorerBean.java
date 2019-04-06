@@ -15,12 +15,16 @@ import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.dictionary.SysParams;
+import com.maxfill.escom.beans.companies.CompanyBean;
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.docs.attaches.AttacheBean;
+import com.maxfill.escom.beans.docs.docsTypes.DocTypeBean;
+import com.maxfill.escom.beans.partners.PartnersBean;
+import com.maxfill.escom.beans.users.UserBean;
 import com.maxfill.facade.BaseLazyFacade;
 import com.maxfill.model.WithDatesPlans;
 import com.maxfill.model.core.metadates.Metadates;
@@ -61,6 +65,14 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     protected DocBean docBean;
     @Inject
     private AttacheBean attacheBean; 
+    @Inject
+    private UserBean userBean;
+    @Inject
+    private PartnersBean partnerBean;
+    @Inject
+    private DocTypeBean docTypeBean;
+    @Inject
+    private CompanyBean companyBean;
     
     @EJB
     protected FiltersFacade filtersFacade;
@@ -111,22 +123,21 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     private String selectorHeader;
     private String explorerHeader;
     protected String currentTab = "0";
-    
-    //private List<SortMeta> sortOrder;
-    
-    private Integer rowsInPage = DictExplForm.ROW_IN_PAGE;
-    protected Integer currentPage = 0;
-    protected String versionOS;   
+                  
 
     /* *** СЛУЖЕБНЫЕ ПОЛЯ *** */
+    
     private Integer source = DictDetailSource.ALL_ITEMS_SOURCE;
     protected Integer viewMode;         //режим отображения формы
     private Integer selectMode;         //режим выбора для селектора
+    protected String versionOS; 
+    private Integer rowsInPage = DictExplForm.ROW_IN_PAGE;
+    protected Integer currentPage = 0;
     
     //параметры открытия обозревателя
     private Integer selectedDocId;      //при открытии обозревателя в это поле заносится id документа для открытия
     private Integer filterId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать 
-    private Integer folderId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать
+    private Integer folderId = null;    //при открытии обозревателя в это поле заносится id папки что бы её показать
     
     protected Integer itemId;
                
@@ -718,11 +729,6 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         Filter filter = (Filter) node.getData(); 
         return filter.getId().equals(DictFilters.TRASH_ID);         
     }
-
-    /* ФИЛЬТР: проверят, отображается ли сейчас дерево  */
-    public boolean isShowTree(){
-        return Objects.equals(currentTab, DictExplForm.TAB_TREE);
-    }
     
     /* ФИЛЬТР: проверят, является ли фильтр "Избранные" текущим элементом в дереве */
     public boolean isFavoriteSelected(){
@@ -796,21 +802,21 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                     Filter filter = (Filter) filterSelectedNode.getData();
                     if (filterSelectedNode.getType().equals(typeDetail)){
                         loadItems = tableBean.makeFilteredContent(filter, first, pageSize, sortField,  sortOrder.name());                    
-                        setCurrentViewModeDetail();                        
+                        setCurrentViewModeAsDetail();                        
                     } else
                         if (filterSelectedNode.getType().equals(typeTree)){
                             loadItems = treeBean.makeFilteredContent(filter, first, pageSize, sortField,  sortOrder.name());
-                            setCurrentViewModeTree();
+                            setCurrentViewModeAsTree();
                         } else
                             if (filterSelectedNode.getType().equals(typeRoot)){
                                 loadItems = rootBean.makeFilteredContent(filter, first, pageSize, sortField,  sortOrder.name());
-                                setCurrentViewModeRoot();
+                                setCurrentViewModeAsRoot();
                             }
                     break;
                 }
                 case DictDetailSource.TREE_SOURCE:{ 
                     BaseDict treeItem = (BaseDict) treeSelectedNode.getData(); 
-                    setCurrentViewModeTree();
+                    setCurrentViewModeAsTree();
                     if (isItemTreeType(treeItem)){                    
                             loadItems = treeBean.makeGroupContent(treeItem, tableBean, viewMode, first, pageSize, sortField,  sortOrder.name());                            
                             //count = treeBean.getDetailBean().getFacade().findCountActualDetails(currentItem).intValue();
@@ -822,7 +828,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                     break;
                 }
                 case DictDetailSource.SEARCHE_SOURCE:{
-                    setCurrentViewModeDetail();
+                    setCurrentViewModeAsDetail();
                     loadItems = doSearcheItems(first, pageSize, sortField, sortOrder, makeFilters(filters));
                     break;
                 }
@@ -977,7 +983,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         refreshLazyData();
         
         makeNavigator(currentItem);         
-        setCurrentViewModeMixed();
+        setCurrentViewModeAsMixed();
        
         BaseDict rootItem = (BaseDict) tree.getChildren().get(0).getData();
         String journalName = "";
@@ -1135,6 +1141,11 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         return false;
     }
 
+    /* ДЕРЕВО: проверят, отображается ли сейчас дерево  */
+    public boolean isShowTree(){
+        return Objects.equals(currentTab, DictExplForm.TAB_TREE);
+    }
+    
     /* НАВИГАТОР */
 
     /* НАВИГАТОР: установка текущей папки по нажатию на кнопку навигатора  */ 
@@ -1309,29 +1320,16 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     
     /* Обработка действия по нажатию кнопки Поиск */
     public void onSearcheItem() {        
-        if (getModel().isSearcheInGroups() && (treeBean == null || treeSelectedNode == null)) {
-            MsgUtils.errorMsg("NO_SEARCHE_GROUPS");
-            return ;
-        } 
         setSource(DictDetailSource.SEARCHE_SOURCE);
         refreshLazyData();        
         getLazyDataModel();
         
-        switch (currentTab) {
-            case DictExplForm.TAB_TREE: {
-                if (treeSelectedNode != null) {
-                    treeSelectedNode.setSelected(false);
-                    treeSelectedNode = null;
-                }
-                break;
-            }
-            case DictExplForm.TAB_FILTER: {
-                if (filterSelectedNode != null) {
-                    filterSelectedNode.setSelected(false);
-                    filterSelectedNode = null;
-                }
-                break;
-            }
+        //если поиск был вызван, когда открыты фильтры, то нужно сбросить установку фильтров
+        if (DictExplForm.TAB_FILTER.equals(currentTab)){
+            if (filterSelectedNode != null) {
+                filterSelectedNode.setSelected(false);
+                filterSelectedNode = null;
+            }            
         }         
     }    
     
@@ -1339,16 +1337,23 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
      * Сброс критериев поиска
      */
     public void onClearSearche(){
+        initSearcheModel();
+    }
+    
+    /**
+     * Инициализация класса модели поиска
+     */
+    private void initSearcheModel(){
         model = searcheBean.initSearcheModel();
+        model.setExplBean(this);
     }
     
     /* Выполняет поиск объектов с учётом критериев поиска  */
     public List<BaseDict> doSearcheItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
-        List<BaseDict> searcheGroups = new ArrayList<>();
         Map<String, Object> paramEQ = new HashMap<>();
         Map<String, Object> paramLIKE = new HashMap<>();
         Map<String, Object> paramIN = new HashMap<>();
-        Map<String, Date[]> paramDATE = new HashMap<>();       
+        Map<String, Date[]> paramDATE = new HashMap<>();
 
         //добавление в запрос точных критериев
         if (model.isOnlyActualItem()) {
@@ -1380,7 +1385,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         }
         
         //добавление в запрос критериев на вхождение
-        //paramIN.put("state", states);
+        //paramIN.put("", );
 
         //добавление в запрос даты создания
         if (model.getDateCreatePeriod() != null) {
@@ -1399,16 +1404,21 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         }
         
         Map<String, Object> addParams = new HashMap<>();
-        model.addSearcheParams(paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
-        
-        List<Integer> statesIds = model.getStateSearche().stream().map(item -> item.getId()).collect(Collectors.toList());
+        model.addSearcheParams(paramEQ, paramLIKE, paramIN, paramDATE, addParams);                
 
-        List<BaseDict> result = searcheBean.doSearche(statesIds, paramEQ, paramLIKE, paramIN, paramDATE, addParams, first, pageSize);
-        //count = searcheBean.getFacade().getCountByParameters(statesIds, paramEQ, paramLIKE, paramIN, paramDATE, addParams).intValue();             
+        //если поиск выполняется с учётом текущей папки/группы, то передаём её в поиск
+        BaseDict ownerItem = null;
+        if (DictExplForm.TAB_TREE.equals(currentTab) && treeSelectedNode != null){
+            ownerItem = (BaseDict)treeSelectedNode.getData();
+        }
+        
+        //вызов поиска
+        List<BaseDict> result = searcheBean.doSearche(ownerItem, model.getStatesIds(), paramEQ, paramLIKE, paramIN, paramDATE, addParams, first, pageSize);
+             
         setSource(DictDetailSource.SEARCHE_SOURCE);
-        setCurrentViewModeDetail();        
+        setCurrentViewModeAsDetail();        
         makeJurnalHeader(MsgUtils.getBandleLabel(searcheBean.getMetadatesObj().getBundleJurnalName()), MsgUtils.getBandleLabel("SearcheResult"), "DisplaysObjectsSelectedSearche");
-        navigator = null;
+        
         return result;
     }
 
@@ -1678,29 +1688,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     public void onPageChange(PageEvent event) {
         setCurrentPage(((DataTable) event.getSource()).getFirst());
     }       
-            
-    /* Построение объекта для сортировки таблицы обозревателя Не использую, т.к. загрузка теперь лэзи */
-    /*
-    public List<SortMeta> getSortOrder() {
-        if (sortOrder == null){
-            sortOrder = new ArrayList<>();
-            UIViewRoot viewRoot =  FacesContext.getCurrentInstance().getViewRoot();
-            UIComponent columnIcon = viewRoot.findComponent("mainFRM:tblDetail:colIcon"); 
-            UIComponent columnName = viewRoot.findComponent("mainFRM:tblDetail:shortName"); 
-            SortMeta sm1 = new SortMeta();
-            sm1.setSortBy((UIColumn)columnIcon);
-            sm1.setSortField("iconName");
-            sm1.setSortOrder(SortOrder.DESCENDING);                        
-            SortMeta sm2 = new SortMeta();
-            sm2.setSortBy((UIColumn)columnName);
-            sm2.setSortField("nameEndElipse");
-            sm2.setSortOrder(SortOrder.ASCENDING);
-            sortOrder.add(sm1);
-            sortOrder.add(sm2);
-        }
-        return sortOrder;
-    }    
-    */
+                
     /* Формирование заголовка журнала обозревателя   */ 
     public void makeJurnalHeader(String firstName, String secondName, String toolTipKey){              
         StringBuilder sb = new StringBuilder(firstName);
@@ -1752,25 +1740,25 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     public void setCurrentViewModel(TreeNode node){
         BaseDict item = (BaseDict) node.getData();
         if (isItemDetailType(item)){
-            setCurrentViewModeDetail();
+            setCurrentViewModeAsDetail();
         } else 
             if (isItemTreeType(item)){
-                setCurrentViewModeTree();                
+                setCurrentViewModeAsTree();                
             } else
                 if (isItemRootType(item)){
-                    setCurrentViewModeRoot();
+                    setCurrentViewModeAsRoot();
                 }
     }
-    public void setCurrentViewModeDetail(){
+    public void setCurrentViewModeAsDetail(){
         currentType = typeDetail;
     }
-    public void setCurrentViewModeTree(){
+    public void setCurrentViewModeAsTree(){
         currentType = typeTree;
     }
-    public void setCurrentViewModeRoot(){
+    public void setCurrentViewModeAsRoot(){
         currentType = typeRoot;
     }
-    public void setCurrentViewModeMixed(){
+    public void setCurrentViewModeAsMixed(){
         currentType = typeMixed;
     }
     
@@ -1833,9 +1821,9 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     public BaseTableBean getSearcheBean() {
         return searcheBean;
     }
-    public void setSearcheBean(BaseTableBean searcheBean) {
-        model = searcheBean.initSearcheModel();
+    public void setSearcheBean(BaseTableBean searcheBean) {        
         this.searcheBean = searcheBean;
+        initSearcheModel();
     }
 
     public String getTypeRoot() {
@@ -1987,7 +1975,20 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     public List<BaseDict> getLoadItems() {        
         return loadItems;
     }
-        
+
+    public UserBean getUserBean() {
+        return userBean;
+    }
+    public PartnersBean getPartnerBean() {
+        return partnerBean;
+    }
+    public DocTypeBean getDocTypeBean() {
+        return docTypeBean;
+    }
+    public CompanyBean getCompanyBean() {
+        return companyBean;
+    }
+    
     @Override
     public boolean isWestShow(){
         return true;

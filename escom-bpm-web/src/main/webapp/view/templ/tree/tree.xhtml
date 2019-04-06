@@ -9,20 +9,20 @@
                      actionListener="#{_bean.onCreateTreeItem()}" 
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();"> 
-        <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+        <p:ajax event="dialogReturn" update="#{_updates}" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
     <p:commandButton id="createRootCardBtn" style="display: none;"
                      actionListener="#{_bean.onCreateRootItem()}" 
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();"> 
-        <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+        <p:ajax event="dialogReturn" update="#{_updates}" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
 
     <p:commandButton id="openTreeCardBtn" style="display: none;"
                      actionListener="#{_bean.onEditTreeItem()}"
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();" > 
-        <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+        <p:ajax event="dialogReturn" update="#{_updates}" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
 
     <p:commandButton id="viewTreeCardBtn" style="display: none;"
@@ -34,7 +34,7 @@
 
     <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
         <p:accordionPanel id="accord" widgetVar="accordion" activeIndex="#{_bean.currentTab}" >
-            <p:ajax event="tabChange" listener="#{_bean.onTreeTabChange}" update="mainFRM #{_updates}" oncomplete="initDND();"/>
+            <p:ajax event="tabChange" listener="#{_bean.onTreeTabChange}" update="#{_updates}" oncomplete="initDND();"/>
 
             <p:tab id="tabTree" title="#{_lbGroupName}" rendered="#{_treeBean != null and _bean != null}">
                 <ui:include src="/view/templ/tree/tree-toolbar.xhtml"/>
@@ -52,11 +52,11 @@
                     </p:treeNode>
 
                     <p:ajax event="select" listener="#{_bean.onTreeNodeSelect}"
-                            update="mainFRM #{_updates}"
+                            update="#{_updates}"
                             onstart="PF('statusDialog').show()"
                             oncomplete="PF('statusDialog').hide(); initDND();"/>
                     <p:ajax event="contextMenu" listener="#{_bean.onTreeNodeSelect}"
-                            update="westFRM:accord:toolbarTree mainFRM #{_updates}"
+                            update="westFRM:accord:toolbarTree #{_updates}"
                             oncomplete="initDND()"/>
                     <p:ajax event="expand"  listener="#{_bean.onNodeExpand}" />
                     <p:ajax event="collapse" listener="#{_bean.onNodeCollapse}" />
@@ -105,7 +105,7 @@
                                 onstart="PF('statusDialog').show()"
                                 oncomplete="PF('statusDialog').hide(); initDND()"
                                 actionListener="#{_bean.onPasteItemToTree()}"
-                                update="westFRM:accord:tree mainFRM"/>
+                                update="westFRM:accord:tree #{_updates}"/>
                     <p:separator/>
                     <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" 
                                 actionListener="#{_bean.onAddContentInFavorites()}"/>

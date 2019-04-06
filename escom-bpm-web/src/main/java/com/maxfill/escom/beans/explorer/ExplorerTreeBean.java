@@ -77,7 +77,7 @@ public class ExplorerTreeBean extends ExplorerBean{
         if (folder == null) return;
         doSelectFolder(folder);                
         PrimeFaces.current().ajax().update("westFRM");
-        PrimeFaces.current().ajax().update("mainFRM");
+        PrimeFaces.current().ajax().update("mainFRM:tblDetail");
     }
         
     private void doSelectFolder(BaseDict folder){

@@ -24,9 +24,7 @@ import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
 import java.io.IOException;
 import java.io.StringReader;
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -129,8 +127,6 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             criteries.add(builder.isNull(root.get("owner")));
         }
     }
-
-    /* РАБОТА С ЕДИНИЧНЫМ ОБЪЕКТОМ */
 
     /**
      * Создание нового объекта в памяти
@@ -530,26 +526,45 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return query.executeUpdate();    
     }
             
-    /* ПОИСК из формы поиска */
+    /* ПОИСК ОБЪЕКТОВ */
     
     @Override
     public T find(Object id) { 
         return super.find(id);
     }
 
-    public List<T> getByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams, int first, int pageSize, User currentUser) {
+    /**
+     * Поиск объектов по заданным критериям
+     * @param treeItem - владелец объектов - папка или группа, если она указана, то поиск выполняется с учётом её
+     * @param states
+     * @param paramEQ
+     * @param paramLIKE
+     * @param paramIN
+     * @param paramDATE
+     * @param addParams
+     * @param first
+     * @param pageSize
+     * @param currentUser
+     * @return 
+     */
+    public List<T> findItemsByParams(O treeItem, List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams, int first, int pageSize, User currentUser) {
         first = 0;
-        pageSize = configuration.getMaxResultCount();
-        CriteriaQuery<T> criteriaQuery = selectQueryByParameters(states, paramEQ, paramLIKE, paramIN, paramDATE, itemClass, addParams);
-        TypedQuery<T> query = em.createQuery(criteriaQuery);        
+        pageSize = configuration.getMaxResultCount();        
+        TypedQuery<T> query = em.createQuery(makeQueryByParams(states, paramEQ, paramLIKE, paramIN, paramDATE, itemClass, addParams));        
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
-        return query.getResultStream()
-                    .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
+        if (treeItem == null || treeItem.getId() == 0){
+            return query.getResultStream()
+                    .filter(item -> preloadCheckRightView(item, currentUser))
                     .collect(Collectors.toList());
+        } else {
+            return query.getResultStream()                    
+                    .filter(item -> checkPreloadItem(treeItem, item, currentUser))
+                    .collect(Collectors.toList());
+        }
     }
     
-    protected <EC> CriteriaQuery<EC> selectQueryByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Class<EC> itemClass, Map<String, Object> addParams) {
+    private <EC> CriteriaQuery<EC> makeQueryByParams(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Class<EC> itemClass, Map<String, Object> addParams) {
         em.getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<EC> criteriaQuery = builder.createQuery(itemClass);
@@ -557,11 +572,11 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         
         criteriaQuery.orderBy(builder.asc(root.get("name")));
         
-        Predicate[] predicates = makePredicate(builder, root, states, paramEQ, paramLIKE, paramIN, paramDATE, addParams);
+        Predicate[] predicates = makePredicates(builder, root, states, paramEQ, paramLIKE, paramIN, paramDATE, addParams);
         return criteriaQuery.select(root).where(builder.and(predicates));        
     }
     
-    private Predicate[] makePredicate(CriteriaBuilder builder, Root root, List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams){
+    private Predicate[] makePredicates(CriteriaBuilder builder, Root root, List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams){
         List<Predicate> criteries = new ArrayList<>(); 
         criteries.add(builder.equal(root.get("deleted"), false));
         
@@ -588,7 +603,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         addJoinPredicatesAndOrders(root, criteries, builder, addParams);
                        
         Predicate[] predicates = new Predicate[criteries.size()];
-        predicates = criteries.toArray(predicates);
+        predicates = criteries.toArray(predicates);        
         return predicates;
     }
     
@@ -610,6 +625,28 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
     protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates,  CriteriaBuilder builder, Map<String, Object> addParams){};
 
+    /* *** *** *** */    
+    
+    /**
+     * Выполняет проверку на принадлежность проверяемого объекта item к какой-нибудь папке из treeItem
+     * если принадлежность найдена, то выполняется проверка на наличие у пользователя прав доступа к item
+     * @param treeItem
+     * @param item
+     * @param user
+     * @return 
+     */
+    private boolean checkPreloadItem(BaseDict treeItem, BaseDict item, User user){
+        if (item.getOwner().equals(treeItem)){
+            LOGGER.log(Level.INFO, "Find document id ={0}", item.getId());            
+            return preloadCheckRightView(item, user);
+        } else {            
+            return treeItem.getChildItems().stream()
+                    .filter(child->checkPreloadItem((BaseDict)child, item, user))
+                    .findFirst()
+                    .isPresent();
+        }
+    }    
+    
     public Metadates getMetadatesObj() {
         return metadatesFacade.find(getMetadatesObjId());
     }       
@@ -749,12 +786,15 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     /* *** ПРАВА ДОСТУПА *** */
 
     /* ПРАВА ДОСТУПА: Установка и проверка прав объекта для пользователя при загрузке объекта */
-    protected Boolean preloadCheckRightView(BaseDict item, User user) {
+    public Boolean preloadCheckRightView(BaseDict item, User user) {        
         Rights rights = getRightItem(item, user);
         item.setRightItem(rights);
         Integer mask = getAccessMask((T)item, rights, user, 18);
-        item.setRightMask(mask);        
-        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_VIEW);
+        item.setRightMask(mask);
+        boolean rez = checkMaskAccess(item.getRightMask(), DictRights.RIGHT_VIEW);
+        LOGGER.log(Level.INFO, "Access for item {2} id [{0}] = {1}", new Object[]{item.getId(),rez, item.getClass().getSimpleName()}); 
+        return rez;
+        
     }
 
     /* ПРАВА ДОСТУПА:
@@ -945,7 +985,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
                 actualRight = (Rights) JAXB.unmarshal(access, Rights.class);
                 //settingRightItem(item, actualRight, user);
             } catch (IOException ex) {
-                Logger.getLogger(BaseDictFacade.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
         } else {
             throw new NullPointerException("EscomERR: Object " + item.getName() + " dont have xml right!");

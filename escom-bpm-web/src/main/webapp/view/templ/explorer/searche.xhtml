@@ -5,7 +5,7 @@
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 xmlns:p="http://primefaces.org/ui">         
     
-    <p:accordionPanel id="serchePanel" activeIndex="1" cache="true">
+    <p:accordionPanel id="serchePanel" activeIndex="1" cache="true" dynamic="true">
         <p:tab title="#{bundle.Searche}"  >
             <p:panelGrid columns="3" layout="grid" columnClasses="ui-grid-col-4" styleClass="ui-grid-col-12 without-spaces">        
                 <h:panelGrid columns="2" columnClasses="ui-grid-col-4 right-aligment, ui-grid-col-8" styleClass="ui-grid-col-12">
@@ -14,7 +14,23 @@
                                             title="#{bundle.SearcheOnlyActualItemsComments}" 
                                             value="#{_bean.model.onlyActualItem}">
                     </p:selectBooleanCheckbox> 
+                    
+                    <p:outputLabel value="#{bundle.SearcheMode}:" rendered="#{_bean.showTree}"/>
+                    <h:panelGroup>
+                        <p:selectOneRadio id="customRadio" value="#{_bean.model.searcheInGroups}" rendered="#{_bean.showTree}" layout="custom">
+                            <f:selectItem itemLabel="#{bundle.SearchInCurrentFolderAndSubfolders}" itemValue="#{true}" />
+                            <f:selectItem itemLabel="#{bundle.SearcheInCurrentGroup}" itemValue="#{false}" />                        
+                        </p:selectOneRadio>                          
 
+                        <h:panelGrid columns="2">
+                            <p:radioButton for="customRadio" itemIndex="0"/>
+                            <h:outputLabel value="#{bundle.SearchInCurrentFolderAndSubfolders}"/>
+
+                            <p:radioButton for="customRadio" itemIndex="1"/>
+                            <h:outputLabel value="#{bundle.SearcheInCurrentGroup}"/> 
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    
                     <p:outputLabel value="#{bundle.Name}:"/>
                     <h:panelGroup styleClass="ui-grid-col-12">
                         <div class="ui-inputgroup">
@@ -36,7 +52,7 @@
                             <p:selectOneMenu value="#{_bean.model.authorSearche}" filter="true" converter="usersConvertor"
                                              widgetVar="authorSearche"
                                              styleClass="ui-grid-col-12">
-                                <f:selectItems value="#{userBean.findAll()}" var="user" itemValue="#{user}" itemLabel="#{user.shortFIO}" />
+                                <f:selectItems value="#{_bean.model.users}" var="user" itemValue="#{user}" itemLabel="#{user.shortFIO}" />
                                 <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}"/>
                             </p:selectOneMenu>
                             <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('authorSearche').selectValue();"/>
@@ -91,15 +107,15 @@
 
                 <h:panelGrid columns="2" styleClass="without-spaces">
                     <p:commandButton id="searcheBtn" value="#{bundle.Find}" title="#{bundle.MakeSearche}" 
-                                     icon="ui-icon-search"                              
+                                     icon="ui-icon-search"                            
                                      actionListener="#{_bean.onSearcheItem}"
                                      update="mainFRM:tblDetail"
-                                     onstart="PF('statusDialog').show()"
+                                     onstart="PF('statusDialog').show();"
                                      oncomplete="PF('statusDialog').hide(); initDND();">
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>
-                    <p:commandButton icon="ui-icon-closethick" value="#{bundle.Reset}" title="#{bundle.ResetSearcheCriteria}" 
-                                     update="mainFRM:tblDetail" 
+                    <p:commandButton icon="ui-icon-closethick" value="#{bundle.Reset}" title="#{bundle.ResetSearcheCriteria}"
+                                     process="@this"
                                      oncomplete="clearSearche(); initDND();"
                                      actionListener="#{_bean.onClearSearche()}">                    
                     </p:commandButton>

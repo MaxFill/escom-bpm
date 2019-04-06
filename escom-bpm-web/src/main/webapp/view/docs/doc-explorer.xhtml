@@ -52,7 +52,7 @@
             <p:selectOneMenu value="#{_bean.model.companySearche}" filter="true" converter="companyConvertor"                         
                             widgetVar="companySearche"
                             styleClass="ui-grid-col-12">
-                    <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
+                    <f:selectItems value="#{_bean.model.companies}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
                     <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
             </p:selectOneMenu> 
             <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('companySearche').selectValue();"/>
@@ -62,11 +62,11 @@
         <p:outputLabel value="#{bundle.DocTypes}:"/>
         <h:panelGroup styleClass="ui-grid-col-12">
             <div class="ui-inputgroup">
-            <p:selectCheckboxMenu value="#{_bean.model.docTypes}" 
+            <p:selectCheckboxMenu value="#{_bean.model.selectedDocTypes}" 
                                   widgetVar="cbmDocType" multiple="true"
                                   converter="docsTypesConvertor"
                                   filter="true" filterMatchMode="startsWith" styleClass="ui-grid-col-12">
-                <f:selectItems value="#{docTypeBean.findAll()}" var="item" itemLabel="#{item.getShortName()}" itemValue="#{item}"/>
+                <f:selectItems value="#{_bean.model.docTypes}" var="item" itemLabel="#{item.getShortName()}" itemValue="#{item}"/>
             </p:selectCheckboxMenu>
             <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('cbmDocType').show(); PF('cbmDocType').uncheckAll(); PF('cbmDocType').hide();"/>
             </div>
@@ -92,7 +92,7 @@
                             rendered="#{applicationBean.isCanUsesPartners()}"
                             widgetVar="partnerSearche"
                             styleClass="ui-grid-col-12">
-                    <f:selectItems value="#{partnersBean.findAll()}" var="partner" itemValue="#{partner}" itemLabel="#{partner.nameEndElipse}" />
+                    <f:selectItems value="#{_bean.model.partners}" var="partner" itemValue="#{partner}" itemLabel="#{partner.nameEndElipse}" />
                     <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}"/>
             </p:selectOneMenu>  
             <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('partnerSearche').selectValue();"/>
@@ -209,7 +209,7 @@
                 </p:treeNode>
 
                 <p:ajax event="select" listener="#{_bean.onProcNodeSelect}"
-                        update="mainFRM #{_updates}"
+                        update="mainFRM"
                         oncomplete="initDND()"/>
             </p:tree>
             <pe:tooltip for="procTree" value="#{msg.DragDropDocumentCreateProcess}" mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10" 

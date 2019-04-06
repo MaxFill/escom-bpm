@@ -1,6 +1,5 @@
 package com.maxfill.escom.beans.explorer;
 
-import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.core.states.State;
 import com.maxfill.model.basedict.user.User;
 import com.maxfill.utils.DateUtils;
@@ -9,16 +8,23 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /* Базовая модель данных для поиска объектов */
 public class SearcheModel implements Serializable {
-    private static final long serialVersionUID = 6832545210562543525L;       
-        
+    private static final long serialVersionUID = 6832545210562543525L;    
+    
     private String nameSearche;             //поиск в поле name
     private User authorSearche;             //поиск в поле автор
-    private List<State> stateSearche;       //поиск по состояниям
-    private boolean onlyActualItem = true;  //признак поиска только актуальных объектов
-    private boolean searcheInGroups;        //признак поиска с учётом групп
+    private List<State> stateSearche = new ArrayList<>();       //поиск по состояниям
+    
+    private boolean onlyActualItem = true;          //признак поиска только актуальных объектов
+    
+    /* признак поиска с учётом вложенных групп, 
+        false - поиск только в текущей папке, 
+        true  - поиск также и во вложенных папках/группах
+    */
+    private boolean searcheInGroups = true;         
     
     private String dateCreatePeriod;
     private Date dateCreateStart;
@@ -32,7 +38,9 @@ public class SearcheModel implements Serializable {
     
     private static final List<String> abcEnglSearche;
     private static final List<String> abcLocalSearche;
-          
+    
+    private List<User> users = null; //список пользователей критериев поиска    
+    
     static{
         abcEnglSearche = new ArrayList<>();
         abcEnglSearche.add("a");
@@ -94,9 +102,19 @@ public class SearcheModel implements Serializable {
         abcLocalSearche.add("ю");
         abcLocalSearche.add("я");
     }
+     
+    protected ExplorerBean explBean;    
     
     /* Добавление в параметры поискового запроса специфичных полей и условий */
-    protected void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<BaseDict> searcheGroups, Map<String, Object> addParams){};
+    protected void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams){};
+    
+    /**
+     * Возвращает список идентификаторов состояний объекта, с учётом которых должен выполнятся поиск
+     * @return 
+     */
+    public List<Integer> getStatesIds() {
+        return stateSearche.stream().map(item -> item.getId()).collect(Collectors.toList());
+    }
     
     public void changeDateChange(String period){
         dateChangePeriod = period;  
@@ -113,7 +131,11 @@ public class SearcheModel implements Serializable {
             dateCreateEnd = DateUtils.periodEndDate(dateCreatePeriod, dateCreateEnd);
         }
     }
-        
+
+    public void setExplBean(ExplorerBean explBean) {
+        this.explBean = explBean;
+    }
+         
     public boolean isFullTextSearche() {
         return fullTextSearche;
     }
@@ -204,6 +226,13 @@ public class SearcheModel implements Serializable {
     }
     public void setDateChangePeriod(String dateChangePeriod) {
         this.dateChangePeriod = dateChangePeriod;
+    }
+       
+    public List<User> getUsers() {
+        if (users == null){
+            users = explBean.getUserBean().findAll();
+        }
+        return users;
     }
     
 }
