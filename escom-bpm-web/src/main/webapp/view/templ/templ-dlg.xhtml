@@ -5,7 +5,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 template="/view/templ/templ-frm.xhtml">
-
+    
     <ui:define name="centerContent"> 
         <script>
             var isFullPage = #{_bean.isFullPageMode()};
@@ -34,6 +34,7 @@
                         <h:outputText styleClass="ui-icon ui-icon-closethick" />
                     </p:commandLink>
                 </f:facet>
+                
                 <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                        
                     <p:toolbar id="explToolBar">
                         <f:facet name="left">

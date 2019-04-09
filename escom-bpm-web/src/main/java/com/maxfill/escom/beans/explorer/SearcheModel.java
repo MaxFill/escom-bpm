@@ -24,7 +24,7 @@ public class SearcheModel implements Serializable {
         false - поиск только в текущей папке, 
         true  - поиск также и во вложенных папках/группах
     */
-    private boolean searcheInGroups = true;         
+    private boolean searcheInGroups = true;   //true-поиск во вложенных папках, false - поиск только в текущей папке      
     
     private String dateCreatePeriod;
     private Date dateCreateStart;

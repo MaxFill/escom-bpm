@@ -78,7 +78,7 @@
                         <p:selectOneMenu value="#{_bean.selUser}" filter="true" filterMatchMode="startsWith" title="#{bundle.Users}"
                                          converter="usersConvertor" placeholder="#{bundle.Select}"
                                          rendered="#{_bean.typeAddRight == DictRights.TYPE_USER}">
-                            <f:selectItems value="#{userBean.findAll()}" var="u" itemLabel="#{u.shortFIO}" itemValue="#{u}"/>
+                            <f:selectItems value="#{userBean.users}" var="u" itemLabel="#{u.shortFIO}" itemValue="#{u}"/>
                             <f:selectItem itemValue="#{null}" itemLabel="--#{bundle.Select}--" />
                         </p:selectOneMenu>
                         <p:selectOneMenu value="#{_bean.selUsGroup}" filter="true" filterMatchMode="startsWith" title="#{bundle.Groups}"

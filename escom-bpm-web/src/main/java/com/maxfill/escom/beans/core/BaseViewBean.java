@@ -57,12 +57,12 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     @PostConstruct
     protected void init(){
         initBean();
-        //System.out.println("Create  " + this.getClass().getSimpleName());
+        System.out.println("Create  " + this.getClass().getSimpleName());
     }
 
     @PreDestroy
     protected void destroy(){
-        //System.out.println("Destroy " + this.getClass().getSimpleName());
+        System.out.println("Destroy " + this.getClass().getSimpleName());
     }
 
     protected void initBean(){};

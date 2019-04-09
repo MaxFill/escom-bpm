@@ -82,8 +82,6 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
                 .orderBy(cb.asc(root.get(User_.secondName)));
         
         TypedQuery<User> query = em.createQuery(cq);
-        //query.setFirstResult(first);
-        //query.setMaxResults(pageSize);
         return query.getResultStream().parallel()
                 .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                 .collect(Collectors.toList());

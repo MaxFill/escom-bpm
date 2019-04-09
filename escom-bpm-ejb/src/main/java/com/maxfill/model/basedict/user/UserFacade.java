@@ -79,6 +79,8 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         super(User.class, UserLog.class, UserStates.class);
     }
 
+    /* CRUD */
+    
     @Override
     public void create(User user) {
         //updateUserInfoInRealm(user);
@@ -95,6 +97,14 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         updateUserInfoInRealm(user);
         super.edit(user);
     }
+    
+    @Override
+    public void remove(User user){
+        messagesFacade.removeMessageByUser(user);
+        super.remove(user);
+    }
+    
+    /* *** *** */
     
     @Override
     protected void detectParentOwner(User user, BaseDict parent, BaseDict owner){
@@ -223,13 +233,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         //slist = list.stream().sorted(Comparator.comparing(Student::getAge)).collect(Collectors.toList());
         UserGroups freshGroup = userGroupsFacade.find(group.getId());
         return freshGroup.getDetailItems().stream().filter(user -> !user.isDeleted() && user.isActual()).collect(Collectors.toList());        
-    }
-    
-    @Override
-    public Long findCountActualDetails(UserGroups group){
-        UserGroups freshGroup = userGroupsFacade.find(group.getId());
-        return freshGroup.getDetailItems().stream().filter(user -> !user.isDeleted()).count();        
-    }    
+    }        
     
     /**
      * Отбирает пользователей, у которых не назначена штатная единица 
@@ -498,15 +502,6 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         super.addLikePredicates(root, predicates, cb, paramLIKE);
     }
 
-    /* Дополнения при выполнении поиска через форму поиска */
-    @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder cb, Map<String, Object> addParams){
-        String loginName = (String) addParams.get("login");
-        if (StringUtils.isNotBlank(loginName)){
-            predicates.add(cb.like(root.<String>get("login"), loginName));
-        }
-    }
-
     /**
      * Замена пользователя на другого в связанных объектах
      * @param oldItem
@@ -533,13 +528,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
                 .filter(assist->checkUser.equals(assist.getUser()))
                 .findFirst().orElse(null);
         return assistant != null;
-    }
-    
-    @Override
-    public void remove(User user){
-        messagesFacade.removeMessageByUser(user);
-        super.remove(user);
-    }
+    }    
     
     @Override
     protected Integer getMetadatesObjId() {
@@ -558,4 +547,59 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
             return configuration.getServerLocale();
         }      
     }
+    
+    /* ПОИСК */
+    
+    /* Дополнения при выполнении поиска через форму поиска */
+    @Override
+    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder cb, Map<String, Object> addParams){
+        String loginName = (String) addParams.get("login");
+        if (StringUtils.isNotBlank(loginName)){
+            predicates.add(cb.like(root.<String>get("login"), loginName));
+        }
+    }
+    
+    /**
+     * Выполняет проверку сначала на принадлежность checkedUser к группе exampleGroup 
+     * или какой-нибудь дочерней от exampleGroup (при условии что searcheInSubGroups = true)
+     * и если принадлежность существует, то выполняется проверка на наличие у пользователя прав доступа к checkedItem
+     * @param checkedUser проверяемый объект
+     * @param exampleGroup искомая группа (критерий поиска)
+     * @param checkedOwner поле всегда пустое (null) т.к. у пользователя нет владельца
+     * @param user пользователь, для которого проверяются права к checkedUser
+     * @param searcheInSubGroups если true, то поиск выполнять также и во вложенных группах
+     * @return true - если объект доступен, false - если не доступен
+     */
+    @Override
+    protected boolean checkPreloadItem(BaseDict exampleGroup, BaseDict checkedOwner, User checkedUser, User user, boolean searcheInSubGroups){        
+        if (checkUserInGroup(checkedUser, (UserGroups)exampleGroup, searcheInSubGroups)){
+            return preloadCheckRightView(checkedUser, user);
+        } else {            
+            return false;
+        }
+    } 
+    
+    /**
+     * Выполняет проверку принадлежности user к examplUserGroup
+     * @param user проверяемый пользователь
+     * @param examplUserGroup искомая группа (критерий поиска)
+     * @param searcheInSubGroups если true, то поиск выполнять так же и во вложенных группах
+     * @return 
+     */
+    public boolean checkUserInGroup(User user, final UserGroups examplUserGroup, boolean searcheInSubGroups){
+        return user.getUsersGroupsList().stream()
+                .filter(group->checkUserGroup(examplUserGroup, group, searcheInSubGroups))
+                .findFirst()
+                .isPresent();                        
+    }
+    
+    private boolean checkUserGroup(final UserGroups examplUserGroup, UserGroups checkedGroup, boolean searcheInSubGroups){
+        if (checkedGroup == null) return false;
+        if (checkedGroup.equals(examplUserGroup)){
+            return true;
+        } else {
+            return searcheInSubGroups ? checkUserGroup(examplUserGroup, checkedGroup.getParent(), searcheInSubGroups) : false;
+        }
+    }
+    
 }

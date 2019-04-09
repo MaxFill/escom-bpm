@@ -285,7 +285,10 @@
                     <p:panel id="orgStructure" header="#{bundle.OrgStructure}" rendered="#{applicationBean.isCanUsesStaffs()}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                <p:graphicImage id="imgStaffs" value="/resources/icon/structure-32.png"/> 
+                                <p:graphicImage value="/resources/icon/structure-32.png"/> 
+                                <p:link href="#{sessionBean.onGetExplorerURL('/staffs/orgstructure')}" value="#{bundle.OrgStructure}" target="_blank" />
+                                
+                                <p:graphicImage id="imgStaffs" value="/resources/icon/book-32.png"/> 
                                 <p:link href="#{sessionBean.onGetExplorerURL('/staffs/staff-explorer')}" value="#{bundle.OrgStructureExplorer}" target="_blank" />
 
                                 <p:graphicImage id="imgPosts" value="/resources/icon/book-32.png" rendered="#{sessionBean.userAdmin}"/>

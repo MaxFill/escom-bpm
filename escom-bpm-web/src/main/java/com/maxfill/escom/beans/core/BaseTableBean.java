@@ -516,6 +516,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
                 if (errChild.isEmpty() && errDetail.isEmpty()) {
                     item.setDeleted(Boolean.TRUE);
                     getLazyFacade().edit(item);
+                    afterMoveToTrash(item);
                 } else {
                     errors.addAll(errDetail);
                     errors.addAll(errChild);
@@ -523,12 +524,13 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
             }
         } else {
             String metadateName = MsgUtils.getBandleLabel(getMetadatesObj().getBundleName());
-            Object[] msgParams = new Object[]{metadateName, item.getName()};
-            String error = MessageFormat.format(MsgUtils.getMessageLabel("RightDeleteNo"), msgParams);
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("RightDeleteNo"), new Object[]{metadateName, item.getName()});
             errors.add(error);
         }
     } 
 
+    protected void afterMoveToTrash(T item){}
+    
 /* *** CЕЛЕКТОР ОБЪЕКТОВ *** */
     
     /* CЕЛЕКТОР: Открытие формы селектора для выбора единичного объекта */
@@ -613,9 +615,9 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     }
     
     /* ПОИСК: Выполняет поиск объектов */
-    public List<T> doSearche(BaseDict ownerItem, List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams, int first, int pageSize){
+    public List<T> doSearche(BaseDict ownerItem, boolean searcheInSubGroups, List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams, int first, int pageSize){
        return getLazyFacade().
-               findItemsByParams(ownerItem, states, paramEQ, paramLIKE, paramIN, paramDATE, addParams, first, pageSize, getCurrentUser());        
+               findItemsByParams(ownerItem, searcheInSubGroups, states, paramEQ, paramLIKE, paramIN, paramDATE, addParams, first, pageSize, getCurrentUser());        
     }
     
     /* СЛУЖЕБНЫЕ МЕТОДЫ  */

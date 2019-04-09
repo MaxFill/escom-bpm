@@ -61,6 +61,8 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
     private AssistantBean assistantBean;
     @Inject
     private StaffBean staffBean;
+    @Inject
+    private UserBean userBean;
     
     private List<Assistant> checkedDetails;
     private Assistant selectedDetail;
@@ -276,8 +278,9 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
         staff.setEmployee(employee);
         staffBean.makeName(staff);
         staffFacade.edit(staff);
+        userBean.reloadUsers();
     }
-
+    
     @Override
     public List<UserGroups> getGroups(User item) {
         return item.getUsersGroupsList();

@@ -17,4 +17,9 @@
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateChildGroup}" />
     <ui:param name="_CreateItemLabel" value="#{bundle.CreateDocType}" />
     
+    <ui:define name="specDetailColumns">
+        <p:column headerText="#{bundle.Group}" sortBy="#{item.owner.name}" >
+            <h:outputText value="#{item.owner.shortName}"/>
+        </p:column>
+    </ui:define>
 </ui:composition>

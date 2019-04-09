@@ -60,6 +60,59 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         }
     }
 
+    /**
+     * Выполняет проверку сначала на принадлежность staff к владельцу exampleOwner->(Company or Department) 
+     * или какому-нибудь дочернему от exampleOwner (при условии что searcheInSubGroups = true)
+     * и если принадлежность существует, то выполняется проверка на наличие у пользователя прав доступа к staff
+     * @param staff проверяемый объект
+     * @param exampleOwner искомый владелец (критерий поиска), может быть как компания так и подразделением
+     * @param checkedOwner владелец, для которого выполняется проверка (на первой итерации это владелец staff)
+     * @param user пользователь, для которого проверяются права к checkedItem
+     * @param searcheInSubGroups
+     * @return true - если объект доступен, false - если не доступен
+     */
+    @Override
+    protected boolean checkPreloadItem(BaseDict exampleOwner, BaseDict checkedOwner, Staff staff, User user, boolean searcheInSubGroups){        
+        if (exampleOwner instanceof Company){
+            return checkStaffInCompany(staff, (Company) exampleOwner, user);
+        } else {
+            return checkStaffInDepartment(staff, (Department) exampleOwner, staff.getOwner(), searcheInSubGroups, user);                    
+        }
+    } 
+    
+    /**
+     * Проверка принадлежности staff указанному Department и если да, то выполняется праверка прав доступа
+     * @param staff
+     * @param exampleDepartment искомое подразделение
+     * @param departmentStaff проверяемое подразделение штатной единицы
+     * @return 
+     */
+    private boolean checkStaffInDepartment(Staff staff, Department exampleDepartment, Department departmentStaff, boolean searcheInSubGroups, User user){
+        if (departmentStaff == null) return false;            
+        if (departmentStaff.equals(exampleDepartment)){
+            return preloadCheckRightView(staff, user);
+        } else {
+            //если нужно искать с учётом вложенных подразделений, то проверку выполняем снизу вверх
+            return searcheInSubGroups ? checkStaffInDepartment(staff, exampleDepartment,  departmentStaff.getParent(), searcheInSubGroups, user) : false;
+        }
+    }
+    
+    /**
+     * Проверяет, относится staff к указанной company и если да, то выполняется праверка прав доступа
+     * @param staff
+     * @param company
+     * @param user
+     * @return 
+     */
+    private boolean checkStaffInCompany(Staff staff, Company company, User user){
+        Company companyStaff = findCompanyForStaff(staff);        
+        if (Objects.equals(companyStaff, company)){            
+            return preloadCheckRightView(staff, user);
+        } else {            
+            return false;
+        }
+    }
+    
     @Override
     public Rights getRightItem(BaseDict item, User user) {
         if (item == null) return null;
@@ -179,6 +232,8 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         }
     }
     
+    /* ПОИСК */
+    
     /* Возвращает список занятых (не вакантных) штатных единиц с сотрудниками и должностями */
     public List<Staff> findActualStaff(){
         em.getEntityManagerFactory().getCache().evict(Staff.class);
@@ -237,7 +292,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
      * @param currentUser
      * @return
      */
-    public List<Staff> findActualStaffByCompany(Company company, User currentUser){
+    public List<Staff> findActualStaffInCompany(Company company, User currentUser){
         em.getEntityManagerFactory().getCache().evict(Staff.class);
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);
@@ -254,7 +309,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
     }
     
     /**
-     * Отбор штатных единиц (кроме удалённых в корзину), не входящих в подразделения, а напрямую принадлежащих компании 
+     * Отбор актуальных штатных единиц (кроме удалённых в корзину), не входящих в подразделения, а только напрямую принадлежащих компании 
      * @param company
      * @param currentUser
      * @return
@@ -265,9 +320,10 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);
         Root<Staff> c = cq.from(Staff.class);        
         Predicate crit1 = builder.equal(c.get("company"), company);
-        Predicate crit2 = builder.isNull(c.get("owner"));   
-        Predicate crit3 = builder.equal(c.get("deleted"), false);
-        cq.select(c).where(builder.and(crit1, crit2, crit3));
+        Predicate crit2 = builder.isNull(c.get("owner"));
+        Predicate crit3 = builder.equal(c.get("actual"), true);
+        Predicate crit4 = builder.equal(c.get("deleted"), false);
+        cq.select(c).where(builder.and(crit1, crit2, crit3, crit4));
         cq.orderBy(builder.asc(c.get("name")));
         TypedQuery<Staff> query = em.createQuery(cq);       
         return query.getResultStream()      
@@ -309,6 +365,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         }
         return null;
     }
+    
     
     /* ***  ПРОЧЕЕ * *** */
     

@@ -5,8 +5,8 @@
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 xmlns:p="http://primefaces.org/ui">         
     
-    <p:accordionPanel id="serchePanel" activeIndex="1" cache="true" dynamic="true">
-        <p:tab title="#{bundle.Searche}"  >
+    <p:accordionPanel id="serchePanel" activeIndex="1" cache="true" dynamic="true" widgetVar="searcheAccordWV">
+        <p:tab title="#{_bean.searcheInfo}" >
             <p:panelGrid columns="3" layout="grid" columnClasses="ui-grid-col-4" styleClass="ui-grid-col-12 without-spaces">        
                 <h:panelGrid columns="2" columnClasses="ui-grid-col-4 right-aligment, ui-grid-col-8" styleClass="ui-grid-col-12">
                     <p:spacer/>
@@ -19,7 +19,8 @@
                     <h:panelGroup>
                         <p:selectOneRadio id="customRadio" value="#{_bean.model.searcheInGroups}" rendered="#{_bean.showTree}" layout="custom">
                             <f:selectItem itemLabel="#{bundle.SearchInCurrentFolderAndSubfolders}" itemValue="#{true}" />
-                            <f:selectItem itemLabel="#{bundle.SearcheInCurrentGroup}" itemValue="#{false}" />                        
+                            <f:selectItem itemLabel="#{bundle.SearcheInCurrentGroup}" itemValue="#{false}" /> 
+                            <p:ajax event="valueChange" update="serchePanel" />
                         </p:selectOneRadio>                          
 
                         <h:panelGrid columns="2">
@@ -114,10 +115,8 @@
                                      oncomplete="PF('statusDialog').hide(); initDND();">
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>
-                    <p:commandButton icon="ui-icon-closethick" value="#{bundle.Reset}" title="#{bundle.ResetSearcheCriteria}"
-                                     process="@this"
-                                     oncomplete="clearSearche(); initDND();"
-                                     actionListener="#{_bean.onClearSearche()}">                    
+                    <p:commandButton icon="ui-icon-closethick" value="#{bundle.Reset}" title="#{bundle.ResetSearcheCriteria}"                                     
+                                     oncomplete="clearSearche(); initDND();">
                     </p:commandButton>
                 </h:panelGrid>
             </p:panelGrid>

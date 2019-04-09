@@ -219,31 +219,7 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
         return query.getResultStream()      
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
-    }
-    
-    @Override
-    public Long findCountActualDetails(Company owner){
-        em.getEntityManagerFactory().getCache().evict(Department.class);
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery cq = builder.createQuery(Long.class);
-        Root<Department> root = cq.from(Department.class);   
-        List<Predicate> criteries = new ArrayList<>();
-
-        criteries.add(builder.isNull(root.get("parent")));
-        criteries.add(builder.equal(root.get("deleted"), false));
-        criteries.add(builder.equal(root.get("actual"), true));
-        if (owner != null){                    
-            criteries.add(builder.equal(root.get("owner"), owner));
-        }
-
-        Predicate[] predicates = new Predicate[criteries.size()];
-        predicates = criteries.toArray(predicates);
-
-        cq.select(builder.count(root)).where(builder.and(predicates));               
-
-        Query query = em.createQuery(cq);  
-        return (Long) query.getSingleResult();
-    }
+    }        
     
     /* Возвращает компанию, в которой находится подразделение */
     public Company findCompany(Department item){        

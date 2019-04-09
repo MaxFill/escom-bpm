@@ -10,6 +10,8 @@ import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.model.basedict.doc.Doc_;
 import com.maxfill.model.core.rights.Rights;
 import com.maxfill.model.basedict.user.User;
+import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -17,6 +19,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import org.apache.commons.lang3.StringUtils;
 
 /* Фасад для сущности "Виды документов" */
 @Stateless

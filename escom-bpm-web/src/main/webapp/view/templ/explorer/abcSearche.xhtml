@@ -10,7 +10,7 @@
                      actionListener="#{_bean.onAbcSearche}"
                      update="mainFRM:tblDetail"
                      onstart="PF('statusDialog').show()"
-                     oncomplete="PF('statusDialog').hide(); initDND();">
+                     oncomplete="PF('statusDialog').hide(); PF('searcheAccordWV').unselect(0); initDND();">
             <f:attribute name="action" value="#{'*'}" />
         </p:commandButton>
         
@@ -20,7 +20,7 @@
                                 actionListener="#{_bean.onAbcSearche}"
                                 update="mainFRM:tblDetail"
                                 onstart="PF('statusDialog').show()"
-                                oncomplete="PF('statusDialog').hide(); initDND();">
+                                oncomplete="PF('statusDialog').hide(); PF('searcheAccordWV').unselect(0); initDND();">
                     <f:attribute name="action" value="#{abcEngl}" />
                 </p:commandButton>
             </ui:repeat>
@@ -33,7 +33,7 @@
                                  actionListener="#{_bean.onAbcSearche}"
                                  update="mainFRM:tblDetail"
                                  onstart="PF('statusDialog').show()"
-                                 oncomplete="PF('statusDialog').hide(); initDND();">
+                                 oncomplete="PF('statusDialog').hide(); PF('searcheAccordWV').unselect(0); initDND();">
                     <f:attribute name="action" value="#{abcLocal}" />
                 </p:commandButton>
             </ui:repeat>
@@ -42,7 +42,7 @@
                              actionListener="#{_bean.onAbcSearche}"
                              update="mainFRM:tblDetail"
                              onstart="PF('statusDialog').show()"
-                             oncomplete="PF('statusDialog').hide(); initDND();">
+                             oncomplete="PF('statusDialog').hide(); PF('searcheAccordWV').unselect(0); initDND();">
                 <f:attribute name="action" value="#{'[0-9]'}" />
             </p:commandButton>  
         </h:panelGroup>  

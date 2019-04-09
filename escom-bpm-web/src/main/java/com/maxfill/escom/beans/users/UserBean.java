@@ -48,6 +48,8 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
     @Inject
     private UserGroupsBean groupsBean;  
     
+    private List<User> users;
+            
     /* Пользователя при вставке нужно копировать только если он вставляется не в группу! */
     @Override
     public boolean isNeedCopyOnPaste(User pasteItem, BaseDict target) {
@@ -194,4 +196,26 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
         return new UsersSearche();
     }
 
+    /**
+     * Список пользователей, доступный для просмотра текущему пользователя
+     * чтобы каждый раз не лазить в базу за ним
+     * @return 
+     */
+    public List<User> getUsers() {
+        if (users == null){
+            users = findAll();
+        }
+        return users;
+    }
+    
+    public void reloadUsers(){
+        users = null;
+    }
+    
+    @Override
+    protected void afterMoveToTrash(User user){
+        if (users != null){
+            users.remove(user);
+        }
+    }
 }

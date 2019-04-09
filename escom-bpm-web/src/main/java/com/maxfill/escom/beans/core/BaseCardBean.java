@@ -180,7 +180,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
                 case DictEditMode.INSERT_MODE:{
                     getFacade().create(item); 
                     getFacade().addLogEvent(item, DictLogEvents.CREATE_EVENT, getCurrentUser());
-                    setTypeEdit(DictEditMode.EDIT_MODE);
+                    setTypeEdit(DictEditMode.EDIT_MODE);                    
                     break;
                 }
                 case DictEditMode.CHILD_MODE:{
@@ -214,7 +214,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
 
     /* Действия сразу после сохранения объекта перед закрытием его карточки */
     protected void onAfterSaveItem(T item){}
-
+    
     /**
      * Проверка корректности полей объекта перед сохранением
      * @param item

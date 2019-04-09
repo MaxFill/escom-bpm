@@ -1334,18 +1334,28 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     }    
     
     /**
-     * Сброс критериев поиска
-     */
-    public void onClearSearche(){
-        initSearcheModel();
-    }
-    
-    /**
      * Инициализация класса модели поиска
      */
     private void initSearcheModel(){
         model = searcheBean.initSearcheModel();
         model.setExplBean(this);
+    }
+    
+    /**
+     * Информация о настройках поиска
+     * @return 
+     */
+    public String getSearcheInfo(){
+        StringBuilder sb = new StringBuilder(getLabelFromBundle("Searche"));
+        if (DictExplForm.TAB_TREE.equals(currentTab)){
+            sb.append(": ");
+            if (model.isSearcheInGroups()){
+                sb.append(getLabelFromBundle("SearchInCurrentFolderAndSubfolders"));
+            } else {
+                sb.append(getLabelFromBundle("SearcheInCurrentGroup"));
+            }                    
+        }
+        return sb.toString();
     }
     
     /* Выполняет поиск объектов с учётом критериев поиска  */
@@ -1403,17 +1413,21 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
             paramDATE.put("dateChange", dateArray);
         }
         
-        Map<String, Object> addParams = new HashMap<>();
-        model.addSearcheParams(paramEQ, paramLIKE, paramIN, paramDATE, addParams);                
+        Map<String, Object> addParams = new HashMap<>();                    
 
         //если поиск выполняется с учётом текущей папки/группы, то передаём её в поиск
         BaseDict ownerItem = null;
         if (DictExplForm.TAB_TREE.equals(currentTab) && treeSelectedNode != null){
             ownerItem = (BaseDict)treeSelectedNode.getData();
+            if (!model.isSearcheInGroups()){ //если поиск только в текущей папке (без просмотра вложеных папок)
+                addParams.put("owner", ownerItem);
+            }
         }
         
+        model.addSearcheParams(paramEQ, paramLIKE, paramIN, paramDATE, addParams); 
+        
         //вызов поиска
-        List<BaseDict> result = searcheBean.doSearche(ownerItem, model.getStatesIds(), paramEQ, paramLIKE, paramIN, paramDATE, addParams, first, pageSize);
+        List<BaseDict> result = searcheBean.doSearche(ownerItem, model.isSearcheInGroups(), model.getStatesIds(), paramEQ, paramLIKE, paramIN, paramDATE, addParams, first, pageSize);
              
         setSource(DictDetailSource.SEARCHE_SOURCE);
         setCurrentViewModeAsDetail();        

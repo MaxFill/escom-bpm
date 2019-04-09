@@ -49,10 +49,19 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
      * @param company
      * @return 
      */
-    public List<Staff> findStaffsByCompany(Company company){
-        return staffFacade.findActualStaffByCompany(company, getCurrentUser());
+    public List<Staff> findStaffsInCompany(Company company){        
+        return staffFacade.findActualStaffInCompany(company, getCurrentUser());
     }
             
+    /**
+     * Возвращает штатные единицы, не входящие в подразделения, а напрямую принадлежащие компании, доступные для просмотра текущему пользователю
+     * @param company
+     * @return 
+     */
+    public List<Staff> findStaffsByCompany(Company company){        
+        return staffFacade.findStaffInOnlyCompany(company, getCurrentUser());
+    }
+    
     /**
      * Проверка перед созданием штатной единицы
      * @param newItem
@@ -152,15 +161,7 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
             errors.add(error);
         }
     }
-    
-    /**
-     * Действия перед удалением объекта
-     * @param staff
-     */
-    @Override
-    protected void preDeleteItem(Staff staff){        
-    }
-    
+        
     @Override
     public void doGetCountUsesItem(Staff staff,  Map<String, Integer> rezult){
         rezult.put("Users", userFacade.findUsersByStaff(staff).size());

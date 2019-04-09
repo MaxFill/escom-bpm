@@ -23,7 +23,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /* Контрагенты */
 @Stateless
@@ -120,15 +120,6 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
         return freshGroup.getPartnersList().stream()
                 .filter(partner -> !partner.isDeleted() && partner.isActual())
                 .collect(Collectors.toList());        
-    }         
-    
-    @Override
-    public Long findCountActualDetails(PartnerGroups group){
-        PartnerGroups freshGroup = partnersGroupsFacade.find(group.getId());
-        return freshGroup.getPartnersList()
-                .stream()
-                .filter(partner -> !partner.isDeleted() && partner.isActual())
-                .count();
     }
     
     @Override
@@ -176,5 +167,65 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
         Query query = em.createQuery(update);
         return query.executeUpdate();
     }
-
+    
+    /* ПОИСК */
+    
+    /* Дополнения при выполнении поиска через форму поиска */
+    @Override
+    protected void addLikePredicates(Root root, List<Predicate> predicates,  CriteriaBuilder cb, Map<String, Object> paramLIKE){
+        String param = (String) paramLIKE.get("name");
+        if (StringUtils.isNotBlank(param)) {
+            predicates.add(
+                    cb.or(
+                            cb.like(root.<String>get("name"), param),
+                            cb.like(root.<String>get("fullName"), param)
+                    )
+            );
+            paramLIKE.remove("name");
+        }
+        super.addLikePredicates(root, predicates, cb, paramLIKE);
+    }
+    
+    /**
+     * Выполняет проверку сначала на принадлежность checkedPartner к группе exampleGroup 
+     * или какой-нибудь дочерней от exampleGroup (при условии что searcheInSubGroups = true)
+     * и если принадлежность существует, то выполняется проверка на наличие у пользователя прав доступа к checkedPartner
+     * @param checkedPartner проверяемый объект
+     * @param exampleGroup искомая группа (критерий поиска)
+     * @param checkedOwner поле всегда пустое (null) т.к. у пользователя нет владельца
+     * @param user пользователь, для которого проверяются права к checkedUser
+     * @param searcheInSubGroups если true, то поиск выполнять также и во вложенных группах
+     * @return true - если объект доступен, false - если не доступен
+     */
+    @Override
+    protected boolean checkPreloadItem(BaseDict exampleGroup, BaseDict checkedOwner, Partner checkedPartner, User user, boolean searcheInSubGroups){        
+        if (checkPartnerInGroup(checkedPartner, (PartnerGroups)exampleGroup, searcheInSubGroups)){
+            return preloadCheckRightView(checkedPartner, user);
+        } else {            
+            return false;
+        }
+    } 
+    
+    /**
+     * Выполняет проверку принадлежности user к examplUserGroup
+     * @param partner проверяемый пользователь
+     * @param examplUserGroup искомая группа (критерий поиска)
+     * @param searcheInSubGroups если true, то поиск выполнять так же и во вложенных группах
+     * @return 
+     */
+    public boolean checkPartnerInGroup(final Partner partner, final PartnerGroups examplUserGroup, boolean searcheInSubGroups){
+        return partner.getPartnersGroupsList().stream().parallel()
+                .filter(group->checkPartnerGroup(examplUserGroup, group, searcheInSubGroups))
+                .findFirst()
+                .isPresent();                        
+    }
+    
+    private boolean checkPartnerGroup(final PartnerGroups examplUserGroup, PartnerGroups checkedGroup, boolean searcheInSubGroups){
+        if (checkedGroup == null) return false;
+        if (checkedGroup.equals(examplUserGroup)){
+            return true;
+        } else {
+            return searcheInSubGroups ? checkPartnerGroup(examplUserGroup, checkedGroup.getParent(), searcheInSubGroups) : false;
+        }
+    }
 }

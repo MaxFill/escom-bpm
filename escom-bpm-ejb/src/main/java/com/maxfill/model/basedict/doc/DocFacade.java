@@ -502,7 +502,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     @Override
     protected void addLikePredicates(Root root, List<Predicate> predicates,  CriteriaBuilder cb, Map<String, Object> paramLIKE){
         String param = (String) paramLIKE.get("regNumber");
-        if (org.apache.commons.lang.StringUtils.isNotBlank(param)) {
+        if (StringUtils.isNotBlank(param)) {
             predicates.add(
                     cb.or(
                             cb.like(root.<String>get("regNumber"), param),
@@ -524,6 +524,11 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
                 Predicate predicate = join.get("id").in(docTypeIds);
                 predicates.add(predicate);
             } 
+        }
+        if (addParams.containsKey("owner")){
+            Integer folderId = ((BaseDict) addParams.get("owner")).getId(); 
+            Join<Doc, Folder> folderJoin = root.join("owner");
+            predicates.add(builder.equal(folderJoin.<Integer>get("id"), folderId));            
         }
     }
 }

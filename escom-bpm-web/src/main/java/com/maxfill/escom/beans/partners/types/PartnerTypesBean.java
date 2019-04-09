@@ -5,6 +5,7 @@ import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.basedict.partnerTypes.PartnerTypesFacade;
 import com.maxfill.model.basedict.partnerTypes.PartnerTypes;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
+import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.model.basedict.partner.PartnersFacade;
 
 import javax.ejb.EJB;
@@ -55,4 +56,8 @@ public class PartnerTypesBean extends BaseTableBean<PartnerTypes>{
         return null;
     }
 
+    @Override
+    public SearcheModel initSearcheModel() {
+        return new PartnerTypesSearche();
+    }
 }

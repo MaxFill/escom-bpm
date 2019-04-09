@@ -19,9 +19,6 @@ import java.util.logging.Level;
 public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> extends BaseTableBean<T>{
     private static final long serialVersionUID = 6547409445062031636L;
 
-    @EJB
-    protected AttacheService attacheService;
-
     public abstract List<O> getGroups(T item);          //возвращает список групп объекта
 
     /**

@@ -49,8 +49,7 @@ public final class DocsSearche extends SearcheModel{
         }
         if (partnerSearche != null){
            paramEQ.put("partner", partnerSearche); 
-        }  
-        
+        }         
     }        
       
     public void changeDateDocument(String period){

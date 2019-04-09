@@ -44,7 +44,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         }
     }
 
-    /* Действия перед удалением папки  */
+    /* Действия перед физическим удалением папки  */
     @Override
     protected void preDeleteItem(Folder folder) {       
         folder.getDetailItems().clear();

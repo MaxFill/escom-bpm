@@ -39,7 +39,7 @@
                 <h:panelGrid id="staffsGrig" columns="2" styleClass="without-spaces">
                     <p:outputLabel value="#{bundle.ForSomeone}:" />
                     <p:selectOneMenu value="#{_bean.selectedStaff}" id="staff" converter="staffConvertor" disabled="#{!sessionBean.userAdmin}" filter="true" filterMatchMode="startsWith">
-                        <f:selectItems value="#{staffBean.findStaffsByCompany(_bean.company)}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}" />
+                        <f:selectItems value="#{staffBean.findStaffsInCompany(_bean.company)}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}" />
                         <f:selectItem itemValue="#{null}" itemLabel="#{bundle.ForAll}" />
                         <p:ajax event="change" update="explToolBar calendar" listener="#{calendarBean.onRefresh()}" oncomplete="return itemChange = 1;"/>
                     </p:selectOneMenu>

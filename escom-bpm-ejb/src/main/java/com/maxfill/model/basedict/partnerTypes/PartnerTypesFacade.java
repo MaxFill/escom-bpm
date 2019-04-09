@@ -4,12 +4,15 @@ import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.basedict.partner.Partner;
 import com.maxfill.model.basedict.partner.Partner_;
+import java.util.List;
+import java.util.Map;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Фасад для сущности "Виды контрагентов"
@@ -53,5 +56,23 @@ public class PartnerTypesFacade extends BaseDictFacade<PartnerTypes, PartnerType
         update.where(predicate);
         Query query = em.createQuery(update);
         return query.executeUpdate();
+    }
+    
+    /* ПОИСК */
+    
+    /* Дополнения при выполнении поиска через форму поиска */
+    @Override
+    protected void addLikePredicates(Root root, List<Predicate> predicates,  CriteriaBuilder cb, Map<String, Object> paramLIKE){
+        String param = (String) paramLIKE.get("name");
+        if (StringUtils.isNotBlank(param)) {
+            predicates.add(
+                    cb.or(
+                            cb.like(root.<String>get("name"), param),
+                            cb.like(root.<String>get("fullName"), param)
+                    )
+            );
+            paramLIKE.remove("name");
+        }
+        super.addLikePredicates(root, predicates, cb, paramLIKE);
     }
 }

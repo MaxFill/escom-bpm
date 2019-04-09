@@ -29,6 +29,7 @@ public final class DictFrmName {
     public static final String FRM_LOOP = "loop-card";
     
     public static final String FRM_STAFF_EXPLORER = "staff-explorer";
+    public static final String FRM_ORGSTRUCTURE = "orgstructure";
 
     public static final String FRM_ADMIN_OBJECTS = "object-admin";
     public static final String FRM_ADMIN_CLEANS = "clean-up";

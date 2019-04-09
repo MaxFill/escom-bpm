@@ -1,0 +1,116 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                 template="/view/templ/templ-dlg.xhtml"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core">    
+
+    <ui:param name="_bean" value="#{orgStructureBean}"/>
+        
+    <ui:define name="title">
+        #{orgStructureBean.formHeader}
+    </ui:define>
+    
+    <ui:define name="toolbarComponents" >
+        <h:panelGrid columns="2" styleClass="without-spaces">
+            <p:outputLabel value="#{bundle.Organization}:" for="company" indicateRequired="true"/>
+            <p:selectOneMenu id="company" value="#{orgStructureBean.selectedCompany}" converter="companyConvertor"
+                             filter="true" filterMatchMode="startsWith"
+                             required="true" requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}"
+                             disabled="#{!sessionBean.userAdmin}">
+                <f:selectItems value="#{orgStructureBean.companies}" var="org" itemLabel="#{org.name}" itemValue="#{org}" /> 
+                <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
+                <p:ajax event="change" update="organigram" listener="#{orgStructureBean.onClearDiagram()}" oncomplete="return itemChange = 1;"/>
+            </p:selectOneMenu>
+        </h:panelGrid>
+    </ui:define>
+
+    <ui:define name="centerFormContent">                
+        <h:panelGroup id="organigram">
+            <p:organigram id="orgstruct" rendered="#{orgStructureBean.selectedCompany != null}" var="node"
+                   widgetVar="organigram" value="#{orgStructureBean.rootNode}" selection="#{orgStructureBean.selection}"                   
+                   leafNodeConnectorHeight="5"
+                   autoScrollToSelection="#{false}"
+                   zoom="#{true}"                 
+                   style="#{orgStructureBean.style}">
+                
+                <p:ajax event="dragdrop" process="@this" listener="#{orgStructureBean.nodeDragDropListener}" />
+                <p:ajax event="select" process="@this" listener="#{orgStructureBean.nodeSelectListener}" />
+                <p:ajax event="contextmenu" process="@this" />
+                
+                <p:organigramNode style="width: auto; background-color: #C7C6C4;">
+                    <h:outputText value="#{node.data.shortName}" />
+                </p:organigramNode>
+
+                <p:organigramNode type="root"
+                                  icon="ico_company20"
+                                  style="width: auto; border-radius: 10px;">
+                    <h:outputText value="#{node.data.shortName}" />
+                </p:organigramNode>
+
+                <p:organigramNode type="division" 
+                                  styleClass="division"
+                                  icon="ico-portfolio-16"
+                                  iconPos="left">
+                    <h:outputText value="#{node.data.shortName}" />
+                </p:organigramNode>
+
+                <p:organigramNode type="employee"
+                                  styleClass="employee"
+                                  icon="ico_user20">
+                    <h:outputText value="#{node.data.shortName}" />
+                </p:organigramNode>
+            </p:organigram>
+            
+            <p:contextMenu for="orgstruct" nodeType="root">
+                <p:menuitem value="#{bundle.Open}"/>
+                <p:separator/>
+            </p:contextMenu>
+            
+            <p:contextMenu for="orgstruct" nodeType="employee">
+                <p:menuitem value="#{bundle.Open}"/>
+                <p:separator/>
+                <p:menuitem value="#{bundle.MoveToTrash}"
+                            update="organigram" 
+                            actionListener="#{orgStructureBean.onMoveStaffToTrash()}"
+                            />
+            </p:contextMenu>
+ 
+            <p:contextMenu for="orgstruct" nodeType="division">
+                <p:menuitem value="#{bundle.Open}"/>
+                <p:separator/>
+                <p:menuitem value="#{bundle.CreateDepartament}"
+                            update="organigram"
+                            />
+                <p:menuitem value="#{bundle.CreateStaff}"
+                            update="organigram"
+                            />
+                <p:separator/>
+                <p:menuitem value="#{bundle.MoveToTrash}"
+                            actionListener="#{orgStructureBean.onMoveDepartToTrash()}"
+                            update="organigram"
+                            />
+            </p:contextMenu>
+        </h:panelGroup>
+    </ui:define>
+    
+    <ui:define name="customStyleCSS">
+        <style>
+        .ui-organigram .ui-organigram-node.division {
+            width: auto;
+            background: #93e7ff;
+            background: -moz-linear-gradient(top, #93e7ff 0%, #007efc 100%);
+            background: -webkit-linear-gradient(top, #93e7ff 0%,#007efc 100%);
+            background: linear-gradient(to bottom, #93e7ff 0%,#007efc 100%);
+        }
+ 
+        .ui-organigram .ui-organigram-node.employee {
+            width: auto;
+            background: #88c048;
+            background: -moz-linear-gradient(top, #88c048 0%, #69a038 100%);
+            background: -webkit-linear-gradient(top, #88c048 0%,#69a038 100%);
+            background: linear-gradient(to bottom, #88c048 0%,#69a038 100%);
+        }
+        </style>
+    </ui:define>
+</ui:composition>

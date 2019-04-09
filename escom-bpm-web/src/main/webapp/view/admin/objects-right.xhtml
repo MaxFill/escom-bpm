@@ -123,7 +123,7 @@
                             <p:selectOneMenu value="#{metadatesBean.selUser}" filter="true" filterMatchMode="startsWith" title="#{bundle.Users}"
                                              converter="usersConvertor"
                                              rendered="#{metadatesBean.typeAddRight == DictRights.TYPE_USER}">
-                                <f:selectItems value="#{userBean.findAll()}" var="u" itemLabel="#{u.shortFIO}" itemValue="#{u}"/>
+                                <f:selectItems value="#{userBean.users}" var="u" itemLabel="#{u.shortFIO}" itemValue="#{u}"/>
                                 <f:selectItem itemValue="#{null}" itemLabel="--#{bundle.Select}--" />
                             </p:selectOneMenu>
                             <p:selectOneMenu value="#{metadatesBean.selUsGroup}" filter="true" filterMatchMode="startsWith" title="#{bundle.Groups}"

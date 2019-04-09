@@ -34,7 +34,7 @@
 
     <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
         <p:accordionPanel id="accord" widgetVar="accordion" activeIndex="#{_bean.currentTab}" >
-            <p:ajax event="tabChange" listener="#{_bean.onTreeTabChange}" update="#{_updates}" oncomplete="initDND();"/>
+            <p:ajax event="tabChange" listener="#{_bean.onTreeTabChange}" update="#{_updates} mainFRM:serchePanel" oncomplete="initDND();"/>
 
             <p:tab id="tabTree" title="#{_lbGroupName}" rendered="#{_treeBean != null and _bean != null}">
                 <ui:include src="/view/templ/tree/tree-toolbar.xhtml"/>
@@ -54,10 +54,10 @@
                     <p:ajax event="select" listener="#{_bean.onTreeNodeSelect}"
                             update="#{_updates}"
                             onstart="PF('statusDialog').show()"
-                            oncomplete="PF('statusDialog').hide(); initDND();"/>
+                            oncomplete="PF('statusDialog').hide(); PF('searcheAccordWV').unselect(0); initDND();"/>
                     <p:ajax event="contextMenu" listener="#{_bean.onTreeNodeSelect}"
                             update="westFRM:accord:toolbarTree #{_updates}"
-                            oncomplete="initDND()"/>
+                            oncomplete="PF('searcheAccordWV').unselect(0); initDND();"/>
                     <p:ajax event="expand"  listener="#{_bean.onNodeExpand}" />
                     <p:ajax event="collapse" listener="#{_bean.onNodeCollapse}" />
                 </p:tree>

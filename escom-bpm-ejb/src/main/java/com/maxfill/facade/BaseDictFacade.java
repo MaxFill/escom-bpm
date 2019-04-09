@@ -535,7 +535,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
     /**
      * Поиск объектов по заданным критериям
-     * @param treeItem - владелец объектов - папка или группа, если она указана, то поиск выполняется с учётом её
+     * @param owner - владелец объектов - папка или группа, если она указана, то поиск выполняется с учётом её
+     * @param searcheInSubGroups - true выполнять поиск во вложенных папках, false - искать только в текущей папке
      * @param states
      * @param paramEQ
      * @param paramLIKE
@@ -547,19 +548,19 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
      * @param currentUser
      * @return 
      */
-    public List<T> findItemsByParams(O treeItem, List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams, int first, int pageSize, User currentUser) {
+    public List<T> findItemsByParams(O owner, boolean searcheInSubGroups, List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams, int first, int pageSize, User currentUser) {
         first = 0;
         pageSize = configuration.getMaxResultCount();        
         TypedQuery<T> query = em.createQuery(makeQueryByParams(states, paramEQ, paramLIKE, paramIN, paramDATE, itemClass, addParams));        
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
-        if (treeItem == null || treeItem.getId() == 0){
+        if (owner == null){
             return query.getResultStream()
                     .filter(item -> preloadCheckRightView(item, currentUser))
                     .collect(Collectors.toList());
         } else {
             return query.getResultStream()                    
-                    .filter(item -> checkPreloadItem(treeItem, item, currentUser))
+                    .filter(item -> checkPreloadItem(owner, item.getOwner(), item, currentUser, searcheInSubGroups))
                     .collect(Collectors.toList());
         }
     }
@@ -628,22 +629,24 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     /* *** *** *** */    
     
     /**
-     * Выполняет проверку на принадлежность проверяемого объекта item к какой-нибудь папке из treeItem
-     * если принадлежность найдена, то выполняется проверка на наличие у пользователя прав доступа к item
-     * @param treeItem
-     * @param item
-     * @param user
-     * @return 
+     * Выполняет проверку сначала на принадлежность checkedItem к владельцу exampleOwner 
+     * или какому-нибудь дочернему от exampleOwner (при условии что searcheInSubGroups = true)
+     * и если принадлежность существует, то выполняется проверка на наличие у пользователя прав доступа к checkedItem
+     * @param checkedItem проверяемый объект
+     * @param exampleOwner искомый владелец (критерий поиска)
+     * @param checkedOwner владелец, для которого выполняется проверка (на первой итерации это владелец checkedItem)
+     * @param user пользователь, для которого проверяются права к checkedItem
+     * @param searcheInSubGroups
+     * @return true - если объект доступен, false - если не доступен
      */
-    private boolean checkPreloadItem(BaseDict treeItem, BaseDict item, User user){
-        if (item.getOwner().equals(treeItem)){
-            LOGGER.log(Level.INFO, "Find document id ={0}", item.getId());            
-            return preloadCheckRightView(item, user);
-        } else {            
-            return treeItem.getChildItems().stream()
-                    .filter(child->checkPreloadItem((BaseDict)child, item, user))
-                    .findFirst()
-                    .isPresent();
+    protected boolean checkPreloadItem(BaseDict exampleOwner, BaseDict checkedOwner, T checkedItem, User user, boolean searcheInSubGroups){
+        if (checkedOwner == null) return false;            
+        if (checkedOwner.equals(exampleOwner)){
+            //LOGGER.log(Level.INFO, "Check right for folder id ={0}", checkedOwner.getId());            
+            return preloadCheckRightView(checkedItem, user);
+        } else {
+            //если нужно искать с учётом вложенных папок, то проверку выполняем снизу вверх
+            return searcheInSubGroups ? checkPreloadItem(exampleOwner,  checkedOwner.getParent(), checkedItem, user, searcheInSubGroups) : false;
         }
     }    
     
@@ -785,7 +788,12 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     
     /* *** ПРАВА ДОСТУПА *** */
 
-    /* ПРАВА ДОСТУПА: Установка и проверка прав объекта для пользователя при загрузке объекта */
+    /**
+     * Проверка права пользователя на просмотр при загрузке объекта item из базы данных
+     * @param item объект, к которому проверяется доступ
+     * @param user пользователь, для которого выполняется проверка прав
+     * @return 
+     */
     public Boolean preloadCheckRightView(BaseDict item, User user) {        
         Rights rights = getRightItem(item, user);
         item.setRightItem(rights);
