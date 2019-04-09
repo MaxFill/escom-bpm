@@ -496,7 +496,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     /* КОРЗИНА: помещение в корзину отмеченных записей контента  */
     public void onMoveCheckedContentToTrash(){
         Set<String> errors = new HashSet<>();
-        getCheckedItems().stream()
+        getCheckedItems()
                 .forEach(item -> {
                     if (isItemDetailType(item)){
                         tableBean.moveToTrash(item, errors);

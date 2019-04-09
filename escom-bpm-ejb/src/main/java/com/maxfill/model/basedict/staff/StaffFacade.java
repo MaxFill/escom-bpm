@@ -207,8 +207,10 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
             staff.setOwner(null); //теперь нет связи с подразделением
         } else
             if (target instanceof Department){
-                staff.setOwner((Department)target);
-                staff.setCompany(null);
+                Department owner = (Department)target;
+                staff.setOwner(owner);
+                Company company = (Company)owner.getCompany();
+                staff.setCompany(company);
             }
     }
     

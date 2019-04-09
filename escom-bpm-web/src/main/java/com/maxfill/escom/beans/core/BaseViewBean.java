@@ -189,6 +189,10 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         if (beanId == null){
             beanId = this.toString();
         }        
+        /*
+            сохраняем идентификатор бина, из которого открывается карточка объекта
+            для того чтобы потом в бине карочки получить этот бин из мапы бинов по его идентификатору
+        */        
         paramsMap.put(SysParams.PARAM_BEAN_ID, Collections.singletonList(beanId));
         sessionBean.getOpenedBeans().put(beanId, this);
         return paramsMap;

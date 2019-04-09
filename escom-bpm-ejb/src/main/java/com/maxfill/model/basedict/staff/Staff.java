@@ -167,6 +167,10 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
         return employee.getPhone();
     }
     
+    public boolean isVacant(){
+        return employee == null;
+    }
+    
     /* GETS & SETS */
     
     @Override
