@@ -134,7 +134,6 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
      * @param parent
      * @param owner
      * @param params
-     * @param errors
      * @return
      */
     public T createItem(User author, T parent, O owner, Map<String, Object> params) {

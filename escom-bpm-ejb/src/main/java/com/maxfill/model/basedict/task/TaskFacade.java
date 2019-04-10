@@ -5,12 +5,16 @@ import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.facade.BaseDictWithRolesFacade;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.company.Company;
+import com.maxfill.model.basedict.department.Department;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.processType.ProcessType;
 import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.core.states.State;
 import com.maxfill.model.basedict.result.Result;
+import com.maxfill.model.basedict.staff.StaffFacade;
 import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.core.messages.UserMessagesFacade;
 import com.maxfill.services.worktime.WorkTimeService;
@@ -25,6 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -48,6 +53,8 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
     private ProcessTypesFacade processTypesFacade;
     @EJB
     private UserMessagesFacade messagesFacade;
+    @EJB
+    private StaffFacade staffFacade;
     
     public TaskFacade() {
         super(Task.class, TaskLog.class, TaskStates.class);
@@ -99,7 +106,12 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
             task.setScheme(process.getScheme());
         }
     }    
-            
+     
+    /**
+     * Отбор задач по штатной единице
+     * @param staff
+     * @return 
+     */
     public List<Task> findTaskByStaff(Staff staff){
         em.getEntityManagerFactory().getCache().evict(Task.class);
         CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -166,6 +178,19 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         return new Tuple(0, result);
     }
     
+    /**
+     * Поиск задач по штатной единице с учётом состояний задач и прав доступа пользователя
+     * @param staff
+     * @param states
+     * @param currentUser
+     * @return 
+     */
+    public List<BaseDict> findTaskByStaffStates(Staff staff, List<State> states, User currentUser){
+        return findTaskByStaffStates(staff, states)
+                .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
+                .collect(Collectors.toList());
+    }
+    
     public Stream<Task> findTaskByStaffStates(Staff staff, List<State> states){
         em.getEntityManagerFactory().getCache().evict(Task.class);
         CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -173,13 +198,121 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         Root<Task> root = cq.from(Task.class); 
         List<Predicate> criteries = new ArrayList<>();
         criteries.add(builder.equal(root.get(Task_.owner), staff));
-        criteries.add(root.get("state").get("currentState").in(states));        
+        if (!states.isEmpty()){
+            criteries.add(root.get("state").get("currentState").in(states));
+        }
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);
         cq.select(root).where(builder.and(predicates));
         TypedQuery<Task> q = em.createQuery(cq);
         return q.getResultStream();
     }               
+    
+    public Stream<Task> findTaskByStates(List<State> states){
+        em.getEntityManagerFactory().getCache().evict(Task.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Task> cq = builder.createQuery(Task.class);
+        Root<Task> root = cq.from(Task.class); 
+        List<Predicate> criteries = new ArrayList<>();
+        if (!states.isEmpty()){
+            criteries.add(root.get("state").get("currentState").in(states));
+        }
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+        cq.select(root).where(builder.and(predicates));
+        TypedQuery<Task> query = em.createQuery(cq);
+        return query.getResultStream();
+    }
+    
+    /**
+     * Поиск задач в заданных состояниях для department, доступные currentUser
+     * @param department
+     * @param states
+     * @param currentUser
+     * @param searcheInSubGroups
+     * @return 
+     */
+    public List<BaseDict> findTaskByDepartStates(Department department, List<State> states, User currentUser, boolean searcheInSubGroups){        
+        return findTaskByStates(states)
+                .filter(task -> checkTaskInDepartment(task, department, task.getOwner().getOwner(), searcheInSubGroups, currentUser))
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Поиск задач в заданных состояниях для company , доступные currentUser
+     * @param company
+     * @param states
+     * @param currentUser
+     * @param searcheInSubGroups
+     * @return 
+     */
+    public List<BaseDict> findTaskByCompanyStates(Company company, List<State> states, User currentUser, boolean searcheInSubGroups){
+        return findTaskByStates(states)
+                .filter(task -> checkTaskInCompany(task, company, currentUser, searcheInSubGroups))
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Выполняет проверку сначала на принадлежность task к владельцу exampleOwner->(Company or Department) 
+     * или какому-нибудь дочернему от exampleOwner (при условии что searcheInSubGroups = true)
+     * и если принадлежность существует, то выполняется проверка на наличие у пользователя прав доступа к staff
+     * @param task проверяемый объект
+     * @param exampleOwner искомый владелец (критерий поиска), может быть как компания так и подразделением
+     * @param checkedOwner владелец, для которого выполняется проверка 
+     * @param user пользователь, для которого проверяются права к checkedItem
+     * @param searcheInSubGroups
+     * @return true - если объект доступен, false - если не доступен
+     */
+    @Override
+    protected boolean checkPreloadItem(BaseDict exampleOwner, BaseDict checkedOwner, Task task, User user, boolean searcheInSubGroups){        
+        if (exampleOwner instanceof Company){
+            return checkTaskInCompany(task, (Company) exampleOwner, user, searcheInSubGroups);
+        } else {
+            return checkTaskInDepartment(task, (Department) exampleOwner, task.getOwner().getOwner(), searcheInSubGroups, user);                    
+        }
+    } 
+    
+    /**
+     * Проверка принадлежности task указанному exampleDepartment и если да, то выполняется праверка прав доступа для user
+     * @param task
+     * @param exampleDepartment искомое подразделение
+     * @param department проверяемое подразделение 
+     * @return 
+     */
+    private boolean checkTaskInDepartment(Task task, Department exampleDepartment, Department department, boolean searcheInSubGroups, User user){
+        if (department == null) return false;            
+        if (department.equals(exampleDepartment)){
+            return preloadCheckRightView(task, user);
+        } else {
+            //если нужно искать с учётом вложенных подразделений, то проверку выполняем снизу вверх
+            return searcheInSubGroups ? checkTaskInDepartment(task, exampleDepartment,  department.getParent(), searcheInSubGroups, user) : false;
+        }
+    }
+    
+    /**
+     * Проверяет, относится task к указанной company и если да, то выполняется праверка прав доступа для user
+     * @param task
+     * @param company
+     * @param user
+     * @return 
+     */
+    private boolean checkTaskInCompany(Task task, Company company, User user, boolean searcheInSubGroups){        
+        Staff staff = task.getOwner();        
+        if (staff == null) return false;
+        
+        Company companyStaff;
+        if (!searcheInSubGroups){   //если не искать в подразделениях
+            companyStaff = staff.getCompany();
+        } else {
+            companyStaff = staffFacade.findCompanyForStaff(staff);
+        }
+        
+        if (Objects.equals(companyStaff, company)){
+            return preloadCheckRightView(task, user);
+        } else {
+            return false;
+        }           
+    }
     
     /**
      * Формирование даты планового срока исполнения. Учитывается рабочее время

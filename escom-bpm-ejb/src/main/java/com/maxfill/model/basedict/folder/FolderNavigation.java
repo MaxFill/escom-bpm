@@ -1,4 +1,3 @@
-
 package com.maxfill.model.basedict.folder;
 
 import com.maxfill.model.basedict.BaseDict;

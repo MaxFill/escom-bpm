@@ -14,15 +14,18 @@
         
         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                <p:graphicImage value="/resources/icon/timer-32.png" />                                 
+                <p:graphicImage value="/resources/icon/timer-32.png"/>
                 <p:link href="#{sessionBean.onGetFormURL('/tasks/'.concat(DictFrmName.FRM_SCHEDULER))}"                         
-                        value="#{bundle.Scheduler}" target="_blank" />
+                        value="#{bundle.Scheduler}" target="_blank"/>
 
-                <p:graphicImage value="/resources/icon/tasks-32.png"/>  
+                <p:graphicImage value="/resources/icon/tasks-32.png"/>
                 <p:commandLink id="countTasks" value="#{''.concat(bundle.MyTasks).concat(': ').concat(sessionBean.getTasksInfo())}" 
                                actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_MY_TASKS)}"
                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"> 
                 </p:commandLink>
+                
+                <p:graphicImage value="/resources/icon/book-32.png" />                    
+                <p:link href="#{sessionBean.onGetFormURL('/tasks/task-explorer')}" value="#{bundle.TaskExplorer}" target="_blank" />
             </p:panelGrid>
         </p:panelGrid>
     </p:panel>

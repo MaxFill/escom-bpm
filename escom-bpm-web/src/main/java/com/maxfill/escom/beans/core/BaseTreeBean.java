@@ -24,6 +24,11 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
         return getDetailBean().getLazyFacade().findActualDetailItems(group, first, pageSize, sortField,  sortOrder, getCurrentUser());        
     }
     
+    /**
+     * Подгрузка дочерних элементов при щелчке по ветке в дереве
+     * @param item
+     * @param node 
+     */
     public void loadChilds(BaseDict item, TreeNode node){
         if ("ui-icon-folder-collapsed".equals(item.getIconTree())){
             node.setExpanded(true);
@@ -37,7 +42,8 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     public TreeNode makeTree() {
         TreeNode tree = new DefaultTreeNode("Root", null);
         tree.setExpanded(true);
-        getLazyFacade().findRootItems(getCurrentUser()).forEach(treeItem -> addItemInTree(tree, (BaseDict)treeItem, "tree"));
+        getLazyFacade().findRootItems(getCurrentUser())
+                .forEach(treeItem -> addItemInTree(tree, (BaseDict)treeItem, "tree"));
         return tree;
     }
 

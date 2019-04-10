@@ -39,6 +39,8 @@ public class StaffStates extends BaseStateItem{
         this.id = id;
     }
 
+    /* *** *** */
+    
     @Override
     public int hashCode() {
         int hash = 0;

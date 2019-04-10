@@ -58,19 +58,9 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     public void loadChilds(BaseDict item, TreeNode node){
         if ("ui-icon-folder-collapsed".equals(item.getIconTree())){
             node.setExpanded(true);
-            node.getChildren().clear();            
-            switch (item.getClass().getSimpleName()){
-                case DictObjectName.DEPARTAMENT:{                    
-                    departmentFacade.findActualChilds((Department)item, getCurrentUser())
-                            .forEach(itemChild -> addItemInTree(node, itemChild, "tree"));
-                    break;
-                }
-                case DictObjectName.COMPANY:{                    
-                    departmentFacade.findActualDetailItems((Company)item, 0, 0, "name", "ASCENDING", getCurrentUser())
+            node.getChildren().clear();                  
+            departmentFacade.findActualDetailItems((Company)item, 0, 0, "name", "ASCENDING", getCurrentUser())
                             .forEach(itemChild -> addItemInTree(node, itemChild, DictObjectName.COMPANY));
-                    break;
-                }
-            }            
             item.setIconTree("ui-icon-folder-open");
         }
     }

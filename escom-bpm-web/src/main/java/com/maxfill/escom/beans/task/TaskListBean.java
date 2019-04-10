@@ -3,30 +3,20 @@ package com.maxfill.escom.beans.task;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictTaskStatus;
 import com.maxfill.dictionary.SysParams;
-import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.facade.BaseLazyFacade;
-import com.maxfill.model.basedict.assistant.AssistantFacade;
-import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.core.states.State;
 import com.maxfill.model.core.states.StateFacade;
 import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.task.TaskFacade;
-import com.maxfill.model.basedict.user.UserFacade;
 import com.maxfill.utils.DateUtils;
 import java.util.ArrayList;
-import java.util.Comparator;
-import static java.util.Comparator.naturalOrder;
-import static java.util.Comparator.nullsFirst;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -48,10 +38,6 @@ public class TaskListBean extends LazyLoadBean<Task>{
     private TaskFacade taskFacade;
     @EJB
     private StateFacade stateFacade;
-    @EJB
-    private AssistantFacade assistantFacade;
-    @EJB
-    private UserFacade userFacade;
     
     @Inject
     private TaskBean taskBean;
@@ -60,8 +46,7 @@ public class TaskListBean extends LazyLoadBean<Task>{
     
     private boolean showOnlyExecute = true;
     private List<State> states = new ArrayList<>();
-    private List<Staff> executors;
-    private Staff executor;
+
     private String number;
     private String name;
     private Integer tasksStatus; //0 ExeInTime, 1 ExeOverdue, 2 FinishInTime, 3 FinishOverdue
@@ -69,40 +54,13 @@ public class TaskListBean extends LazyLoadBean<Task>{
     @Override
     public void doBeforeOpenCard(Map<String, String> params) {
         states.add(stateFacade.getRunningState());
-        executor = getCurrentStaff();
-        executors = initExecutors();
         if (params.containsKey("tasksStatus")){
             tasksStatus = Integer.valueOf(params.get("tasksStatus"));
             period = sessionBean.getTaskPeriod();
             dateStart = sessionBean.getTaskDateStart();
             dateEnd = sessionBean.getTaskDateEnd();
         }
-    }
-    
-    /**
-     * Формирование списка доступных для выбора Исполнителей
-     * @param task 
-     */
-    private List<Staff> initExecutors(){                
-        //админ может выбрать любого
-        if (userFacade.isAdmin(getCurrentUser())){
-           return staffFacade.findActualStaff();            
-        }        
-        
-        Set<Staff> staffs = new HashSet<>();
-        if (executor != null){
-            staffs.add(executor);
-        }
-        staffs.addAll(assistantFacade.findAssistByUser(getCurrentUser()));
-        List<Staff> chiefs = assistantFacade.findChiefsByUser(getCurrentUser(), getCurrentUser()).stream()
-                .map(user->user.getStaff())
-                .collect(Collectors.toList());
-        staffs.addAll(chiefs);
-        List<Staff> result = new ArrayList<>(staffs);
-        return result.stream()                
-                .sorted(Comparator.comparing(Staff::getName, nullsFirst(naturalOrder())))
-                .collect(Collectors.toList());                        
-    }
+    }    
     
     /* *** ЗАДАЧИ *** */
     
@@ -182,7 +140,7 @@ public class TaskListBean extends LazyLoadBean<Task>{
     
     @Override
     protected Map<String, Object> makeFilters(Map filters) {
-        filters.put("owner", executor);         
+        filters.put("owner", getCurrentStaff());         
         if (!showOnlyExecute){     
             if(dateStart != null || dateEnd != null) {
                 Map <String, Date> dateFilters = new HashMap <>();
@@ -262,21 +220,7 @@ public class TaskListBean extends LazyLoadBean<Task>{
     }
     public void setStates(List<State> states) {
         this.states = states;
-    }
-
-    public List<Staff> getExecutors() {
-        return executors;
-    }
-    public void setExecutors(List<Staff> executors) {
-        this.executors = executors;
-    }
-    
-    public Staff getExecutor() {
-        return executor;
-    }
-    public void setExecutor(Staff executor) {
-        this.executor = executor;
-    }
+    }   
 
     public String getNumber() {
         return number;

@@ -56,6 +56,7 @@
             <ui:insert name="specCommandLinks"/>
         </p:column>
 
+        <ui:insert name="specMixedColumns"/>
         <ui:insert name="specDetailColumns" />
         <ui:insert name="specTreeColumns"/>
         <ui:insert name="specRootColumns"/>
@@ -66,7 +67,7 @@
             <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>            
         </p:column>
 
-        <p:column id="colDateChange" headerText="#{bundle.DateChange}" width="75" 
+        <p:column id="colDateChange" headerText="#{bundle.DateChange}" width="73" 
                   rendered="#{_showDateChange}" 
                   visible="#{_detailBean.isVisibleColumn('colDateChange')}"
                   sortBy="#{item.dateChange}">
@@ -75,7 +76,7 @@
             </h:outputLabel>
         </p:column>
 
-        <p:column id="colDateCreate" headerText="#{bundle.DateCreate}" width="75"                                    
+        <p:column id="colDateCreate" headerText="#{bundle.DateCreate}" width="73"                                    
                   visible="#{_detailBean.isVisibleColumn('colDateCreate')}"
                   sortBy="#{item.dateCreate}">
             <h:outputLabel value="#{item.dateCreate}">

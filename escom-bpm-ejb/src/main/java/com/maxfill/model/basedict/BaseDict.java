@@ -248,6 +248,10 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         return author != null ? author.getName() : "";
     }
     
+    public String getOwnerName(){
+        return owner == null ? "" : owner.getShortName();
+    }
+        
     public String getLogin(){
         return "";
     }

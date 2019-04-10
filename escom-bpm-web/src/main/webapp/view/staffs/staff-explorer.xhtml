@@ -27,11 +27,15 @@
        
     <!-- специфичные колонки таблицы обозревателя для "Штатной единицы"-->
     <ui:define name="specDetailColumns">
-        <p:column id="colPoast" headerText="#{bundle.Post}" sortBy="#{item.postName}" 
-                  rendered="#{_bean.isNowShowDetail()}">
-            <h:outputLabel value="#{item.postName}"/>
+        <p:column headerText="#{bundle.Post}" sortBy="#{item.postName}" 
+                  rendered="#{_bean.isNowShowDetail() or _bean.isNowShowMix()}">
+            #{item.postName}
         </p:column>
-    </ui:define> 
+        <p:column headerText="#{bundle.Departament}" sortBy="#{item.owner.name}" 
+                  rendered="#{_bean.isNowShowDetail() or _bean.isNowShowMix()}">
+            #{item.ownerName}
+        </p:column>
+    </ui:define>  
     
     <!-- специфичные колонки таблицы обозревателя для "Подразделения"-->
     <ui:define name="specTreeColumns"> 

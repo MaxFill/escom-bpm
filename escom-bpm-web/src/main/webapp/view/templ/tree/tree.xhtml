@@ -51,10 +51,14 @@
                         <h:outputText value="#{treeItem.nameEndElipse}" title="#{treeItem.name}"/>
                     </p:treeNode>
 
+                    <p:treeNode type="Staff" icon="#{treeItem.iconTree}" >
+                        <h:outputText value="#{treeItem.nameEndElipse}" title="#{treeItem.name}"/>
+                    </p:treeNode>
+                    
                     <p:ajax event="select" listener="#{_bean.onTreeNodeSelect}"
                             update="#{_updates}"
-                            onstart="PF('statusDialog').show()"
-                            oncomplete="PF('statusDialog').hide(); PF('searcheAccordWV').unselect(0); initDND();"/>
+                            onstart=""
+                            oncomplete="PF('searcheAccordWV').unselect(0); initDND();"/>
                     <p:ajax event="contextMenu" listener="#{_bean.onTreeNodeSelect}"
                             update="westFRM:accord:toolbarTree #{_updates}"
                             oncomplete="PF('searcheAccordWV').unselect(0); initDND();"/>

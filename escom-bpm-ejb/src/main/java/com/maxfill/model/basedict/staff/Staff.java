@@ -171,6 +171,16 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
         return employee == null;
     }
     
+    @Override
+    public String getOwnerName(){
+        return owner == null ? company.getShortName(): owner.getShortName();
+    }
+    
+    @Override
+    public String getIconTree(){
+        return "ui-icon-person";
+    }
+    
     /* GETS & SETS */
     
     @Override
@@ -284,7 +294,7 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
 
     @Override
     public String toString() {
-        return "Staff[ id=" + id + " ] [" + getName() + "]";
+        return "Staff [ id=" + id + " ] [" + getName() + "]";
     }
 
 }

@@ -98,7 +98,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         
     protected TreeNode dragNode, dropNode;
         
-    private Deque navigator; 
+    protected Deque navigator; 
 
     private final String typeMixed = "mixed";        
     private String currentType = typeMixed;
@@ -797,7 +797,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     public List<BaseDict> onLoadItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
         this.filters = filters;
         if (loadItems == null) {
-            switch (getSource()){
+            switch (source){
                 case DictDetailSource.FILTER_SOURCE:{
                     Filter filter = (Filter) filterSelectedNode.getData();
                     if (filterSelectedNode.getType().equals(typeDetail)){
@@ -815,16 +815,8 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                     break;
                 }
                 case DictDetailSource.TREE_SOURCE:{ 
-                    BaseDict treeItem = (BaseDict) treeSelectedNode.getData(); 
-                    setCurrentViewModeAsTree();
-                    if (isItemTreeType(treeItem)){                    
-                            loadItems = treeBean.makeGroupContent(treeItem, tableBean, viewMode, first, pageSize, sortField,  sortOrder.name());                            
-                            //count = treeBean.getDetailBean().getFacade().findCountActualDetails(currentItem).intValue();
-                        } else
-                            if (isItemRootType(treeItem)){                            
-                                loadItems = rootBean.makeGroupContent(treeItem, tableBean, viewMode, first, pageSize, sortField,  sortOrder.name());
-                                //count = rootBean.getDetailBean().getFacade().findCountActualDetails(currentItem).intValue();
-                            }
+                    setCurrentViewModeAsMixed();
+                    loadItems = loadDetailItems(first, pageSize, sortField, sortOrder, makeFilters(filters));
                     break;
                 }
                 case DictDetailSource.SEARCHE_SOURCE:{
@@ -875,6 +867,19 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
 
         return loadItems.subList(first, pageSize);
     }    
+    
+    /**
+     * Загрузка детальных объектов для текущего элемента в дереве
+     * @param first
+     * @param pageSize
+     * @param sortField
+     * @param sortOrder
+     * @param filters
+     * @return 
+     */
+    protected List<BaseDict> loadDetailItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters){
+        return new ArrayList<>();
+    } 
     
     protected List<BaseDict> loadDocs(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters){
         return new ArrayList<>();
@@ -947,12 +952,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         }
         return tree;
     }    
-    
-    /* ДЕРЕВО: обработка события установки текущего элемента в дереве */
-    public void onTreeNodeSelect(NodeSelectEvent event) {
-        TreeNode node = event.getTreeNode();
-        onSelectInTree(node);
-    }    
+       
     
     /* ДЕРЕВО: Установка текущего элемента в дереве по заданному узлу node */
     public void onSelectInTree(TreeNode node) {        
@@ -966,24 +966,12 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         treeSelectedNode.setSelected(true);
         currentItem = (BaseDict) treeSelectedNode.getData();        
         
-        if (isItemTreeType(currentItem)){
-            if ("ui-icon-folder-collapsed".equals(currentItem.getIconTree())){
-                treeBean.loadChilds(currentItem, treeSelectedNode);
-                PrimeFaces.current().ajax().update("westFRM:accord:tree");
-            }                                    
-        } else
-            if (isItemRootType(currentItem)){
-                if ("ui-icon-folder-collapsed".equals(currentItem.getIconTree())){
-                    rootBean.loadChilds(currentItem, treeSelectedNode);
-                    PrimeFaces.current().ajax().update("westFRM:accord:tree");
-                }
-            }
+        loadSubTree();
         
         setSource(DictDetailSource.TREE_SOURCE); 
         refreshLazyData();
         
-        makeNavigator(currentItem);         
-        setCurrentViewModeAsMixed();
+        makeNavigator(currentItem);
        
         BaseDict rootItem = (BaseDict) tree.getChildren().get(0).getData();
         String journalName = "";
@@ -991,8 +979,10 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
             journalName = currentItem.getName();
         }        
         makeJurnalHeader(rootItem.getName(), journalName, "DisplaysObjectsRelatedTo");
-    }        
-        
+    }
+    
+    protected void loadSubTree(){};
+    
     /* ДЕРЕВО: установка текущего элемента в ДЕРЕВЕ по заданному объекту item */
     public void makeSelectedGroup(BaseDict item){      
         if (item == null) return;
@@ -1429,8 +1419,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         //вызов поиска
         List<BaseDict> result = searcheBean.doSearche(ownerItem, model.isSearcheInGroups(), model.getStatesIds(), paramEQ, paramLIKE, paramIN, paramDATE, addParams, first, pageSize);
              
-        setSource(DictDetailSource.SEARCHE_SOURCE);
-        setCurrentViewModeAsDetail();        
+        setSource(DictDetailSource.SEARCHE_SOURCE);       
         makeJurnalHeader(MsgUtils.getBandleLabel(searcheBean.getMetadatesObj().getBundleJurnalName()), MsgUtils.getBandleLabel("SearcheResult"), "DisplaysObjectsSelectedSearche");
         
         return result;
@@ -1751,18 +1740,6 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     }
 
     /* Установка режима отображения в обозревателе в зависимости от того, какой(ие) тип(ы) объектов отображаются  */
-    public void setCurrentViewModel(TreeNode node){
-        BaseDict item = (BaseDict) node.getData();
-        if (isItemDetailType(item)){
-            setCurrentViewModeAsDetail();
-        } else 
-            if (isItemTreeType(item)){
-                setCurrentViewModeAsTree();                
-            } else
-                if (isItemRootType(item)){
-                    setCurrentViewModeAsRoot();
-                }
-    }
     public void setCurrentViewModeAsDetail(){
         currentType = typeDetail;
     }

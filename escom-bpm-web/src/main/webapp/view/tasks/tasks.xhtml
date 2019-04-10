@@ -20,17 +20,7 @@
                                          itemLabel="#{bundle.ShowOnlyExecute}">
                     <p:ajax update="mainFRM" listener="#{taskListBean.onChangeChBoxType()}"/>
                 </p:selectBooleanCheckbox>
-            </h:panelGrid>
-            
-            <h:panelGrid columns="2" styleClass="without-spaces">
-                <p:outputLabel id="lbExecutor" value="#{bundle.Executor}:"  />
-                <p:selectOneMenu id="selExecutor" value="#{taskListBean.executor}" filter="true" filterMatchMode="startsWith"
-                                styleClass="ui-grid-col-12"
-                                converter="staffConvertor" placeholder="#{bundle.Select}">
-                    <f:selectItems value="#{taskListBean.executors}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}"/>  
-                    <p:ajax event="change" oncomplete="document.getElementById('mainFRM:btnSearche').click();"/>
-                </p:selectOneMenu>                
-            </h:panelGrid>                                                     
+            </h:panelGrid>                                                                
             
             <h:panelGrid columns="3" styleClass=" without-spaces"> 
                 <ui:include src="/view/common/period-select.xhtml" >

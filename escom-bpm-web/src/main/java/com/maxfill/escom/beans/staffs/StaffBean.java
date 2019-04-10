@@ -189,7 +189,7 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
 
     @Override
     public SearcheModel initSearcheModel() {
-        return new StaffsSearche();
+        return new StaffSearche();
     }
 
     public void makeName(Staff staff){

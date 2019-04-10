@@ -1,0 +1,67 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                template="/view/templ/templ-explorer.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- стандарный обозреватель/селектор для Задач -->
+    
+    <ui:param name="_bean" value="#{taskExplBean}"/>
+    <ui:param name="_rootBean"    value="#{companyBean}"/> 
+    <ui:param name="_treeBean"    value="#{departmentBean}"/> 
+    <ui:param name="_detailBean"  value="#{taskBean}"/>     
+    
+    <ui:param name="_filterBean"  value="#{filtersBean}"/>     
+    <ui:param name="_searcheBean" value="#{_detailBean}"/>
+    
+    <ui:param name="_selectorHeader" value="#{_bean.getLabelFromBundle('Select')}"/>
+    <ui:param name="_explorerHeader" value="#{_bean.getLabelFromBundle('TaskExplorer')}"/>
+    <ui:param name="_lbGroupName"    value="#{bundle.Structure}" />
+    
+    <ui:param name="_CreateGroupLabel" value="#{bundle.CreateDepartament}"/>
+    <ui:param name="_CreateItemLabel" value="#{bundle.CreateTask}"/> 
+    <ui:param name="_CreateRootLabel" value="#{bundle.CreateCompany}"/>
+       
+    <!-- специфичные колонки таблицы обозревателя для "Задач"-->
+    <ui:define name="specDetailColumns">
+        <p:column headerText="#{bundle.Number}" sortBy="#{item.fullRegNumber}"
+                  rendered="#{_bean.isNowShowDetail() or _bean.isNowShowMix()}">
+            #{item.fullRegNumber}
+        </p:column>
+
+        <p:column headerText="#{bundle.Executor}" 
+                  rendered="#{_bean.isNowShowDetail() or _bean.isNowShowMix()}">
+            #{item.owner.employeeFIO}
+        </p:column>
+
+        <p:column headerText="#{bundle.Term}" sortBy="#{item.planExecDate}"
+                  rendered="#{_bean.isNowShowDetail() or _bean.isNowShowMix()}">
+            <h:outputLabel value="#{item.planExecDate}">
+                <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+            </h:outputLabel>
+        </p:column>
+
+        <p:column headerText="#{bundle.Status}" rendered="#{_bean.isNowShowDetail() or _bean.isNowShowMix()}">
+            #{sessionBean.getItemStatus(item)}
+        </p:column>
+
+        <p:column headerText="#{bundle.Result}" rendered="#{_bean.isNowShowDetail() or _bean.isNowShowMix()}">
+            <p:graphicImage value="/resources/icon/#{item.resultIcon}.png"  /> 
+            #{_bean.getLabelFromBundle(item.getResult())}
+        </p:column>
+    </ui:define> 
+    
+    <!-- специфичные колонки таблицы обозревателя для "Подразделения"-->
+    <ui:define name="specTreeColumns">         
+    </ui:define>
+    
+    <!-- специфичные колонки таблицы обозревателя для "Компания"-->
+    <ui:define name="specRootColumns">         
+    </ui:define>
+        
+    <!-- специфичные поля поиска -->
+    <ui:define name="searche"> 
+    </ui:define>
+    
+</ui:composition>

@@ -7,7 +7,7 @@ import org.primefaces.model.TreeNode;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 
-/* Расширение контролёра обозревателя оргструктуры */
+/* Расширение контролёра обозревателя для оргструктуры */
 @Named
 @ViewScoped
 public class CompanyExplBean extends ExplorerTreeBean{

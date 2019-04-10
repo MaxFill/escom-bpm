@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.maxfill.escom.beans.staffs;
 
 import com.maxfill.escom.beans.explorer.SearcheModel;
@@ -11,7 +6,7 @@ import java.util.Map;
 
 /* Расширение поиска Штатных единиц */
  
-public class StaffsSearche extends SearcheModel{
+public class StaffSearche extends SearcheModel{
     private static final long serialVersionUID = 4197000011831824656L;
     
     private String postSearche;

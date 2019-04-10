@@ -18,6 +18,7 @@ import javax.faces.context.FacesContext;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,9 @@ import javax.ejb.EJB;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.NodeSelectEvent;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.SortOrder;
 
 /* Контролер формы обозревателя c поддержкой групп */
 @Named
@@ -47,6 +51,62 @@ public class ExplorerTreeBean extends ExplorerBean{
     protected static final Integer LEH_TREE_ITEMS  = TREE_ITEMS_NAME.length();
     protected static final Integer LEH_TREE_FILTERS = TREE_FILTERS_NAME.length();
     protected static final Integer LEH_TABLE_NAME = TABLE_NAME.length();   
+    
+    /* МЕТОДЫ РАБОТЫ С ДЕРЕВОМ */
+    
+    //подгрузка веток в дерево 
+    @Override
+    protected void loadSubTree(){                
+        if (isItemTreeType(currentItem)){
+            if ("ui-icon-folder-collapsed".equals(currentItem.getIconTree())){
+                treeBean.loadChilds(currentItem, treeSelectedNode);
+                PrimeFaces.current().ajax().update("westFRM:accord:tree");
+            }                                    
+        } else
+            if (isItemRootType(currentItem)){
+                if ("ui-icon-folder-collapsed".equals(currentItem.getIconTree())){
+                    rootBean.loadChilds(currentItem, treeSelectedNode);
+                    PrimeFaces.current().ajax().update("westFRM:accord:tree");
+                }
+            }
+    }
+    
+    /* Добавление узла в дерево при его формировании  */
+    public TreeNode addItemInTree(TreeNode parentNode, BaseDict item, String typeNode) {
+        return new DefaultTreeNode(typeNode, item, parentNode);                
+    }
+    
+    /**
+     * Событие установки текущего элемента в дереве
+     * @param event 
+     */
+    public void onTreeNodeSelect(NodeSelectEvent event) {
+        TreeNode node = event.getTreeNode();
+        onSelectInTree(node);
+    } 
+    
+    /**
+     * Загрузка детальных объектов для текущего элемента в дереве
+     * @param first
+     * @param pageSize
+     * @param sortField
+     * @param sortOrder
+     * @param filters
+     * @return 
+     */
+    @Override
+    protected List<BaseDict> loadDetailItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters){
+        BaseDict treeItem = (BaseDict) treeSelectedNode.getData(); 
+        if (isItemTreeType(treeItem)){                    
+                return treeBean.makeGroupContent(treeItem, tableBean, viewMode, first, pageSize, sortField,  sortOrder.name());                            
+            } else
+                if (isItemRootType(treeItem)){                            
+                    return rootBean.makeGroupContent(treeItem, tableBean, viewMode, first, pageSize, sortField,  sortOrder.name());                                
+                }
+        return new ArrayList<>();
+    }
+    
+    /* *** *** */
     
     @Override
     public void onAfterFormLoad(){
