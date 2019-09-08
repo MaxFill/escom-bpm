@@ -78,7 +78,7 @@ public class LoginBean extends BaseViewBean{
     }
     
     public String login() throws NoSuchAlgorithmException{
-        Set <FacesMessage> errors = new HashSet <>();
+        Set<FacesMessage> errors = new HashSet<>();
        
         if (StringUtils.isEmpty(userName) ||  StringUtils.isEmpty(password)){
             //LOGGER.log(Level.INFO, "LOGIN: login for userName: {0}", userName + "_" + password);
@@ -99,7 +99,7 @@ public class LoginBean extends BaseViewBean{
         }
 
         if(appBean.isNoAvailableLicence()) {
-            errors.add(MsgUtils.prepFormatErrorMsg("ErrorCountLogin", new Object[]{}));
+            errors.add(MsgUtils.prepFormatErrorMsg("NoFreeLicenses", new Object[]{}));
         }
         
         if(user == null) { 
@@ -135,13 +135,6 @@ public class LoginBean extends BaseViewBean{
             }
         }
 
-        /*
-        if (appBean.isAlreadyLogin(user)){
-            errorsKey.add("UserPreviouslyLogged");
-            makeCountErrLogin(context, errorsKey);
-            return showErrMsg(errorsKey, context);            
-        }
-        */
         initCurrentUser(user);
         generatePinCode = null;
         

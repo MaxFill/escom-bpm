@@ -432,14 +432,18 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
                 .setSigningKey(key)
                 .parseClaimsJws(token).getBody();
             Integer uesrId = Integer.valueOf(claims.getId());
-            String subject = claims.getSubject();
+            String subject = claims.getSubject().trim().toLowerCase();
             Date dateExpir = claims.getExpiration();
             if (dateExpir.before(new Date())) return null; //token просрочен
             User user = find(uesrId);
-            if (user == null) return null; //пользователь не найден
-            String login = user.getLogin() + "/" + user.getPassword();
+            if (user == null){
+                LOGGER.log(Level.INFO, "CheckToken:  user id {0} not found!", uesrId);
+                return null;
+            } 
+            String login = user.getLogin().trim().toLowerCase() + "/" + user.getPassword();
             if (!Objects.equals(login, subject)){
-                user = null;
+                LOGGER.log(Level.INFO, "CheckToken: user login {0} incorrect for subject {1}!", new Object[]{login, subject});
+                return null;
             }
             return user;
         } catch (MalformedJwtException | ClaimJwtException | SignatureException | UnsupportedJwtException ex){

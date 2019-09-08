@@ -143,8 +143,7 @@ public class SearcheServiceImpl implements SearcheService {
             try {
                     String path = txtFile.getPath();
                     byte[] encoded = Files.readAllBytes(Paths.get(path));
-                    Charset encoding = StandardCharsets.UTF_8;
-                    content = new String(encoded, encoding);
+                    content = new String(encoded, StandardCharsets.UTF_8);
                 } catch (IOException ex) {
                     LOGGER.log(Level.SEVERE, null, ex);
                 }

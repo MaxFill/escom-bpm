@@ -47,12 +47,9 @@ public class ApplicationBean implements Serializable{
     private String appName;
     private final Release release = new Release();
     
-    @EJB
-    private Configuration configuration;
-    @EJB
-    private UpdateInfo updateInfo;
-    @EJB
-    private ActivateApp activateApp;
+    @EJB private Configuration configuration;
+    @EJB private UpdateInfo updateInfo;
+    @EJB private ActivateApp activateApp;
 
     //открытые сессии пользователей
     private final ConcurrentHashMap<String, UsersSessions> userSessions = new ConcurrentHashMap<>();
@@ -143,17 +140,25 @@ public class ApplicationBean implements Serializable{
         userSession.setDateConnect(new Date());
         userSession.setIpAdress(""); //TODO Нужен IP адрес!
         userSession.setHttpSession(httpSession);        
-        userSessions.put(user.getLogin(), userSession);
+        String login = user.getLogin().trim().toLowerCase();
+        userSessions.put(login, userSession); 
+        LOGGER.log(Level.INFO, "The user {0} occupied license", login);
+        LOGGER.log(Level.INFO, "Basy licence {0} ", getBasyLicence());
     }
     
     /* Освобождение занятой пользователем лицензии  */
     synchronized public void clearBasyLicence(String login){        
+        getBasyLicence();
+        login = login.trim().toLowerCase();
         userSessions.remove(login);
+        LOGGER.log(Level.INFO, "The user {0} license is now free!", login);
+        LOGGER.log(Level.INFO, "Now basy licences {0}", getBasyLicence());
     }
     
     /* Проверка на то что пользователь уже залогинился  */
     public Boolean isAlreadyLogin(User user){
-        return userSessions.containsKey(user.getLogin());
+        String login = user.getLogin().trim().toLowerCase();
+        return userSessions.containsKey(login);
     }
     
     /* Проверка наличия свободных лицензий  */
@@ -163,13 +168,14 @@ public class ApplicationBean implements Serializable{
     
     /* Возвращает число занятых лицензий */
     public Integer getBasyLicence(){
+        //userSessions.entrySet().forEach(entry -> LOGGER.log(Level.INFO, "map key = {0}", entry.getKey()));
         return userSessions.size();
     }
     
     /* Отключение сессии пользователя */
     public void disconectUser(UsersSessions usersSession){
-        usersSession.getHttpSession().invalidate();
-        clearBasyLicence(usersSession.getUser().getLogin());        
+        clearBasyLicence(usersSession.getUser().getLogin());
+        usersSession.getHttpSession().invalidate();                
     }
 
     /* Обновление данных об актуальном релизе */
@@ -281,7 +287,7 @@ public class ApplicationBean implements Serializable{
         return licence;
     }
 
-    public ConcurrentHashMap<String, UsersSessions> getUserSessions() {
+    public Map<String, UsersSessions> getUserSessions() {
         return userSessions;
     }
     
